@@ -25,7 +25,7 @@ from urllib import request, error
 log = logging.getLogger(__name__)
 addonHandler.initTranslation()
 
-# --- تنظیمات سیستمی ---
+# --- System Configuration ---
 winmm = ctypes.windll.winmm
 user32 = ctypes.windll.user32
 
@@ -36,10 +36,14 @@ MODELS = [
 ]
 
 BASE_LANGUAGES = [
-    ("Arabic", "ar"), ("Chinese", "zh"), ("Dutch", "nl"), ("English", "en"),
-    ("French", "fr"), ("German", "de"), ("Italian", "it"), ("Japanese", "ja"),
-    ("Persian", "fa"), ("Portuguese", "pt"), ("Russian", "ru"),
-    ("Spanish", "es"), ("Turkish", "tr")
+    ("Arabic", "ar"), ("Chinese", "zh"), ("Czech", "cs"), ("Danish", "da"),
+    ("Dutch", "nl"), ("English", "en"), ("Finnish", "fi"), ("French", "fr"),
+    ("German", "de"), ("Greek", "el"), ("Hebrew", "he"), ("Hindi", "hi"),
+    ("Hungarian", "hu"), ("Indonesian", "id"), ("Italian", "it"), ("Japanese", "ja"),
+    ("Korean", "ko"), ("Norwegian", "no"), ("Persian", "fa"), ("Polish", "pl"),
+    ("Portuguese", "pt"), ("Romanian", "ro"), ("Russian", "ru"), ("Spanish", "es"),
+    ("Swedish", "sv"), ("Thai", "th"), ("Turkish", "tr"), ("Ukrainian", "uk"),
+    ("Vietnamese", "vi")
 ]
 SOURCE_LIST = [("Auto-detect", "auto")] + BASE_LANGUAGES
 SOURCE_NAMES = [x[0] for x in SOURCE_LIST]
@@ -58,7 +62,7 @@ confspec = {
     "custom_prompts": "string(default='')"
 }
 
-# --- توابع کمکی ---
+# --- Helpers ---
 def clean_markdown(text):
     if not text: return ""
     text = re.sub(r'\*\*|__|[*_]', '', text)
@@ -68,15 +72,11 @@ def clean_markdown(text):
     text = re.sub(r'^\s*-\s+', '', text, flags=re.MULTILINE)
     return text.strip()
 
-def move_mouse(x, y):
-    try:
-        user32.SetCursorPos(int(x), int(y))
-        ui.message(f"Mouse moved to {x}, {y}")
-    except: ui.message("Failed to move mouse.")
-
 def play_sound(freq, dur):
     import winsound
-    winsound.Beep(freq, dur)
+    try:
+        winsound.Beep(freq, dur)
+    except: pass
 
 def send_ctrl_v():
     VK_CONTROL = 0x11
@@ -91,7 +91,6 @@ def send_ctrl_v():
 
 def process_tiff_pages(path):
     pages_data = []
-    # Suppress wxWidgets warnings (TIFFReadDirectory errors)
     no_log = wx.LogNull() 
     try:
         img_count = wx.Image.GetImageCount(path, wx.BITMAP_TYPE_TIFF)
@@ -108,7 +107,7 @@ def process_tiff_pages(path):
     except: pass
     return pages_data
 
-# --- پرامپت‌ها ---
+# --- Prompts ---
 PROMPT_TRANSLATE = """
 Role: Professional Translator.
 Config: Primary={target_lang}, Fallback={swap_target}, SmartSwap={smart_swap}.
@@ -136,12 +135,6 @@ class VisionQADialog(wx.Dialog):
         
         clean_init = clean_markdown(initial_text)
         self.outputArea.AppendText(f"AI: {clean_init}\n")
-        
-        self.moveMouseBtn = wx.Button(self, label="Move Mouse")
-        self.moveMouseBtn.Hide()
-        self.moveMouseBtn.Bind(wx.EVT_BUTTON, self.onMoveMouse)
-        self.target_coords = None
-        mainSizer.Add(self.moveMouseBtn, 0, wx.ALL, 5)
 
         inputLbl = wx.StaticText(self, label="Ask:")
         mainSizer.Add(inputLbl, 0, wx.ALL, 5)
@@ -174,23 +167,12 @@ class VisionQADialog(wx.Dialog):
     def process_question(self, question, is_locator):
         response_text, coords = self.callback_fn(self.context_data, question, is_locator, self.extra_info)
         clean_resp = clean_markdown(response_text)
-        wx.CallAfter(self.update_response, clean_resp, coords)
+        wx.CallAfter(self.update_response, clean_resp)
 
-    def update_response(self, text, coords):
+    def update_response(self, text):
         self.outputArea.AppendText(f"AI: {text}\n")
         self.outputArea.ShowPosition(self.outputArea.GetLastPosition())
         ui.message(text)
-        if coords:
-            self.target_coords = coords
-            self.moveMouseBtn.SetLabel(f"Move Mouse to ({coords[0]}, {coords[1]})")
-            self.moveMouseBtn.Show()
-            self.Layout()
-            ui.message("Element found.")
-        else:
-            self.moveMouseBtn.Hide()
-
-    def onMoveMouse(self, event):
-        if self.target_coords: move_mouse(*self.target_coords)
 
 class ResultDialog(wx.Dialog):
     def __init__(self, parent, title, content):
@@ -259,6 +241,8 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         config.conf["VisionAssistant"]["custom_prompts"] = self.customPrompts.Value.strip()
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
+    scriptCategory = "Vision Assistant"
+    
     last_translation = "" 
     is_recording = False
     temp_audio_file = os.path.join(tempfile.gettempdir(), "vision_dictate.wav")
@@ -277,6 +261,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
         model = config.conf["VisionAssistant"]["model_name"]
         
+        if not api_key:
+            wx.CallAfter(ui.message, "API Key missing.")
+            return None
+
         base_url = proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
         url = f"{base_url}/v1beta/models/{model}:generateContent?key={api_key}"
         headers = {"Content-Type": "application/json; charset=UTF-8"}
@@ -288,32 +276,49 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         data = {"contents": [{"parts": parts}]}
         if json_mode: data["generationConfig"] = {"response_mime_type": "application/json"}
 
-        try:
-            req = request.Request(url, data=json.dumps(data).encode('utf-8'), headers=headers)
-            with request.urlopen(req, timeout=60) as response:
-                if response.status == 200:
-                    res = json.loads(response.read().decode('utf-8'))
-                    text = res['candidates'][0]['content']['parts'][0]['text'].strip()
-                    return text if json_mode else clean_markdown(text)
-        except Exception as e:
-            log.error(f"Gemini Error: {e}")
-            return None
+        max_retries = 2
+        for attempt in range(max_retries + 1):
+            try:
+                req = request.Request(url, data=json.dumps(data).encode('utf-8'), headers=headers)
+                with request.urlopen(req, timeout=60) as response:
+                    if response.status == 200:
+                        res = json.loads(response.read().decode('utf-8'))
+                        text = res['candidates'][0]['content']['parts'][0]['text'].strip()
+                        return text if json_mode else clean_markdown(text)
+            except error.HTTPError as e:
+                if e.code == 503 and attempt < max_retries:
+                    time.sleep(1)
+                    continue
+                log.error(f"Gemini HTTP Error: {e.code} - {e.reason}")
+                return None
+            except Exception as e:
+                log.error(f"Gemini General Error: {e}")
+                return None
+        return None
 
     # --- Feature 1: Dictation ---
     def script_smartDictation(self, gesture):
+        """Toggles voice dictation. Records audio and types the transcription."""
         if not self.is_recording:
             self.is_recording = True
             play_sound(800, 100)
-            winmm.mciSendStringW('open new type waveaudio alias myaudio', None, 0, 0)
-            winmm.mciSendStringW('record myaudio', None, 0, 0)
-            ui.message("Listening...")
+            try:
+                winmm.mciSendStringW('open new type waveaudio alias myaudio', None, 0, 0)
+                winmm.mciSendStringW('record myaudio', None, 0, 0)
+                ui.message("Listening...")
+            except Exception as e:
+                ui.message("Audio error")
+                self.is_recording = False
         else:
             self.is_recording = False
             play_sound(500, 100)
-            winmm.mciSendStringW(f'save myaudio "{self.temp_audio_file}"', None, 0, 0)
-            winmm.mciSendStringW('close myaudio', None, 0, 0)
-            ui.message("Typing...")
-            threading.Thread(target=self._thread_dictation).start()
+            try:
+                winmm.mciSendStringW(f'save myaudio "{self.temp_audio_file}"', None, 0, 0)
+                winmm.mciSendStringW('close myaudio', None, 0, 0)
+                ui.message("Typing...")
+                threading.Thread(target=self._thread_dictation).start()
+            except Exception as e:
+                ui.message("Save error")
 
     def _thread_dictation(self):
         try:
@@ -325,10 +330,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             res = self._call_gemini(p, attachments=[{'mime_type': 'audio/wav', 'data': audio_data}])
             
             if res: wx.CallAfter(self._paste_text, res)
-            else: wx.CallAfter(ui.message, "No speech.")
+            else: wx.CallAfter(ui.message, "No speech recognized.")
             try: os.remove(self.temp_audio_file)
             except: pass
-        except: wx.CallAfter(ui.message, "Error.")
+        except: wx.CallAfter(ui.message, "Dictation Error.")
 
     def _paste_text(self, text):
         api.copyToClip(text)
@@ -338,9 +343,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     # --- Feature 2: Translator ---
     def script_translateSmart(self, gesture):
+        """Translates the selected text or navigator object."""
         text = self._get_text_smart()
         if not text:
-            ui.message("No text.")
+            ui.message("No text found.")
             return
         ui.message("Translating...") 
         threading.Thread(target=self._thread_translate, args=(text,)).start()
@@ -355,7 +361,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if res:
             self.last_translation = res
             wx.CallAfter(self._announce_translation, res)
-        else: wx.CallAfter(ui.message, "Failed.")
+        else: wx.CallAfter(ui.message, "Translation failed.")
 
     def _announce_translation(self, text):
         api.copyToClip(text)
@@ -363,20 +369,36 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def _get_text_smart(self):
         try:
-            info = api.getFocusObject().makeTextInfo(textInfos.POSITION_SELECTION)
-            if info.text and not info.text.isspace(): return info.text
-        except: pass
+            focus_obj = api.getFocusObject()
+            if focus_obj:
+                info = focus_obj.makeTextInfo(textInfos.POSITION_SELECTION)
+                if info and info.text and not info.text.isspace():
+                    return info.text
+        except Exception: 
+            pass 
+            
         try:
             obj = api.getNavigatorObject()
-            content = [obj.name, obj.value, obj.description]
+            if not obj: return None
+            
+            content = []
+            if obj.name: content.append(obj.name)
+            if obj.value: content.append(obj.value)
+            if obj.description: content.append(obj.description)
+            
             if hasattr(obj, 'makeTextInfo'):
-                try: content.append(obj.makeTextInfo(textInfos.POSITION_ALL).text)
+                try: 
+                    content.append(obj.makeTextInfo(textInfos.POSITION_ALL).text)
                 except: pass
-            return " ".join(list(dict.fromkeys([c for c in content if c and not c.isspace()])))
-        except: return None
+                
+            final_text = " ".join(list(dict.fromkeys([c for c in content if c and not c.isspace()])))
+            return final_text if final_text else None
+        except Exception: 
+            return None
 
     # --- Feature 3: Refiner & Custom Prompts ---
     def script_refineText(self, gesture):
+        """Opens a menu to Explain, Summarize, or Fix the selected text."""
         text = self._get_text_smart()
         if not text: text = "" 
         wx.CallAfter(self._open_refine_dialog, text)
@@ -436,18 +458,39 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def _thread_refine(self, text, custom_content, file_path=None):
         target_lang = config.conf["VisionAssistant"]["target_language"]
+        source_lang = config.conf["VisionAssistant"]["source_language"]
+        smart_swap = config.conf["VisionAssistant"]["smart_swap"]
         resp_lang = config.conf["VisionAssistant"]["ai_response_language"]
         
         prompt_text = custom_content
         attachments = []
         
-        prompt_text = prompt_text.replace("[summarize]", f"Summarize this in {resp_lang}.")
-        prompt_text = prompt_text.replace("[fix_grammar]", "Fix grammar.")
-        prompt_text = prompt_text.replace("[fix_translate]", f"Fix grammar and translate to {target_lang}.")
-        prompt_text = prompt_text.replace("[explain]", f"Explain in {resp_lang}.")
+        # Smart Swap logic for Fix & Translate
+        final_target = target_lang
+        if "[fix_translate]" in prompt_text:
+            if smart_swap and source_lang != "Auto-detect":
+                # Assuming if text is in source_lang, we keep target. If text is target, we swap to source.
+                # Since we don't detect language here easily without extra call, we use the PROMPT strategy.
+                pass 
+            
+            # Using a strict professional prompt to avoid chatty output
+            fallback = "English" if source_lang == "Auto-detect" else source_lang
+            swap_instruction = f"If input is {target_lang}, translate to {fallback}." if smart_swap else ""
+            
+            prompt_text = prompt_text.replace("[fix_translate]", 
+                f"Role: Editor. Task: Fix grammar and translate to {target_lang}. {swap_instruction} Output ONLY the final text. No explanations.")
         
-        if "[selection]" in prompt_text: prompt_text = prompt_text.replace("[selection]", text)
-        if "[clipboard]" in prompt_text: prompt_text = prompt_text.replace("[clipboard]", api.getClipData())
+        prompt_text = prompt_text.replace("[summarize]", f"Summarize the text below in {resp_lang}.")
+        prompt_text = prompt_text.replace("[fix_grammar]", "Fix grammar in the text below. Output ONLY the fixed text.")
+        prompt_text = prompt_text.replace("[explain]", f"Explain the text below in {resp_lang}.")
+        
+        used_selection = False
+        if "[selection]" in prompt_text: 
+            prompt_text = prompt_text.replace("[selection]", text)
+            used_selection = True
+            
+        if "[clipboard]" in prompt_text: 
+            prompt_text = prompt_text.replace("[clipboard]", api.getClipData())
         
         if "[screen_obj]" in prompt_text:
             d, w, h = self._capture_navigator()
@@ -462,55 +505,42 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if file_path:
             try:
                 if os.path.getsize(file_path) < 15*1024*1024:
-                    ext = os.path.splitext(file_path)[1].lower()
-                    
                     if "[file_ocr]" in prompt_text:
-                        if ext in ['.tif', '.tiff']:
-                            pages = process_tiff_pages(file_path)
-                            for p_data in pages:
-                                attachments.append({'mime_type': 'image/jpeg', 'data': p_data})
-                        elif ext == ".pdf":
-                            with open(file_path, "rb") as f: raw = f.read()
-                            attachments.append({'mime_type': 'application/pdf', 'data': base64.b64encode(raw).decode('utf-8')})
-                        else:
-                            with open(file_path, "rb") as f: raw = f.read()
-                            attachments.append({'mime_type': 'image/png', 'data': base64.b64encode(raw).decode('utf-8')})
-                        
-                        prompt_text = prompt_text.replace("[file_ocr]", "")
-                        if not prompt_text.strip(): prompt_text = "Extract all text from this file."
-                    
-                    elif "[file_audio]" in prompt_text:
-                        mt = "audio/mpeg" if ext == ".mp3" else "audio/wav"
-                        with open(file_path, "rb") as f: raw = f.read()
-                        attachments.append({'mime_type': mt, 'data': base64.b64encode(raw).decode('utf-8')})
-                        prompt_text = prompt_text.replace("[file_audio]", "")
-                        if not prompt_text.strip(): prompt_text = f"Transcribe this audio in {resp_lang}."
-
+                         with open(file_path, "rb") as f: raw = f.read()
+                         attachments.append({'mime_type': 'image/png', 'data': base64.b64encode(raw).decode('utf-8')})
+                         prompt_text = prompt_text.replace("[file_ocr]", "")
+                         if not prompt_text.strip(): prompt_text = "Extract text."
                     elif "[file_read]" in prompt_text:
-                        if ext == ".pdf":
-                            with open(file_path, "rb") as f: raw = f.read()
-                            attachments.append({'mime_type': 'application/pdf', 'data': base64.b64encode(raw).decode('utf-8')})
-                            prompt_text = prompt_text.replace("[file_read]", "")
-                            if not prompt_text.strip(): prompt_text = f"Analyze this document in {resp_lang}."
-                        elif ext in ['.tif', '.tiff']:
-                            pages = process_tiff_pages(file_path)
-                            for p_data in pages:
-                                attachments.append({'mime_type': 'image/jpeg', 'data': p_data})
-                            prompt_text = prompt_text.replace("[file_read]", "")
-                            if not prompt_text.strip(): prompt_text = f"Analyze this document in {resp_lang}."
-                        else:
-                            with open(file_path, "rb") as f: raw = f.read()
-                            try:
-                                txt = raw.decode('utf-8')
-                                prompt_text = prompt_text.replace("[file_read]", f"\nFile:\n{txt}\n")
-                            except: pass
+                        with open(file_path, "rb") as f: raw = f.read()
+                        try:
+                            txt = raw.decode('utf-8')
+                            prompt_text = prompt_text.replace("[file_read]", f"\nFile Content:\n{txt}\n")
+                        except: pass
             except: pass
             
+        if text and not used_selection and not file_path:
+            prompt_text += f"\n\n---\nInput Text:\n{text}"
+            
         res = self._call_gemini(prompt_text, attachments=attachments)
-        if res: wx.CallAfter(lambda: (api.copyToClip(res), ui.message(res)))
+        
+        if res:
+             wx.CallAfter(self._open_refine_result_dialog, res, attachments, text)
+
+    def _open_refine_result_dialog(self, result_text, attachments, original_text):
+        def refine_callback(ctx, q, dum1, dum2):
+            # ctx contains (attachments, original_text)
+            atts, orig = ctx
+            lang = config.conf["VisionAssistant"]["ai_response_language"]
+            p = f"Original Text: {orig}\n\nUser Question: {q}\nRespond in {lang}."
+            return self._call_gemini(p, attachments=atts), None
+
+        context = (attachments, original_text)
+        dlg = VisionQADialog(gui.mainFrame, "Refine Result", result_text, context, refine_callback)
+        dlg.Show()
 
     # --- Feature 4: Doc QA ---
     def script_analyzeDocument(self, gesture):
+        """Allows asking questions about a selected document (PDF/Text/Image)."""
         wx.CallAfter(self._open_doc_dialog)
     def _open_doc_dialog(self):
         dlg = wx.FileDialog(gui.mainFrame, "Select Document to Analyze", wildcard="Doc|*.pdf;*.tif;*.tiff;*.txt;*.py;*.md", style=wx.FD_OPEN)
@@ -528,7 +558,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             doc_text = None
             
             if ext in ['.tif', '.tiff']:
-                no_log = wx.LogNull()
                 pages = process_tiff_pages(path)
                 for p_data in pages:
                     att.append({'mime_type': 'image/jpeg', 'data': p_data})
@@ -543,7 +572,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 except: doc_text = "Binary"
             
             wx.CallAfter(self._open_doc_chat_dialog, init_msg, att, doc_text)
-        except: wx.CallAfter(ui.message, "Error.")
+        except: wx.CallAfter(ui.message, "Error loading doc.")
         
     def _open_doc_chat_dialog(self, init_msg, initial_attachments, doc_text):
         def doc_callback(ctx_atts, q, dum1, dum2):
@@ -551,7 +580,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             atts = ctx_atts if ctx_atts else []
             p = f"User Question: {q}\nRespond in {lang}."
             if doc_text: p = f"Document:\n{doc_text}\n\n{p}"
-            # Force processing for attachments even if prompt is short
             if atts and len(q) < 5: p += " Describe/Analyze this file."
             return self._call_gemini(p, attachments=atts), None
             
@@ -560,8 +588,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     # --- Feature 5: Vision ---
     def script_ocrFullScreen(self, gesture):
+        """Performs OCR and description on the entire screen."""
         self._start_vision(True)
     def script_describeObject(self, gesture):
+        """Describes the current object (Navigator Object)."""
         self._start_vision(False)
     def _start_vision(self, full):
         if full: d, w, h = self._capture_fullscreen()
@@ -596,6 +626,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     # --- Feature 6: Audio ---
     def script_transcribeAudio(self, gesture):
+        """Transcribes a selected audio file."""
         wx.CallAfter(self._open_audio)
     def _open_audio(self):
         dlg = wx.FileDialog(gui.mainFrame, "Select Audio File to Transcribe", wildcard="Audio|*.mp3;*.wav;*.ogg", style=wx.FD_OPEN)
@@ -617,13 +648,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     # --- Feature 7: Captcha ---
     def script_solveCaptcha(self, gesture):
+        """Attempts to solve a CAPTCHA on the screen or navigator object."""
         mode = config.conf["VisionAssistant"]["captcha_mode"]
         if mode == 'fullscreen': d, w, h = self._capture_fullscreen()
         else: d, w, h = self._capture_navigator()
         
         is_gov = False
         try:
-            if "پنجره ملی خدمات دولت هوشمند" in api.getForegroundObject().name: is_gov = True
+            if api.getForegroundObject() and "پنجره ملی خدمات دولت هوشمند" in api.getForegroundObject().name: 
+                is_gov = True
         except: pass
 
         if d:
@@ -649,7 +682,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def _capture_navigator(self):
         try:
             obj = api.getNavigatorObject()
-            if not obj.location: return None,0,0
+            if not obj or not obj.location: return None,0,0
             x,y,w,h = obj.location
             if w<1 or h<1: return None,0,0
             bmp = wx.Bitmap(w,h)
@@ -669,11 +702,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         except: return None,0,0
 
     def script_readLastTranslation(self, gesture):
+        """Announces the last received translation."""
         if self.last_translation: ui.message(f"Last: {self.last_translation}")
         else: ui.message("No history.")
+    
     def script_translateClipboard(self, gesture):
+        """Translates the text currently in the clipboard."""
         t = api.getClipData()
-        if t: self.script_translateSmart(gesture)
+        if t: 
+            ui.message("Translating Clipboard...")
+            threading.Thread(target=self._thread_translate, args=(t,)).start()
+        else:
+            ui.message("Clipboard empty.")
 
     __gestures = {
         "kb:NVDA+shift+t": "translateSmart",
