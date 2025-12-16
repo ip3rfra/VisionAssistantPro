@@ -21,7 +21,7 @@ Features:
 - Audio Transcription (NVDA+Ctrl+Shift+A)
 - File Selection & OCR (NVDA+Ctrl+Shift+F)
 - Status Reporting (NVDA+Ctrl+Shift+I)"""),
-    addon_version="3.0.0",
+    addon_version="3.0.1",
     # Brief changelog for this version
     # Translators: what's new content for the add-on version to be shown in the add-on store
     addon_changelog=_("""## Changes for 3.0

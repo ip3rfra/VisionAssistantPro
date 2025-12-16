@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import sys
+import os
+cur_dir = os.path.dirname(__file__)
+lib_dir = os.path.join(cur_dir, "lib")
+if lib_dir not in sys.path:
+    sys.path.insert(0, lib_dir)
 import addonHandler
 import globalPluginHandler
 import config
@@ -21,6 +27,7 @@ import time
 import wave
 import gc
 import tones
+import NVDAObjects.behaviors
 import scriptHandler
 import markdown
 from urllib import request, error
@@ -958,13 +965,34 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.report_status(msg)
 
     def _get_text_smart(self):
-        try:
-            focus_obj = api.getFocusObject()
-            if focus_obj:
-                info = focus_obj.makeTextInfo(textInfos.POSITION_SELECTION)
+        focus_obj = api.getFocusObject()
+        if not focus_obj: return None
+
+        if hasattr(focus_obj, "treeInterceptor") and focus_obj.treeInterceptor:
+            try:
+                info = focus_obj.treeInterceptor.makeTextInfo(textInfos.POSITION_SELECTION)
                 if info and info.text and not info.text.isspace():
                     return info.text
+            except: pass
+
+        try:
+            info = focus_obj.makeTextInfo(textInfos.POSITION_SELECTION)
+            if info and info.text and not info.text.isspace():
+                return info.text
         except: pass
+
+        if isinstance(focus_obj, NVDAObjects.behaviors.EditableText):
+            try:
+                info = focus_obj.makeTextInfo(textInfos.POSITION_ALL)
+                if info and info.text and not info.text.isspace():
+                    return info.text
+            except: pass
+        
+        if isinstance(focus_obj, NVDAObjects.behaviors.Terminal):
+            try:
+                info = focus_obj.makeTextInfo(textInfos.POSITION_ALL)
+                return info.text
+            except: pass
 
         try:
             obj = api.getNavigatorObject()
@@ -977,7 +1005,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             
             if hasattr(obj, 'makeTextInfo'):
                 try: 
-                    content.append(obj.makeTextInfo(textInfos.POSITION_ALL).text)
+                    ti = obj.makeTextInfo(textInfos.POSITION_ALL)
+                    if ti.text and len(ti.text) < 2000: 
+                        content.append(ti.text)
                 except: pass
                 
             final_text = " ".join(list(dict.fromkeys([c for c in content if c and not c.isspace()])))

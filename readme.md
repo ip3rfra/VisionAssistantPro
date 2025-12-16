@@ -22,7 +22,7 @@ To ensure maximum compatibility with laptop layouts, all shortcuts use **NVDA + 
 | Shortcut                    | Function             | Description                                                                 |
 |-----------------------------|----------------------|-----------------------------------------------------------------------------|
 | NVDA+Ctrl+Shift+T           | Smart Translator     | Translates the text under the navigator cursor. Prioritizes selection.     |
-| NVDA+Ctrl+Shift+Y           | Clipboard Translator | Translates clipboard content. **Recommended for web browsers**.            |
+| NVDA+Ctrl+Shift+Y | Clipboard Translator | Translates clipboard content. |
 | NVDA+Ctrl+Shift+S           | Smart Dictation      | Converts speech to text. Press once to start, again to stop and type.       |
 | NVDA+Ctrl+Shift+R           | Text Refiner         | Summarize, Fix Grammar, Explain, or run **Custom Prompts**.                 |
 | NVDA+Ctrl+Shift+C           | CAPTCHA Solver       | Captures and solves CAPTCHA automatically.                                 |
