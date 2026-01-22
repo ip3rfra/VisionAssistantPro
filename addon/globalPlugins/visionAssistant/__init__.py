@@ -119,6 +119,9 @@ def text_to_html(text, full_page=False):
 def get_mime_type(path):
     ext = os.path.splitext(path)[1].lower()
     if ext == '.pdf': return 'application/pdf'
+    if ext == '.txt': return 'text/plain'
+    if ext == '.md': return 'text/markdown'
+    if ext == '.py': return 'text/plain'
     if ext in ['.jpg', '.jpeg']: return 'image/jpeg'
     if ext == '.png': return 'image/png'
     if ext == '.webp': return 'image/webp'
@@ -128,6 +131,17 @@ def get_mime_type(path):
     if ext == '.ogg': return 'audio/ogg'
     if ext == '.mp4': return 'video/mp4'
     return 'application/octet-stream'
+
+def model_supports_pdf(model_name):
+    if not model_name:
+        return False
+    name = model_name.lower()
+    # Assume future models support PDF; block only known non-PDF models.
+    return not (
+        "2.5-flash" in name
+        or "2.0-flash" in name
+        or "2.0-flash-lite" in name
+    )
 
 def show_error_dialog(message):
     # Translators: Title of the error dialog box
@@ -902,7 +916,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 "X-Goog-Upload-Command": "start",
                 "X-Goog-Upload-Header-Content-Length": str(file_size),
                 "X-Goog-Upload-Header-Content-Type": mime_type,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "x-goog-api-key": api_key
             }
             metadata = {"file": {"display_name": filename}}
             req_init = request.Request(initial_url, data=json.dumps(metadata).encode('utf-8'), headers=headers_init, method="POST")
@@ -934,7 +949,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             check_url = f"{base_url}/v1beta/{file_name_id}?key={api_key}"
             for _ in range(30): # Poll for up to 60s
                 try:
-                    with request.urlopen(check_url, timeout=10) as response:
+                    req_check = request.Request(check_url, headers={"x-goog-api-key": api_key})
+                    with request.urlopen(req_check, timeout=10) as response:
                         state_data = json.loads(response.read().decode('utf-8'))
                         state = state_data.get('state')
                         if state == "ACTIVE":
@@ -980,19 +996,21 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         url = f"{base_url}/v1beta/models/{model}:generateContent?key={api_key}"
         headers = {
             "Content-Type": "application/json; charset=UTF-8",
-            "x-api-key": api_key
+            "x-goog-api-key": api_key
         }
         
         contents = []
         if isinstance(prompt_or_contents, list):
             contents = prompt_or_contents
         else:
-            parts = [{"text": prompt_or_contents}]
+            parts = []
             for att in attachments:
                 if 'file_uri' in att:
                     parts.append({"file_data": {"mime_type": att['mime_type'], "file_uri": att['file_uri']}})
                 else:
                     parts.append({"inline_data": {"mime_type": att['mime_type'], "data": att['data']}})
+            if prompt_or_contents:
+                parts.append({"text": prompt_or_contents})
             contents = [{"parts": parts}]
             
         data = {
@@ -1564,11 +1582,20 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         msg = _("Uploading & Analyzing...")
         wx.CallAfter(self.report_status, msg)
         mime_type = get_mime_type(path)
+        model = config.conf["VisionAssistant"]["model_name"]
+
+        if mime_type == "application/pdf" and not model_supports_pdf(model):
+            # Translators: Message reported when selected model doesn't support PDF input
+            msg = _("Models gemini-2.5-flash, gemini-2.0-flash, gemini-2.0-flash-lite do not support PDF input.")
+            wx.CallAfter(self.report_status, msg)
+            show_error_dialog(msg)
+            self.current_status = _("Idle")
+            return
         
         file_uri = self._upload_file_to_gemini(path, mime_type)
         
         if file_uri:
-            att = [{'mime_type': 'mime_type', 'file_uri': file_uri}]
+            att = [{'mime_type': mime_type, 'file_uri': file_uri}]
             self.current_status = _("Idle")
             
             if config.conf["VisionAssistant"]["skip_chat_dialog"]:
@@ -1599,9 +1626,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         lang = config.conf["VisionAssistant"]["ai_response_language"]
         p = f"{question} (Strictly respond in {lang})"
         
-        parts = [{"text": p}]
+        parts = []
         for att in attachments:
             parts.append({"file_data": {"mime_type": att['mime_type'], "file_uri": att['file_uri']}})
+        parts.append({"text": p})
             
         res = self._call_gemini_safe([{"parts": parts}])
         if res:
@@ -1624,13 +1652,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 "Analyze the attached content to answer."
             )
             
-            context_parts = [{"text": f"Context: {system_instr}"}]
+            context_parts = []
             if ctx_atts:
                 for att in ctx_atts:
                     if 'file_uri' in att:
                         context_parts.append({"file_data": {"mime_type": att['mime_type'], "file_uri": att['file_uri']}})
                     elif 'data' in att:
                         context_parts.append({"inline_data": {"mime_type": att['mime_type'], "data": att['data']}})
+            context_parts.append({"text": f"Context: {system_instr}"})
             
             messages = []
             
