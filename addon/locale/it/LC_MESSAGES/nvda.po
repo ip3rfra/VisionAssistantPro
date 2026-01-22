@@ -546,6 +546,11 @@ msgstr "Errore 403: Forbidden (Controlla regione e permessi)"
 msgid "Error 429: Quota Exceeded (Try later)"
 msgstr "Errore 429: Quota superata (Prova più tardi)"
 
+#. Translators: Message reported when selected model doesn't support PDF input
+#: addon\globalPlugins\visionAssistant\__init__.py:1594
+msgid "Models gemini-2.5-flash, gemini-2.0-flash, gemini-2.0-flash-lite do not support PDF input."
+msgstr "I modelli gemini-2.5-flash, gemini-2.0-flash, gemini-2.0-flash-lite non supportano l'input di PDF."
+
 #. Translators: Message of a dialog which may pop up while performing an AI call
 #: addon\globalPlugins\visionAssistant\__init__.py:1067
 #, python-brace-format

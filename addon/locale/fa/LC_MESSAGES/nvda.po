@@ -379,6 +379,11 @@ msgstr "خطای ۴۰۳: ممنوع. (منطقه یا مجوز را بررسی �
 msgid "Error 429: Quota Exceeded (Try later)"
 msgstr "خطای ۴۲۹: درخواست بیش از حدِ مجاز. (بعدا تلاش کنید.)"
 
+#. Translators: Message reported when selected model doesn't support PDF input
+#: addon\globalPlugins\visionAssistant\__init__.py:1594
+msgid "Models gemini-2.5-flash, gemini-2.0-flash, gemini-2.0-flash-lite do not support PDF input."
+msgstr "مدل‌های gemini-2.5-flash، gemini-2.0-flash و gemini-2.0-flash-lite از ورودی PDF پشتیبانی نمی‌کنند."
+
 #. Translators: Message of a dialog which may pop up while performing an AI call
 #: addon\globalPlugins\visionAssistant\__init__.py:853
 #, python-brace-format
