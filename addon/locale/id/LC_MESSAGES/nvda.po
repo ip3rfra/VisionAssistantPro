@@ -554,11 +554,6 @@ msgstr "Kesalahan 403: Akses Ditolak (Periksa Wilayah/Izin)"
 msgid "Error 429: Quota Exceeded (Try later)"
 msgstr "Kesalahan 429: Kuota Melampaui Batas (Coba lagi nanti)"
 
-#. Translators: Message reported when selected model doesn't support PDF input
-#: addon\globalPlugins\visionAssistant\__init__.py:1594
-msgid "Models gemini-2.5-flash, gemini-2.0-flash, gemini-2.0-flash-lite do not support PDF input."
-msgstr "Model gemini-2.5-flash, gemini-2.0-flash, gemini-2.0-flash-lite tidak mendukung input PDF."
-
 #. Translators: Message of a dialog which may pop up while performing an AI call
 #: addon\globalPlugins\visionAssistant\__init__.py:1067
 #, python-brace-format
