@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import sys
 import os
 import json
@@ -13,11 +12,13 @@ import tempfile
 import time
 import wave
 import gc
-from urllib import request, error
-from urllib.parse import quote, urlparse
+import wx
+from urllib import request, error, parse
 from urllib.parse import quote, urlparse, urlencode
 from http import cookiejar
 from functools import wraps
+from uuid import uuid4
+from concurrent.futures import ThreadPoolExecutor
 
 lib_dir = os.path.join(os.path.dirname(__file__), "lib")
 if lib_dir not in sys.path:
@@ -28,233 +29,36 @@ try:
 except:
     markdown_lib = None
 
+try:
+    import fitz
+except ImportError:
+    fitz = None
+
 import addonHandler
 import globalPluginHandler
 import config
 import gui
-import wx
 import ui
 import api
 import textInfos
 import tones
 import NVDAObjects.behaviors
 import scriptHandler
-import baseObject
 
 log = logging.getLogger(__name__)
 addonHandler.initTranslation()
 
+_vision_assistant_instance = None
+
 ADDON_NAME = addonHandler.getCodeAddon().manifest["summary"]
+GITHUB_REPO = "mahmoodhozhabri/VisionAssistantPro"
 
-# --- Helper for Layer Logic ---
+# --- Constants & Config ---
 
-def finally_(func, final):
-    @wraps(func)
-    def new(*args, **kwargs):
-        try:
-            func(*args, **kwargs)
-        finally:
-            final()
-    return new
-
-# --- Helper Functions ---
-
-def clean_markdown(text):
-    if not text: return ""
-    text = re.sub(r'\*\*|__|[*_]', '', text)
-    text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
-    text = re.sub(r'```', '', text)
-    text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
-    text = re.sub(r'^\s*-\s+', '', text, flags=re.MULTILINE)
-    return text.strip()
-
-def text_to_html(text, full_page=False):
-    if not text: return ""
-    
-    html_body = ""
-    if markdown_lib:
-        try:
-            html_body = markdown_lib.markdown(text, extensions=['fenced_code', 'tables', 'nl2br'])
-        except:
-            html_body = None
-    
-    if not html_body:
-        safe_text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        
-        safe_text = re.sub(r'^###\s+(.*?)$', r'<h3>\1</h3>', safe_text, flags=re.MULTILINE)
-        safe_text = re.sub(r'^##\s+(.*?)$', r'<h2>\1</h2>', safe_text, flags=re.MULTILINE)
-        safe_text = re.sub(r'^#\s+(.*?)$', r'<h1>\1</h1>', safe_text, flags=re.MULTILINE)
-        
-        safe_text = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', safe_text)
-        
-        safe_text = re.sub(r'^\s*-\s+(.*?)$', r'<li>\1</li>', safe_text, flags=re.MULTILINE)
-        
-        html_body = safe_text.replace("\n", "<br>")
-
-    if not full_page:
-        return html_body
-
-    return f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{ADDON_NAME} Result</title>
-        <style>
-            body {{ font-family: "Segoe UI", Arial, sans-serif; line-height: 1.6; padding: 20px; color: #333; max-width: 800px; margin: 0 auto; }}
-            h1, h2, h3 {{ color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 5px; }}
-            pre {{ background-color: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; font-family: Consolas, monospace; }}
-            code {{ background-color: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-family: Consolas, monospace; }}
-            strong, b {{ color: #000; font-weight: bold; }}
-            li {{ margin-bottom: 5px; }}
-        </style>
-    </head>
-    <body>
-        {html_body}
-    </body>
-    </html>
-    """
-
-def get_mime_type(path):
-    ext = os.path.splitext(path)[1].lower()
-    if ext == '.pdf': return 'application/pdf'
-    if ext == '.txt': return 'text/plain'
-    if ext == '.md': return 'text/markdown'
-    if ext == '.py': return 'text/plain'
-    if ext in ['.jpg', '.jpeg']: return 'image/jpeg'
-    if ext == '.png': return 'image/png'
-    if ext == '.webp': return 'image/webp'
-    if ext in ['.tif', '.tiff']: return 'image/jpeg'
-    if ext == '.mp3': return 'audio/mpeg'
-    if ext == '.wav': return 'audio/wav'
-    if ext == '.ogg': return 'audio/ogg'
-    if ext == '.mp4': return 'video/mp4'
-    return 'application/octet-stream'
-
-def model_supports_pdf(model_name):
-    if not model_name:
-        return False
-    name = model_name.lower()
-    # Assume future models support PDF; block only known non-PDF models.
-    return not (
-        "2.5-flash" in name
-        or "2.0-flash" in name
-        or "2.0-flash-lite" in name
-    )
-
-def show_error_dialog(message):
-    # Translators: Title of the error dialog box
-    title = _("{name} Error").format(name=ADDON_NAME)
-    wx.CallAfter(gui.messageBox, message, title, wx.OK | wx.ICON_ERROR)
-
-def send_ctrl_v():
-    try:
-        user32 = ctypes.windll.user32
-        VK_CONTROL = 0x11
-        VK_V = 0x56
-        KEYEVENTF_KEYUP = 0x0002
-        user32.keybd_event(VK_CONTROL, 0, 0, 0)
-        user32.keybd_event(VK_V, 0, 0, 0)
-        user32.keybd_event(VK_V, 0, KEYEVENTF_KEYUP, 0)
-        user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
-    except: pass
-
-def process_tiff_pages(path):
-    pages_data = []
-    no_log = wx.LogNull()
-    index = 0
-    while index < 100:
-        try:
-            img = wx.Image(path, wx.BITMAP_TYPE_TIFF, index)
-            if not img.IsOk():
-                break     
-            stream = io.BytesIO()
-            img.SaveFile(stream, wx.BITMAP_TYPE_JPEG)
-            pages_data.append(base64.b64encode(stream.getvalue()).decode('utf-8'))
-            index += 1
-        except:
-            break
-    if not pages_data:
-        try:
-            img = wx.Image(path, wx.BITMAP_TYPE_ANY)
-            if img.IsOk():
-                stream = io.BytesIO()
-                img.SaveFile(stream, wx.BITMAP_TYPE_JPEG)
-                pages_data.append(base64.b64encode(stream.getvalue()).decode('utf-8'))
-        except: pass
-    return pages_data
-
-def get_twitter_download_link(tweet_url):
-    cj = cookiejar.CookieJar()
-    opener = request.build_opener(request.HTTPCookieProcessor(cj))
-    base_url = "https://savetwitter.net/en4"
-    api_url = "https://savetwitter.net/api/ajaxSearch"
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Referer': base_url
-    }
-    try:
-        req_init = request.Request(base_url, headers=headers)
-        opener.open(req_init)
-        params = {'q': tweet_url, 'lang': 'en', 'cftoken': ''}
-        data = urlencode(params).encode('utf-8')
-        req_post = request.Request(api_url, data=data, headers=headers, method='POST')
-        with opener.open(req_post) as response:
-            res_data = json.loads(response.read().decode('utf-8'))
-            if res_data.get('status') == 'ok':
-                html = res_data.get('data', '')
-                pattern = r'href="(https?://dl\.snapcdn\.app/[^"]+)"'
-                match = re.search(pattern, html)
-                if match:
-                    return match.group(1)
-    except: pass
-    return None
-
-def get_instagram_download_link(insta_url):
-    cj = cookiejar.CookieJar()
-    opener = request.build_opener(request.HTTPCookieProcessor(cj))
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Mobile/15E148 Safari/604.1',
-        'Accept': '*/*',
-        'Referer': 'https://anon-viewer.com/',
-        'X-Requested-With': 'XMLHttpRequest'
-    }
-    opener.addheaders = list(headers.items())
-    try:
-        opener.open("https://anon-viewer.com/", timeout=120)
-        encoded_url = quote(insta_url, safe='')
-        api_url = f"https://anon-viewer.com/content.php?url={encoded_url}"
-        response = opener.open(api_url, timeout=60)
-        if response.getcode() == 200:
-            data = json.loads(response.read().decode('utf-8'))
-            html_text = data.get('html', '')
-            match = re.search(r'href="([^"]+anon-viewer\.com/media\.php\?media=[^"]+)"', html_text)
-            if match:
-                final_link = match.group(1).replace('&amp;', '&')
-                return final_link
-    except Exception:
-        pass
-    return None
-
-def _download_temp_video(url):
-    try:
-        req = request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with request.urlopen(req, timeout=60) as response:
-            fd, path = tempfile.mkstemp(suffix=".mp4")
-            os.close(fd)
-            with open(path, 'wb') as f:
-                while True:
-                    chunk = response.read(8192)
-                    if not chunk: break
-                    f.write(chunk)
-            return path
-    except:
-        pass
-    return None
-
-# --- Configuration ---
+CHROME_OCR_KEYS = [
+    "AIzaSyA2KlwBX3mkFo30om9LUFYQhpqLoa_BNhE",
+    "AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw"
+]
 
 MODELS = [
     # --- 1. Recommended (Auto-Updating) ---
@@ -272,11 +76,40 @@ MODELS = [
     # Translators: AI Model info. [Pro] = High intelligence/Paid tier. (Preview) = Experimental version.
     (_("[Pro]") + " Gemini 3.0 Pro " + _("(Preview)"), "gemini-3-pro-preview"),
     (_("[Pro]") + " Gemini 2.5 Pro", "gemini-2.5-pro"),
+]
 
-    # --- 4. Legacy (Older Versions) ---
-    # Translators: AI Model info. [Legacy] = Older versions that are still available.
-    (_("[Legacy]") + " Gemini 2.0 Flash", "gemini-2.0-flash"),
-    (_("[Legacy]") + " Gemini 2.0 Flash Lite", "gemini-2.0-flash-lite"),
+GEMINI_VOICES = [
+    # Translators: Voice style description (e.g., Bright, Calm, Formal).
+    ("Zephyr", _("Bright")), 
+    ("Puck", _("Upbeat")), 
+    ("Charon", _("Informative")), 
+    ("Kore", _("Firm")), 
+    ("Fenrir", _("Excitable")), 
+    ("Leda", _("Youthful")), 
+    ("Orus", _("Firm")), 
+    ("Aoede", _("Breezy")), 
+    ("Callirrhoe", _("Easy-going")), 
+    ("Autonoe", _("Bright")), 
+    ("Enceladus", _("Breathy")), 
+    ("Iapetus", _("Clear")), 
+    ("Umbriel", _("Easy-going")), 
+    ("Algieba", _("Smooth")), 
+    ("Despina", _("Smooth")), 
+    ("Erinome", _("Clear")), 
+    ("Algenib", _("Gravelly")), 
+    ("Rasalgethi", _("Informative")), 
+    ("Laomedeia", _("Upbeat")), 
+    ("Achernar", _("Soft")), 
+    ("Alnilam", _("Firm")), 
+    ("Schedar", _("Even")), 
+    ("Gacrux", _("Mature")), 
+    ("Pulcherrima", _("Forward")), 
+    ("Achird", _("Friendly")), 
+    ("Zubenelgenubi", _("Casual")), 
+    ("Vindemiatrix", _("Gentle")), 
+    ("Sadachbia", _("Lively")), 
+    ("Sadaltager", _("Knowledgeable")), 
+    ("Sulafat", _("Warm"))
 ]
 
 BASE_LANGUAGES = [
@@ -293,6 +126,14 @@ SOURCE_LIST = [("Auto-detect", "auto")] + BASE_LANGUAGES
 SOURCE_NAMES = [x[0] for x in SOURCE_LIST]
 TARGET_LIST = BASE_LANGUAGES
 TARGET_NAMES = [x[0] for x in TARGET_LIST]
+TARGET_CODES = {x[0]: x[1] for x in BASE_LANGUAGES}
+
+OCR_ENGINES = [
+    # Translators: OCR Engine option (Fast but less formatted)
+    (_("Chrome (Fast)"), "chrome"),
+    # Translators: OCR Engine option (Slower but better formatting)
+    (_("Gemini (Formatted)"), "gemini")
+]
 
 confspec = {
     "proxy_url": "string(default='')",
@@ -307,10 +148,12 @@ confspec = {
     "check_update_startup": "boolean(default=False)",
     "clean_markdown_chat": "boolean(default=True)",
     "copy_to_clipboard": "boolean(default=False)",
-    "skip_chat_dialog": "boolean(default=False)"
+    "skip_chat_dialog": "boolean(default=False)",
+    "ocr_engine": "string(default='chrome')",
+    "tts_voice": "string(default='Puck')"
 }
 
-GITHUB_REPO = "mahmoodhozhabri/VisionAssistantPro"
+config.conf.spec["VisionAssistant"] = confspec
 
 PROMPT_TRANSLATE = """
 Task: Translate the text below to "{target_lang}".
@@ -336,7 +179,526 @@ Input Text:
 
 PROMPT_UI_LOCATOR = "Analyze UI (Size: {width}x{height}). Request: '{query}'. Output JSON: {{\"x\": int, \"y\": int, \"found\": bool}}."
 
+# --- Helpers ---
+
+def finally_(func, final):
+    @wraps(func)
+    def new(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        finally:
+            final()
+    return new
+
+def clean_markdown(text):
+    if not text: return ""
+    text = re.sub(r'\*\*|__|[*_]', '', text)
+    text = re.sub(r'^#+\s*', '', text, flags=re.MULTILINE)
+    text = re.sub(r'```', '', text)
+    text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+    text = re.sub(r'^\s*-\s+', '', text, flags=re.MULTILINE)
+    return text.strip()
+
+def markdown_to_html(text, full_page=False):
+    if not text: return ""
+    
+    html = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    html = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', html)
+    html = re.sub(r'__(.*?)__', r'<i>\1</i>', html)
+    html = re.sub(r'^### (.*)', r'<h3>\1</h3>', html, flags=re.M)
+    html = re.sub(r'^## (.*)', r'<h2>\1</h2>', html, flags=re.M)
+    html = re.sub(r'^# (.*)', r'<h1>\1</h1>', html, flags=re.M)
+    
+    lines = html.split('\n')
+    in_table = False
+    new_lines = []
+    table_style = 'border="1" style="border-collapse: collapse; width: 100%; margin-bottom: 10px;"'
+    td_style = 'style="padding: 5px; border: 1px solid #ccc;"'
+    
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith('|') or (stripped.count('|') > 1 and len(stripped) > 5):
+            if not in_table:
+                new_lines.append(f'<table {table_style}>')
+                in_table = True
+            if '---' in stripped: continue
+            row_content = stripped.strip('|').split('|')
+            cells = "".join([f'<td {td_style}>{c.strip()}</td>' for c in row_content])
+            new_lines.append(f'<tr>{cells}</tr>')
+        else:
+            if in_table:
+                new_lines.append('</table>')
+                in_table = False
+            if stripped: new_lines.append(line + "<br>")
+            else: new_lines.append("<br>")
+    if in_table: new_lines.append('</table>')
+    html_body = "".join(new_lines)
+
+    if not full_page: return html_body
+    return f"""<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><style>body{{font-family:"Segoe UI",Arial,sans-serif;line-height:1.6;padding:20px;color:#333;max-width:800px;margin:0 auto}}h1,h2,h3{{color:#2c3e50;border-bottom:1px solid #eee;padding-bottom:5px}}pre{{background-color:#f4f4f4;padding:10px;border-radius:5px;overflow-x:auto;font-family:Consolas,monospace}}code{{background-color:#f4f4f4;padding:2px 5px;border-radius:3px;font-family:Consolas,monospace}}table{{border-collapse:collapse;width:100%;margin-bottom:10px}}td,th{{border:1px solid #ccc;padding:8px;text-align:left}}strong,b{{color:#000;font-weight:bold}}li{{margin-bottom:5px}}</style></head><body>{html_body}</body></html>"""
+
+def get_mime_type(path):
+    ext = os.path.splitext(path)[1].lower()
+    if ext == '.pdf': return 'application/pdf'
+    if ext in ['.jpg', '.jpeg']: return 'image/jpeg'
+    if ext == '.png': return 'image/png'
+    if ext == '.webp': return 'image/webp'
+    if ext in ['.tif', '.tiff']: return 'image/jpeg'
+    if ext == '.mp3': return 'audio/mpeg'
+    if ext == '.wav': return 'audio/wav'
+    if ext == '.ogg': return 'audio/ogg'
+    if ext == '.mp4': return 'video/mp4'
+    return 'application/octet-stream'
+
+def show_error_dialog(message):
+    # Translators: Title of the error dialog box
+    title = _("{name} Error").format(name=ADDON_NAME)
+    wx.CallAfter(gui.messageBox, message, title, wx.OK | wx.ICON_ERROR)
+
+def send_ctrl_v():
+    try:
+        user32 = ctypes.windll.user32
+        VK_CONTROL = 0x11; VK_V = 0x56; KEYEVENTF_KEYUP = 0x0002
+        user32.keybd_event(VK_CONTROL, 0, 0, 0)
+        user32.keybd_event(VK_V, 0, 0, 0)
+        user32.keybd_event(VK_V, 0, KEYEVENTF_KEYUP, 0)
+        user32.keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0)
+    except: pass
+
+def get_proxy_opener():
+    proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
+    if proxy_url:
+        if "127.0.0.1" in proxy_url or "localhost" in proxy_url or ":" in proxy_url.split("/")[-1]:
+             handler = request.ProxyHandler({'http': proxy_url, 'https': proxy_url})
+             return request.build_opener(handler)
+    return request.build_opener()
+
+def get_twitter_download_link(tweet_url):
+    cj = cookiejar.CookieJar()
+    opener = request.build_opener(request.HTTPCookieProcessor(cj))
+    base_url = "https://savetwitter.net/en4"
+    api_url = "https://savetwitter.net/api/ajaxSearch"
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'X-Requested-With': 'XMLHttpRequest', 'Referer': base_url}
+    try:
+        req_init = request.Request(base_url, headers=headers)
+        opener.open(req_init)
+        params = {'q': tweet_url, 'lang': 'en', 'cftoken': ''}
+        data = urlencode(params).encode('utf-8')
+        req_post = request.Request(api_url, data=data, headers=headers, method='POST')
+        with opener.open(req_post) as response:
+            res_data = json.loads(response.read().decode('utf-8'))
+            if res_data.get('status') == 'ok':
+                html = res_data.get('data', '')
+                match = re.search(r'href="(https?://dl\.snapcdn\.app/[^"]+)"', html)
+                if match: return match.group(1)
+    except: pass
+    return None
+
+def get_instagram_download_link(insta_url):
+    cj = cookiejar.CookieJar()
+    opener = request.build_opener(request.HTTPCookieProcessor(cj))
+    headers = {'User-Agent': 'Mozilla/5.0', 'X-Requested-With': 'XMLHttpRequest', 'Referer': 'https://anon-viewer.com/'}
+    opener.addheaders = list(headers.items())
+    try:
+        opener.open("https://anon-viewer.com/", timeout=120)
+        encoded_url = quote(insta_url, safe='')
+        api_url = f"https://anon-viewer.com/content.php?url={encoded_url}"
+        response = opener.open(api_url, timeout=60)
+        if response.getcode() == 200:
+            data = json.loads(response.read().decode('utf-8'))
+            html_text = data.get('html', '')
+            match = re.search(r'href="([^"]+anon-viewer\.com/media\.php\?media=[^"]+)"', html_text)
+            if match: return match.group(1).replace('&amp;', '&')
+    except: pass
+    return None
+
+def _download_temp_video(url):
+    try:
+        req = request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with request.urlopen(req, timeout=60) as response:
+            fd, path = tempfile.mkstemp(suffix=".mp4")
+            os.close(fd)
+            with open(path, 'wb') as f:
+                while True:
+                    chunk = response.read(8192)
+                    if not chunk: break
+                    f.write(chunk)
+            return path
+    except: pass
+    return None
+
+def get_file_path(title, wildcard, mode="open", multiple=False):
+    style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST if mode == "open" else wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT
+    if multiple: style |= wx.FD_MULTIPLE
+    with wx.FileDialog(gui.mainFrame, title, wildcard=wildcard, style=style) as dlg:
+        if dlg.ShowModal() == wx.ID_OK:
+            return dlg.GetPaths() if multiple else dlg.GetPath()
+    return None
+
+class VirtualDocument:
+    def __init__(self, file_paths):
+        self.file_paths = file_paths
+        self.page_map = [] 
+        self.total_pages = 0
+        self.is_single_pdf = (len(file_paths) == 1 and file_paths[0].lower().endswith('.pdf'))
+        self.single_pdf_path = file_paths[0] if self.is_single_pdf else None
+
+    def scan(self):
+        if not fitz: return
+        for path in self.file_paths:
+            try:
+                doc = fitz.open(path)
+                count = len(doc)
+                for i in range(count):
+                    self.page_map.append((path, i))
+                doc.close()
+            except Exception as e:
+                log.error(f"Error scanning file {path}: {e}", exc_info=True)
+        self.total_pages = len(self.page_map)
+
+    def get_page_info(self, global_page_index):
+        if 0 <= global_page_index < self.total_pages:
+            return self.page_map[global_page_index]
+        return None, None
+
+    def create_merged_pdf(self, start_page, end_page):
+        if not fitz: return None
+        try:
+            out_doc = fitz.open()
+            for i in range(start_page, end_page + 1):
+                f_path, f_idx = self.get_page_info(i)
+                src_doc = fitz.open(f_path)
+                if src_doc.is_pdf:
+                    out_doc.insert_pdf(src_doc, from_page=f_idx, to_page=f_idx)
+                else:
+                    pdf_bytes = src_doc.convert_to_pdf(from_page=f_idx, to_page=f_idx)
+                    img_pdf = fitz.open("pdf", pdf_bytes)
+                    out_doc.insert_pdf(img_pdf)
+                src_doc.close()
+            
+            fd, temp_path = tempfile.mkstemp(suffix=".pdf")
+            os.close(fd)
+            out_doc.save(temp_path)
+            out_doc.close()
+            return temp_path
+        except Exception as e:
+            log.error(f"Error merging PDF: {e}", exc_info=True)
+            return None
+
+class ChromeOCREngine:
+    @staticmethod
+    def recognize(image_bytes):
+        key = CHROME_OCR_KEYS[0]
+        url = f"https://ckintersect-pa.googleapis.com/v1/intersect/pixels?key={key}"
+        headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
+        payload = {"imageRequests": [{"engineParameters": [{"ocrParameters": {}}], "imageBytes": base64.b64encode(image_bytes).decode('utf-8'), "imageId": str(uuid4())}]}
+        try:
+            req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers=headers, method="POST")
+            opener = get_proxy_opener()
+            with opener.open(req, timeout=30) as response:
+                if response.status == 200:
+                    data = json.loads(response.read().decode('utf-8'))
+                    regions = data['results'][0]['engineResults'][0]['ocrEngine'].get('ocrRegions', [])
+                    lines = []
+                    for reg in regions:
+                        line_text = " ".join([w.get('detectedText', '') for w in reg.get('words', [])])
+                        if line_text.strip(): lines.append(line_text)
+                    return "\n".join(lines)
+        except Exception as e:
+            log.error(f"Chrome OCR Failed: {e}", exc_info=True)
+            return None
+        return None
+
+class SmartProgrammersOCREngine:
+    @staticmethod
+    def recognize(image_bytes):
+        url = "https://ubsa.in/smartprogrammers/SP%20Reader/extract.php"
+        boundary = uuid4().hex.encode('utf-8')
+        body = []
+        body.append(b'--' + boundary)
+        body.append(f'Content-Disposition: form-data; name="file"; filename="p.jpg"'.encode('utf-8'))
+        body.append(b'Content-Type: image/jpeg')
+        body.append(b'')
+        body.append(image_bytes)
+        body.append(b'--' + boundary + b'--')
+        body.append(b'')
+        try:
+            req = request.Request(url, data=b'\r\n'.join(body), headers={'Content-Type': f"multipart/form-data; boundary={boundary.decode('utf-8')}"}, method="POST")
+            opener = get_proxy_opener()
+            with opener.open(req, timeout=40) as response:
+                if response.status == 200:
+                    data = json.loads(response.read().decode('utf-8'))
+                    text = data.get("text", "").replace("\\n", "\n")
+                    return text if text.strip() else None
+        except Exception as e:
+            log.error(f"SmartProgrammers OCR Failed: {e}", exc_info=True)
+            return None
+        return None
+
+class GoogleTranslator:
+    @staticmethod
+    def translate(text, target_lang):
+        try:
+            target_code = TARGET_CODES.get(target_lang, 'en')
+            base_url = "https://translate.googleapis.com/translate_a/single"
+            params = {"client": "gtx", "sl": "auto", "tl": target_code, "dt": "t", "q": text}
+            url = f"{base_url}?{parse.urlencode(params)}"
+            req = request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            opener = get_proxy_opener()
+            with opener.open(req, timeout=30) as response:
+                if response.status == 200:
+                    data = json.loads(response.read().decode('utf-8'))
+                    if data and isinstance(data, list) and len(data) > 0:
+                        result_parts = [x[0] for x in data[0] if x[0]]
+                        return "".join(result_parts)
+        except Exception as e:
+            log.error(f"Google Translate Failed: {e}", exc_info=True)
+            return text 
+        return text
+
+class GeminiHandler:
+    _working_key_idx = 0 
+
+    @staticmethod
+    def _get_api_keys():
+        raw = config.conf["VisionAssistant"]["api_key"]
+        clean_raw = raw.replace('\r\n', ',').replace('\n', ',')
+        return [k.strip() for k in clean_raw.split(',') if k.strip()]
+
+    @staticmethod
+    def _get_opener():
+        return get_proxy_opener()
+
+    @staticmethod
+    def _handle_error(e):
+        if hasattr(e, 'code'):
+            # Translators: Error message for Bad Request (400)
+            if e.code == 400: return _("Error 400: Bad Request (Check API Key)")
+            # Translators: Error message for Forbidden (403)
+            if e.code == 403: return _("Error 403: Forbidden (Check Region)")
+            if e.code == 429: return "QUOTA_EXCEEDED"
+            if e.code >= 500: return "SERVER_ERROR"
+        return str(e)
+
+    @staticmethod
+    def _call_with_rotation(func_logic, *args):
+        keys = GeminiHandler._get_api_keys()
+        if not keys: 
+            # Translators: Error when no API keys are found in settings
+            return "ERROR:" + _("No API Keys configured.")
+        
+        num_keys = len(keys)
+        for i in range(num_keys):
+            idx = (GeminiHandler._working_key_idx + i) % num_keys
+            key = keys[idx]
+            try:
+                res = func_logic(key, *args)
+                GeminiHandler._working_key_idx = idx 
+                return res
+            except error.HTTPError as e:
+                err_msg = GeminiHandler._handle_error(e)
+                if err_msg in ["QUOTA_EXCEEDED", "SERVER_ERROR"]:
+                    if i < num_keys - 1: continue
+                    # Translators: Error when all available API keys fail
+                    return "ERROR:" + _("All API Keys failed (Quota/Server).")
+                return "ERROR:" + err_msg
+            except Exception as e:
+                return "ERROR:" + str(e)
+        return "ERROR:" + _("Unknown error occurred.")
+
+    @staticmethod
+    def translate(text, target_lang):
+        def _logic(key, txt, lang):
+            model = config.conf["VisionAssistant"]["model_name"]
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
+            payload = {"contents": [{"parts": [{"text": f"Translate to {lang}. Output ONLY translation."}, {"text": txt}]}]}
+            req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json"})
+            with GeminiHandler._get_opener().open(req, timeout=90) as r:
+                return json.loads(r.read().decode())['candidates'][0]['content']['parts'][0]['text']
+        return GeminiHandler._call_with_rotation(_logic, text, target_lang)
+
+    @staticmethod
+    def ocr_page(image_bytes):
+        def _logic(key, img_data):
+            model = config.conf["VisionAssistant"]["model_name"]
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
+            payload = {"contents": [{"parts": [{"text": "Extract all visible text from this image. Strictly preserve original formatting (headings, lists, tables) using Markdown. Do not output any system messages or code block backticks (```). Output ONLY the raw content."}, {"inline_data": {"mime_type": "image/jpeg", "data": base64.b64encode(img_data).decode('utf-8')}}]}]}
+            req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json"})
+            with GeminiHandler._get_opener().open(req, timeout=90) as r:
+                return json.loads(r.read().decode())['candidates'][0]['content']['parts'][0]['text']
+        return GeminiHandler._call_with_rotation(_logic, image_bytes)
+
+    @staticmethod
+    def upload_and_process_batch(file_path, mime_type, page_count):
+        keys = GeminiHandler._get_api_keys()
+        if not keys: 
+            # Translators: Error message for missing API Keys
+            return [ _("No API Keys.") ]
+        
+        opener = GeminiHandler._get_opener()
+        proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
+        base_url = proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
+        
+        for i, key in enumerate(keys):
+            try:
+                f_size = os.path.getsize(file_path)
+                init_url = f"{base_url}/upload/v1beta/files?key={key}"
+                headers = {"X-Goog-Upload-Protocol": "resumable", "X-Goog-Upload-Command": "start", "X-Goog-Upload-Header-Content-Length": str(f_size), "X-Goog-Upload-Header-Content-Type": mime_type, "Content-Type": "application/json"}
+                
+                req = request.Request(init_url, data=json.dumps({"file": {"display_name": "batch"}}).encode(), headers=headers, method="POST")
+                with opener.open(req, timeout=60) as r: upload_url = r.headers.get("x-goog-upload-url")
+                
+                with open(file_path, 'rb') as f: f_data = f.read()
+                req_up = request.Request(upload_url, data=f_data, headers={"Content-Length": str(f_size), "X-Goog-Upload-Offset": "0", "X-Goog-Upload-Command": "upload, finalize"}, method="POST")
+                with opener.open(req_up, timeout=180) as r:
+                    res = json.loads(r.read().decode())
+                    uri, name = res['file']['uri'], res['file']['name']
+                
+                for _ in range(30):
+                    with opener.open(f"{base_url}/v1beta/{name}?key={key}", timeout=30) as r:
+                        if json.loads(r.read().decode()).get('state') == "ACTIVE": break
+                    time.sleep(2)
+                
+                model = config.conf["VisionAssistant"]["model_name"]
+                url = f"{base_url}/v1beta/models/{model}:generateContent?key={key}"
+                prompt = "Extract all visible text from this document. Strictly preserve original formatting (headings, lists, tables) using Markdown. You MUST insert the exact delimiter '[[[PAGE_SEP]]]' immediately after the content of every single page. Do not output any system messages or code block backticks (```). Output ONLY the raw content."
+                contents = [{"parts": [{"file_data": {"mime_type": mime_type, "file_uri": uri}}, {"text": prompt}]}]
+                
+                req_gen = request.Request(url, data=json.dumps({"contents": contents}).encode(), headers={"Content-Type": "application/json"})
+                with opener.open(req_gen, timeout=180) as r:
+                    res = json.loads(r.read().decode())
+                    text = res['candidates'][0]['content']['parts'][0]['text']
+                    return text.split('[[[PAGE_SEP]]]')
+                    
+            except error.HTTPError as e:
+                err_msg = GeminiHandler._handle_error(e)
+                if err_msg in ["QUOTA_EXCEEDED", "SERVER_ERROR"] and i < len(keys) - 1: continue
+                return [err_msg]
+            except Exception as e: return [str(e)]
+        return [_("All keys failed.")]
+
+    @staticmethod
+    def chat(history, new_msg, file_uri, mime_type):
+        def _logic(key, hist, msg, uri, mime):
+            model = config.conf["VisionAssistant"]["model_name"]
+            proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
+            base_url = proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
+            url = f"{base_url}/v1beta/models/{model}:generateContent?key={key}"
+            
+            contents = list(hist)
+            user_parts = [{"text": msg}]
+            if uri: 
+                user_parts.append({"file_data": {"mime_type": mime, "file_uri": uri}})
+            contents.append({"role": "user", "parts": user_parts})
+            
+            req = request.Request(url, data=json.dumps({"contents": contents}).encode(), headers={"Content-Type": "application/json"})
+            with GeminiHandler._get_opener().open(req, timeout=90) as r:
+                return json.loads(r.read().decode())['candidates'][0]['content']['parts'][0]['text']
+        return GeminiHandler._call_with_rotation(_logic, history, new_msg, file_uri, mime_type)
+
+    @staticmethod
+    def upload_for_chat(file_path, mime_type):
+        keys = GeminiHandler._get_api_keys()
+        if not keys: return None
+        opener = GeminiHandler._get_opener()
+        proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
+        base_url = proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
+        
+        for key in keys:
+            try:
+                f_size = os.path.getsize(file_path)
+                init_url = f"{base_url}/upload/v1beta/files?key={key}"
+                headers = {"X-Goog-Upload-Protocol": "resumable", "X-Goog-Upload-Command": "start", "X-Goog-Upload-Header-Content-Length": str(f_size), "X-Goog-Upload-Header-Content-Type": mime_type, "Content-Type": "application/json"}
+                req = request.Request(init_url, data=json.dumps({"file": {"display_name": os.path.basename(file_path)}}).encode(), headers=headers, method="POST")
+                with opener.open(req, timeout=60) as r: upload_url = r.headers.get("x-goog-upload-url")
+                with open(file_path, 'rb') as f: f_data = f.read()
+                req_up = request.Request(upload_url, data=f_data, headers={"Content-Length": str(f_size), "X-Goog-Upload-Offset": "0", "X-Goog-Upload-Command": "upload, finalize"}, method="POST")
+                with opener.open(req_up, timeout=180) as r:
+                    res = json.loads(r.read().decode())
+                    uri, name = res['file']['uri'], res['file']['name']
+                for _ in range(30):
+                    with opener.open(f"{base_url}/v1beta/{name}?key={key}", timeout=30) as r:
+                        if json.loads(r.read().decode()).get('state') == "ACTIVE": return uri
+                    time.sleep(2)
+                return None 
+            except: continue 
+        return None
+
+    @staticmethod
+    def generate_speech(text, voice_name):
+        def _logic(key, txt, voice):
+            main_model = config.conf["VisionAssistant"]["model_name"]
+            if "pro" in main_model.lower():
+                tts_model = "gemini-2.5-pro-preview-tts"
+            else:
+                tts_model = "gemini-2.5-flash-preview-tts"
+
+            proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
+            base_url = proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
+            url = f"{base_url}/v1beta/models/{tts_model}:generateContent?key={key}"
+            
+            payload = {
+                "contents": [{"parts": [{"text": txt}]}],
+                "generationConfig": {
+                    "responseModalities": ["AUDIO"],
+                    "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}}
+                }
+            }
+            req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json"})
+            with GeminiHandler._get_opener().open(req, timeout=600) as r:
+                res = json.loads(r.read().decode())
+                candidates = res.get('candidates', [])
+                if not candidates: raise Exception("No candidates returned")
+                content = candidates[0].get('content', {})
+                parts = content.get('parts', [])
+                if not parts: raise Exception("No parts in response")
+                part = parts[0]
+                if 'inlineData' in part: return part['inlineData']['data']
+                if 'inline_data' in part: return part['inline_data']['data']
+                if 'text' in part: raise Exception(f"Model refused audio: {part['text']}")
+                raise Exception("Unknown response format")
+        return GeminiHandler._call_with_rotation(_logic, text, voice_name)
+
 # --- Update Manager ---
+class UpdateDialog(wx.Dialog):
+    def __init__(self, parent, version, name, changes):
+        # Translators: Title of update confirmation dialog
+        super().__init__(parent, title=_("Update Available"), size=(500, 450))
+        self.Centre()
+        
+        panel = wx.Panel(self)
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        
+        # Translators: Message asking user to update. {version} is version number.
+        msg = _("A new version ({version}) of {name} is available.").format(version=version, name=name)
+        header = wx.StaticText(panel, label=msg)
+        vbox.Add(header, 0, wx.ALL, 15)
+        
+        # Translators: Label for the changes text box
+        change_lbl = wx.StaticText(panel, label=_("Changes:"))
+        vbox.Add(change_lbl, 0, wx.LEFT | wx.RIGHT, 15)
+        
+        self.changes_ctrl = wx.TextCtrl(panel, value=changes, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2)
+        vbox.Add(self.changes_ctrl, 1, wx.EXPAND | wx.ALL, 15)
+        
+        # Translators: Question to download and install
+        question = wx.StaticText(panel, label=_("Download and Install?"))
+        vbox.Add(question, 0, wx.LEFT | wx.RIGHT | wx.BOTTOM, 15)
+        
+        btn_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        # Translators: Button to accept update
+        self.yes_btn = wx.Button(panel, wx.ID_YES, label=_("&Yes"))
+        # Translators: Button to reject update
+        self.no_btn = wx.Button(panel, wx.ID_NO, label=_("&No"))
+        
+        btn_sizer.Add(self.yes_btn, 0, wx.RIGHT, 10)
+        btn_sizer.Add(self.no_btn, 0)
+        vbox.Add(btn_sizer, 0, wx.ALIGN_RIGHT | wx.ALL, 15)
+        
+        panel.SetSizer(vbox)
+        self.yes_btn.SetDefault()
+        self.yes_btn.Bind(wx.EVT_BUTTON, lambda e: self.EndModal(wx.ID_YES))
+        self.no_btn.Bind(wx.EVT_BUTTON, lambda e: self.EndModal(wx.ID_NO))
 
 class UpdateManager:
     def __init__(self, repo_name):
@@ -350,34 +712,31 @@ class UpdateManager:
         try:
             url = f"https://api.github.com/repos/{self.repo_name}/releases/latest"
             req = request.Request(url, headers={"User-Agent": "NVDA-Addon"})
-            
             with request.urlopen(req, timeout=10) as response:
                 if response.status == 200:
                     data = json.loads(response.read().decode('utf-8'))
                     latest_tag = data.get("tag_name", "").lstrip("v")
-                    
                     if self._compare_versions(latest_tag, self.current_version) > 0:
                         download_url = None
                         for asset in data.get("assets", []):
                             if asset["name"].endswith(".nvda-addon"):
                                 download_url = asset["browser_download_url"]
                                 break
-                        
                         if download_url:
                             raw_changes = data.get("body", "")
-                            clean_changes = clean_markdown(raw_changes)
+                            
+                            clean_changes = re.split(r'SHA256|Checklist|---', raw_changes, flags=re.I)[0].strip()
+                            clean_changes = clean_markdown(clean_changes)
+                            
                             wx.CallAfter(self._prompt_update, latest_tag, download_url, clean_changes)
                         elif not silent:
-                            # Translators: Error message when update is detected but file is missing
                             msg = _("Update found but no .nvda-addon file in release.")
                             show_error_dialog(msg)
                     elif not silent:
-                        # Translators: Message when no update is found
                         msg = _("You have the latest version.")
                         wx.CallAfter(ui.message, msg)
         except Exception as e:
             if not silent:
-                # Translators: Error message for update check failure
                 msg = _("Update check failed: {error}").format(error=e)
                 show_error_dialog(msg)
 
@@ -386,15 +745,10 @@ class UpdateManager:
             parts1 = [int(x) for x in v1.split('.')]
             parts2 = [int(x) for x in v2.split('.')]
             return (parts1 > parts2) - (parts1 < parts2)
-        except:
-            return 0 if v1 == v2 else 1
+        except: return 0 if v1 == v2 else 1
 
     def _prompt_update(self, version, url, changes):
-        # Translators: Message asking user to update. {version} is version number.
-        msg = _("A new version ({version}) of {name} is available.\n\nChanges:\n{changes}\n\nDownload and Install?").format(version=version, name=ADDON_NAME, changes=changes)
-        # Translators: Title of update confirmation dialog
-        title = _("Update Available")
-        dlg = wx.MessageDialog(gui.mainFrame, msg, title, wx.YES_NO | wx.ICON_INFORMATION)
+        dlg = UpdateDialog(gui.mainFrame, version, ADDON_NAME, changes)
         if dlg.ShowModal() == wx.ID_YES:
             threading.Thread(target=self._download_install_worker, args=(url,), daemon=True).start()
         dlg.Destroy()
@@ -406,10 +760,8 @@ class UpdateManager:
             wx.CallAfter(ui.message, msg)
             temp_dir = tempfile.gettempdir()
             file_path = os.path.join(temp_dir, "VisionAssistant_Update.nvda-addon")
-            
             with request.urlopen(url) as response, open(file_path, 'wb') as out_file:
                 out_file.write(response.read())
-            
             wx.CallAfter(os.startfile, file_path)
         except Exception as e:
             # Translators: Error message for download failure
@@ -417,6 +769,7 @@ class UpdateManager:
             show_error_dialog(msg)
 
 # --- UI Classes ---
+
 
 class VisionQADialog(wx.Dialog):
     def __init__(self, parent, title, initial_text, context_data, callback_fn, extra_info=None, raw_content=None, status_callback=None):
@@ -437,10 +790,9 @@ class VisionQADialog(wx.Dialog):
         mainSizer.Add(self.outputArea, 1, wx.EXPAND | wx.ALL, 5)
         
         self.should_clean = config.conf["VisionAssistant"]["clean_markdown_chat"]
-        
-        # Translators: Format for displaying AI message in a chat dialog
         display_text = clean_markdown(initial_text) if self.should_clean else initial_text
         if display_text:
+            # Translators: Format for displaying AI message in a chat dialog
             init_msg = _("AI: {text}\n").format(text=display_text)
             self.outputArea.AppendText(init_msg)
             if config.conf["VisionAssistant"]["copy_to_clipboard"]:
@@ -453,21 +805,18 @@ class VisionQADialog(wx.Dialog):
         ask_text = _("Ask:")
         inputLbl = wx.StaticText(self, label=ask_text)
         mainSizer.Add(inputLbl, 0, wx.ALL, 5)
-        self.inputArea = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_PROCESS_ENTER, size=(-1, 80))
+        self.inputArea = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER, size=(-1, 30))
         mainSizer.Add(self.inputArea, 0, wx.EXPAND | wx.ALL, 5)
         
         btnSizer = wx.BoxSizer(wx.HORIZONTAL)
         # Translators: Button to send message in a chat dialog
         self.askBtn = wx.Button(self, label=_("Send"))
-        
         # Translators: Button to view the content in a formatted HTML window
         self.viewBtn = wx.Button(self, label=_("View Formatted"))
         self.viewBtn.Bind(wx.EVT_BUTTON, self.onView)
-        
         # Translators: Button to save only the result content without chat history
         self.saveContentBtn = wx.Button(self, label=_("Save Content"))
         self.saveContentBtn.Bind(wx.EVT_BUTTON, self.onSaveContent)
-
         # Translators: Button to save chat in a chat dialog
         self.saveBtn = wx.Button(self, label=_("Save Chat"))
         # Translators: Button to close chat dialog
@@ -489,9 +838,7 @@ class VisionQADialog(wx.Dialog):
         self.askBtn.Bind(wx.EVT_BUTTON, self.onAsk)
         self.saveBtn.Bind(wx.EVT_BUTTON, self.onSave)
         self.inputArea.Bind(wx.EVT_TEXT_ENTER, self.onAsk)
-        
-        if display_text:
-            wx.CallLater(300, ui.message, display_text)
+        if display_text: wx.CallLater(300, ui.message, display_text)
 
     def onAsk(self, event):
         question = self.inputArea.Value
@@ -508,12 +855,10 @@ class VisionQADialog(wx.Dialog):
     def process_question(self, question):
         result_tuple = self.callback_fn(self.context_data, question, self.chat_history, self.extra_info)
         response_text, _ = result_tuple
-        
         if response_text:
             if not (self.extra_info and self.extra_info.get('file_context')):
                  self.chat_history.append({"role": "user", "parts": [{"text": question}]})
                  self.chat_history.append({"role": "model", "parts": [{"text": response_text}]})
-            
             final_text = clean_markdown(response_text) if self.should_clean else response_text
             wx.CallAfter(self.update_response, final_text, response_text)
 
@@ -522,27 +867,21 @@ class VisionQADialog(wx.Dialog):
             self.raw_content = raw_text
             self.viewBtn.Enable(True)
             self.saveContentBtn.Enable(True)
-
         # Translators: Format for displaying AI message in a chat dialog
         ai_msg = _("AI: {text}\n").format(text=display_text)
         self.outputArea.AppendText(ai_msg)
         self.saveBtn.Enable(True)
-        
         if config.conf["VisionAssistant"]["copy_to_clipboard"]:
             api.copyToClip(raw_text if raw_text else display_text)
-
         self.outputArea.ShowPosition(self.outputArea.GetLastPosition())
         ui.message(display_text)
 
     def report_save(self, msg):
-        if self.status_callback:
-            self.status_callback(msg)
-        else:
-            ui.message(msg)
+        if self.status_callback: self.status_callback(msg)
+        else: ui.message(msg)
 
     def onView(self, event):
         full_html = ""
-        
         # Translators: Format for displaying User message in a chat dialog
         user_label = _("\nYou: {text}\n").format(text="").strip()
         # Translators: Format for displaying AI message in a chat dialog
@@ -552,20 +891,18 @@ class VisionQADialog(wx.Dialog):
             for item in self.chat_history:
                 role = item.get("role", "")
                 text = item.get("parts", [{}])[0].get("text", "")
-                
                 if role == "user":
                     safe_text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
                     full_html += f"<h2>{user_label}</h2><p>{safe_text}</p>"
                 elif role == "model":
-                    formatted_text = text_to_html(text, full_page=False)
+                    formatted_text = markdown_to_html(text, full_page=False)
                     full_html += f"<h2>{ai_label}</h2>{formatted_text}<hr>"
         
         if not full_html and self.raw_content:
-             formatted_text = text_to_html(self.raw_content, full_page=False)
+             formatted_text = markdown_to_html(self.raw_content, full_page=False)
              full_html += f"<h2>{ai_label}</h2>{formatted_text}"
 
         if not full_html: return
-
         try:
             # Translators: Title of the formatted result window
             ui.browseableMessage(full_html, _("Formatted Conversation"), isHtml=True)
@@ -576,36 +913,30 @@ class VisionQADialog(wx.Dialog):
 
     def onSave(self, event):
         # Translators: Save dialog title
-        fd = wx.FileDialog(self, _("Save Chat Log"), wildcard="Text files (*.txt)|*.txt", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
-        if fd.ShowModal() == wx.ID_OK:
-            path = fd.GetPath()
+        path = get_file_path(_("Save Chat Log"), "Text files (*.txt)|*.txt", mode="save")
+        if path:
             try:
-                with open(path, "w", encoding="utf-8") as f:
-                    f.write(self.outputArea.GetValue())
+                with open(path, "w", encoding="utf-8") as f: f.write(self.outputArea.GetValue())
                 # Translators: Message on successful save
                 self.report_save(_("Saved."))
             except Exception as e:
                 # Translators: Message in the error dialog when saving fails.
                 msg = _("Save failed: {error}").format(error=e)
                 show_error_dialog(msg)
-        fd.Destroy()
 
     def onSaveContent(self, event):
         # Translators: Save dialog title
-        fd = wx.FileDialog(self, _("Save Result"), wildcard="HTML files (*.html)|*.html", style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
-        if fd.ShowModal() == wx.ID_OK:
-            path = fd.GetPath()
+        path = get_file_path(_("Save Result"), "HTML files (*.html)|*.html", mode="save")
+        if path:
             try:
-                full_html = text_to_html(self.raw_content, full_page=True)
-                with open(path, "w", encoding="utf-8") as f:
-                    f.write(full_html)
+                full_html = markdown_to_html(self.raw_content, full_page=True)
+                with open(path, "w", encoding="utf-8") as f: f.write(full_html)
                 # Translators: Message on successful save
                 self.report_save(_("Saved."))
             except Exception as e:
                 # Translators: Message in the error dialog when saving fails.
                 msg = _("Save failed: {error}").format(error=e)
                 show_error_dialog(msg)
-        fd.Destroy()
 
 class SettingsPanel(gui.settingsDialogs.SettingsPanel):
     title = ADDON_NAME
@@ -617,37 +948,33 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         connectionSizer = wx.StaticBoxSizer(self.connectionBox, wx.VERTICAL)
         cHelper = gui.guiHelper.BoxSizerHelper(self.connectionBox, sizer=connectionSizer)
 
-        apiSizer = wx.BoxSizer(wx.HORIZONTAL)
         # Translators: Label for API Key input
-        apiLabel = wx.StaticText(self.connectionBox, label=_("Gemini API Key:"))
-        apiSizer.Add(apiLabel, 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
+        apiLabel = wx.StaticText(self.connectionBox, label=_("Gemini API Key (Separate multiple keys with comma or newline):"))
+        cHelper.addItem(apiLabel)
         
         api_value = config.conf["VisionAssistant"]["api_key"]
-        self.apiKeyCtrl_hidden = wx.TextCtrl(self.connectionBox, value=api_value, style=wx.TE_PASSWORD)
-        self.apiKeyCtrl_visible = wx.TextCtrl(self.connectionBox, value=api_value)
+        
+        self.apiKeyCtrl_hidden = wx.TextCtrl(self.connectionBox, value=api_value, style=wx.TE_PASSWORD, size=(-1, -1))
+        
+        self.apiKeyCtrl_visible = wx.TextCtrl(self.connectionBox, value=api_value, style=wx.TE_MULTILINE | wx.TE_DONTWRAP, size=(-1, 60))
         self.apiKeyCtrl_visible.Hide()
         
-        apiSizer.Add(self.apiKeyCtrl_hidden, 1, wx.EXPAND | wx.RIGHT, 5)
-        apiSizer.Add(self.apiKeyCtrl_visible, 1, wx.EXPAND | wx.RIGHT, 5)
+        cHelper.addItem(self.apiKeyCtrl_hidden)
+        cHelper.addItem(self.apiKeyCtrl_visible)
         
         # Translators: Checkbox to toggle API Key visibility
         self.showApiCheck = wx.CheckBox(self.connectionBox, label=_("Show API Key"))
         self.showApiCheck.Bind(wx.EVT_CHECKBOX, self.onToggleApiVisibility)
-        apiSizer.Add(self.showApiCheck, 0, wx.ALIGN_CENTER_VERTICAL)
-        
-        cHelper.addItem(apiSizer)
+        cHelper.addItem(self.showApiCheck)
         
         model_display_names = [opt[0] for opt in MODELS]
-        
         # Translators: Label for Model selection
         self.model = cHelper.addLabeledControl(_("AI Model:"), wx.Choice, choices=model_display_names)
-        
         current_id = config.conf["VisionAssistant"]["model_name"]
         try:
             index = next(i for i, v in enumerate(MODELS) if v[1] == current_id)
             self.model.SetSelection(index)
-        except StopIteration:
-            self.model.SetSelection(0)
+        except StopIteration: self.model.SetSelection(0)
 
         # Translators: Label for Proxy URL input
         self.proxyUrl = cHelper.addLabeledControl(_("Proxy URL:"), wx.TextCtrl)
@@ -656,19 +983,15 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         # Translators: Checkbox to enable/disable automatic update checks on NVDA startup
         self.checkUpdateStartup = cHelper.addItem(wx.CheckBox(self.connectionBox, label=_("Check for updates on startup")))
         self.checkUpdateStartup.Value = config.conf["VisionAssistant"]["check_update_startup"]
-        
         # Translators: Checkbox to toggle markdown cleaning in chat windows
         self.cleanMarkdown = cHelper.addItem(wx.CheckBox(self.connectionBox, label=_("Clean Markdown in Chat")))
         self.cleanMarkdown.Value = config.conf["VisionAssistant"]["clean_markdown_chat"]
-
         # Translators: Checkbox to enable copying AI responses to clipboard
         self.copyToClipboard = cHelper.addItem(wx.CheckBox(self.connectionBox, label=_("Copy AI responses to clipboard")))
         self.copyToClipboard.Value = config.conf["VisionAssistant"]["copy_to_clipboard"]
-
         # Translators: Checkbox to skip chat window and only speak AI responses
         self.skipChatDialog = cHelper.addItem(wx.CheckBox(self.connectionBox, label=_("Direct Output (No Chat Window)")))
         self.skipChatDialog.Value = config.conf["VisionAssistant"]["skip_chat_dialog"]
-
         settingsSizer.Add(connectionSizer, 0, wx.EXPAND | wx.ALL, 5)
 
         # --- Translation Languages Group ---
@@ -696,8 +1019,32 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         # Translators: Checkbox for Smart Swap feature
         self.smartSwap = lHelper.addItem(wx.CheckBox(langBox, label=_("Smart Swap")))
         self.smartSwap.Value = config.conf["VisionAssistant"]["smart_swap"]
-
         settingsSizer.Add(langSizer, 0, wx.EXPAND | wx.ALL, 5)
+
+        # --- Document Reader Settings ---
+        # Translators: Title of settings group for Document Reader features
+        groupLabel = _("Document Reader")
+        docBox = wx.StaticBox(self, label=groupLabel)
+        docSizer = wx.StaticBoxSizer(docBox, wx.VERTICAL)
+        dHelper = gui.guiHelper.BoxSizerHelper(docBox, sizer=docSizer)
+
+        # Translators: Label for OCR Engine selection
+        self.ocr_sel = dHelper.addLabeledControl(_("OCR Engine:"), wx.Choice, choices=[x[0] for x in OCR_ENGINES])
+        curr_ocr = config.conf["VisionAssistant"]["ocr_engine"]
+        try:
+            o_idx = next(i for i, v in enumerate(OCR_ENGINES) if v[1] == curr_ocr)
+            self.ocr_sel.SetSelection(o_idx)
+        except: self.ocr_sel.SetSelection(0)
+
+        voice_choices = [f"{v[0]} - {v[1]}" for v in GEMINI_VOICES]
+        # Translators: Label for TTS Voice selection
+        self.voice_sel = dHelper.addLabeledControl(_("TTS Voice:"), wx.Choice, choices=voice_choices)
+        curr_voice = config.conf["VisionAssistant"]["tts_voice"]
+        try:
+            v_idx = next(i for i, v in enumerate(GEMINI_VOICES) if v[0] == curr_voice)
+            self.voice_sel.SetSelection(v_idx)
+        except: self.voice_sel.SetSelection(1)
+        settingsSizer.Add(docSizer, 0, wx.EXPAND | wx.ALL, 5)
 
         # --- CAPTCHA Group ---
         # Translators: Title of the settings group for CAPTCHA options
@@ -705,20 +1052,14 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         capBox = wx.StaticBox(self, label=groupLabel)
         capSizer = wx.StaticBoxSizer(capBox, wx.VERTICAL)
         capHelper = gui.guiHelper.BoxSizerHelper(capBox, sizer=capSizer)
-
         # Translators: Label for CAPTCHA capture method selection
-        self.captchaMode = capHelper.addLabeledControl(
-            _("Capture Method:"), 
-            wx.Choice, 
-            choices=[
-                # Translators: A choice for capture method. Captures only the specific object under the NVDA navigator cursor.
-                _("Navigator Object"),
-                # Translators: A choice for capture method. Captures the entire visible screen area.
-                _("Full Screen")
-            ]
-        )
+        self.captchaMode = capHelper.addLabeledControl(_("Capture Method:"), wx.Choice, choices=[
+            # Translators: A choice for capture method. Captures only the specific object under the NVDA navigator cursor.
+            _("Navigator Object"),
+            # Translators: A choice for capture method. Captures the entire visible screen area.
+            _("Full Screen")
+        ])
         self.captchaMode.SetSelection(0 if config.conf["VisionAssistant"]["captcha_mode"] == 'navigator' else 1)
-
         settingsSizer.Add(capSizer, 0, wx.EXPAND | wx.ALL, 5)
 
         # --- Custom Prompts Group ---
@@ -727,13 +1068,11 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         promptsBox = wx.StaticBox(self, label=groupLabel)
         promptsSizer = wx.StaticBoxSizer(promptsBox, wx.VERTICAL)
         pHelper = gui.guiHelper.BoxSizerHelper(promptsBox, sizer=promptsSizer)
-
         # Translators: Helper text explaining the format for custom prompts
         pHelper.addItem(wx.StaticText(promptsBox, label=_("Format: Name:Content")))
         self.customPrompts = wx.TextCtrl(promptsBox, style=wx.TE_MULTILINE, size=(-1, 100))
         self.customPrompts.Value = config.conf["VisionAssistant"]["custom_prompts"]
         pHelper.addItem(self.customPrompts)
-
         settingsSizer.Add(promptsSizer, 1, wx.EXPAND | wx.ALL, 5)
 
     def onToggleApiVisibility(self, event):
@@ -745,7 +1084,8 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             self.apiKeyCtrl_hidden.SetValue(self.apiKeyCtrl_visible.GetValue())
             self.apiKeyCtrl_visible.Hide()
             self.apiKeyCtrl_hidden.Show()
-        self.Layout()
+        
+        self.connectionBox.GetParent().Layout()
 
     def onSave(self):
         val = self.apiKeyCtrl_visible.GetValue() if self.showApiCheck.IsChecked() else self.apiKeyCtrl_hidden.GetValue()
@@ -762,11 +1102,535 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         config.conf["VisionAssistant"]["skip_chat_dialog"] = self.skipChatDialog.Value
         config.conf["VisionAssistant"]["captcha_mode"] = 'navigator' if self.captchaMode.GetSelection() == 0 else 'fullscreen'
         config.conf["VisionAssistant"]["custom_prompts"] = self.customPrompts.Value.strip()
+        config.conf["VisionAssistant"]["ocr_engine"] = OCR_ENGINES[self.ocr_sel.GetSelection()][1]
+        config.conf["VisionAssistant"]["tts_voice"] = GEMINI_VOICES[self.voice_sel.GetSelection()][0]
 
-# --- Global Plugin ---
+class RangeDialog(wx.Dialog):
+    def __init__(self, parent, total_pages):
+        # Translators: Title of the PDF options dialog
+        super().__init__(parent, title=_("Options"), size=(350, 320))
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        # Translators: Label showing total pages found
+        sizer.Add(wx.StaticText(self, label=_("Total Pages (All Files): {count}").format(count=total_pages)), 0, wx.ALL, 10)
+        
+        # Translators: Box title for page range selection
+        box_range = wx.StaticBoxSizer(wx.VERTICAL, self, _("Range"))
+        g_sizer = wx.FlexGridSizer(2, 2, 10, 10)
+        # Translators: Label for start page
+        g_sizer.Add(wx.StaticText(self, label=_("From:")), 0, wx.ALIGN_CENTER_VERTICAL)
+        self.spin_from = wx.SpinCtrl(self, min=1, max=total_pages, initial=1)
+        g_sizer.Add(self.spin_from, 1, wx.EXPAND)
+        # Translators: Label for end page
+        g_sizer.Add(wx.StaticText(self, label=_("To:")), 0, wx.ALIGN_CENTER_VERTICAL)
+        self.spin_to = wx.SpinCtrl(self, min=1, max=total_pages, initial=total_pages)
+        g_sizer.Add(self.spin_to, 1, wx.EXPAND)
+        box_range.Add(g_sizer, 1, wx.EXPAND | wx.ALL, 5)
+        sizer.Add(box_range, 0, wx.EXPAND | wx.ALL, 10)
+
+        # Translators: Box title for translation options
+        box_trans = wx.StaticBoxSizer(wx.VERTICAL, self, _("Translation"))
+        # Translators: Checkbox to enable translation
+        self.chk_trans = wx.CheckBox(self, label=_("Translate Output"))
+        box_trans.Add(self.chk_trans, 0, wx.ALL, 5)
+        h_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        # Translators: Label for target language
+        h_sizer.Add(wx.StaticText(self, label=_("Target:")), 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
+        self.cmb_lang = wx.Choice(self, choices=TARGET_NAMES)
+        self.cmb_lang.SetSelection(0)
+        h_sizer.Add(self.cmb_lang, 1)
+        box_trans.Add(h_sizer, 1, wx.EXPAND | wx.ALL, 5)
+        sizer.Add(box_trans, 0, wx.EXPAND | wx.ALL, 10)
+        
+        btn_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        # Translators: Button to start processing
+        btn_ok = wx.Button(self, wx.ID_OK, label=_("Start"))
+        btn_ok.SetDefault()
+        # Translators: Button to cancel
+        btn_cancel = wx.Button(self, wx.ID_CANCEL, label=_("Cancel"))
+        btn_sizer.Add(btn_ok, 0, wx.RIGHT, 10)
+        btn_sizer.Add(btn_cancel, 0)
+        sizer.Add(btn_sizer, 0, wx.ALIGN_CENTER | wx.ALL, 10)
+        self.SetSizer(sizer)
+
+        self.chk_trans.Bind(wx.EVT_CHECKBOX, self.on_check)
+        self.cmb_lang.Disable()
+
+    def on_check(self, event):
+        self.cmb_lang.Enable(self.chk_trans.IsChecked())
+
+    def get_settings(self):
+        return {
+            'start': self.spin_from.GetValue() - 1,
+            'end': self.spin_to.GetValue() - 1,
+            'translate': self.chk_trans.IsChecked(),
+            'lang': TARGET_NAMES[self.cmb_lang.GetSelection()]
+        }
+
+class ChatDialog(wx.Dialog):
+    instance = None
+
+    def __init__(self, parent, file_path):
+        # Translators: Title of the chat dialog
+        super().__init__(parent, title=_("Ask about Document"), size=(600, 500), style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
+        ChatDialog.instance = self
+        self.file_path = file_path
+        self.file_uri = None
+        self.history = []
+        
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        # Translators: Label showing the analyzed file name
+        lbl_info = wx.StaticText(self, label=_("File: {name}").format(name=os.path.basename(file_path)))
+        sizer.Add(lbl_info, 0, wx.ALL, 5)
+        self.display = wx.TextCtrl(self, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2)
+        sizer.Add(self.display, 1, wx.EXPAND | wx.ALL, 10)
+        # Translators: Status message while uploading
+        self.display.SetValue(_("Uploading to Gemini...\n"))
+        
+        input_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        # Translators: Label for the chat input field
+        input_sizer.Add(wx.StaticText(self, label=_("Your Question:")), 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
+        self.input = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER, size=(-1, 30))
+        self.input.Bind(wx.EVT_TEXT_ENTER, self.on_send)
+        input_sizer.Add(self.input, 1, wx.EXPAND | wx.RIGHT, 5)
+        
+        # Translators: Button to send message
+        self.btn_send = wx.Button(self, label=_("Send"))
+        self.btn_send.Bind(wx.EVT_BUTTON, self.on_send)
+        self.btn_send.Disable()
+        input_sizer.Add(self.btn_send, 0)
+        sizer.Add(input_sizer, 0, wx.EXPAND | wx.ALL, 10)
+        self.SetSizer(sizer)
+        self.Bind(wx.EVT_CLOSE, self.on_close)
+        threading.Thread(target=self.init_upload, daemon=True).start()
+
+    def on_close(self, event):
+        ChatDialog.instance = None
+        self.Destroy()
+
+    def init_upload(self):
+        mime = get_mime_type(self.file_path)
+        uri = GeminiHandler.upload_for_chat(self.file_path, mime)
+        if uri and not str(uri).startswith("ERROR:"):
+            self.file_uri = uri
+            wx.CallAfter(self.on_ready)
+        else:
+            err_msg = str(uri)[6:] if uri else _("Upload failed.")
+            wx.CallAfter(show_error_dialog, err_msg)
+            wx.CallAfter(self.Close)
+
+    def on_ready(self):
+        # Translators: Message when ready to chat
+        self.display.AppendText(_("Ready! Ask your questions.\n"))
+        self.btn_send.Enable()
+        self.input.SetFocus()
+
+    def on_send(self, event):
+        msg = self.input.GetValue().strip()
+        if not msg: return
+        self.input.Clear()
+        self.display.AppendText(f"You: {msg}\n")
+        # Translators: Message showing AI is thinking
+        ui.message(_("Thinking..."))
+        threading.Thread(target=self.do_chat, args=(msg,), daemon=True).start()
+
+    def do_chat(self, msg):
+        resp = GeminiHandler.chat(self.history, msg, self.file_uri, "application/pdf")
+        
+        if str(resp).startswith("ERROR:"):
+            show_error_dialog(resp[6:])
+            if _vision_assistant_instance:
+                # Translators: Initial status when the add-on is doing nothing
+                _vision_assistant_instance.current_status = _("Idle")
+            return
+
+        self.history.append({"role": "user", "parts": [{"text": msg}]})
+        self.history.append({"role": "model", "parts": [{"text": resp}]})
+        wx.CallAfter(self.display.AppendText, f"AI: {resp}\n\n")
+        # Translators: Spoken prefix for AI response
+        wx.CallAfter(ui.message, _("AI: ") + resp)
+
+class DocumentViewerDialog(wx.Dialog):
+    def __init__(self, parent, virtual_doc, settings):
+        super().__init__(parent, title=ADDON_NAME, size=(800, 600), style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER | wx.MAXIMIZE_BOX)
+        self.v_doc = virtual_doc
+        self.start_page = settings['start']
+        self.end_page = settings['end']
+        self.do_translate = settings['translate']
+        self.target_lang = settings['lang']
+        self.range_count = self.end_page - self.start_page + 1
+        self.page_cache = {}
+        self.current_page = self.start_page
+        self.thread_pool = ThreadPoolExecutor(max_workers=5)
+        
+        self.init_ui()
+        self.Centre()
+        threading.Thread(target=self.start_auto_processing, daemon=True).start()
+
+    def init_ui(self):
+        panel = wx.Panel(self)
+        vbox = wx.BoxSizer(wx.VERTICAL)
+        # Translators: Initial status message
+        self.lbl_status = wx.StaticText(panel, label=_("Initializing..."))
+        vbox.Add(self.lbl_status, 0, wx.ALL, 5)
+        self.txt_content = wx.TextCtrl(panel, style=wx.TE_MULTILINE | wx.TE_READONLY | wx.TE_RICH2)
+        vbox.Add(self.txt_content, 1, wx.EXPAND | wx.LEFT | wx.RIGHT, 10)
+        hbox_nav = wx.BoxSizer(wx.HORIZONTAL)
+        # Translators: Button to go to previous page
+        self.btn_prev = wx.Button(panel, label=_("Previous (Ctrl+PageUp)"))
+        self.btn_prev.Bind(wx.EVT_BUTTON, self.on_prev)
+        hbox_nav.Add(self.btn_prev, 0, wx.RIGHT, 5)
+        # Translators: Button to go to next page
+        self.btn_next = wx.Button(panel, label=_("Next (Ctrl+PageDown)"))
+        self.btn_next.Bind(wx.EVT_BUTTON, self.on_next)
+        hbox_nav.Add(self.btn_next, 0, wx.RIGHT, 15)
+        # Translators: Label for Go To Page
+        hbox_nav.Add(wx.StaticText(panel, label=_("Go to:")), 0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 5)
+        choices = [str(i+1) for i in range(self.start_page, self.end_page + 1)]
+        self.cmb_pages = wx.Choice(panel, choices=choices)
+        self.cmb_pages.Bind(wx.EVT_CHOICE, self.on_page_select)
+        hbox_nav.Add(self.cmb_pages, 0, wx.RIGHT, 15)
+        vbox.Add(hbox_nav, 0, wx.ALIGN_CENTER | wx.ALL, 10)
+        hbox_actions = wx.BoxSizer(wx.HORIZONTAL)
+        # Translators: Button to Ask questions about the document
+        self.btn_ask = wx.Button(panel, label=_("Ask AI (Alt+A)"))
+        self.btn_ask.Bind(wx.EVT_BUTTON, self.on_ask)
+        hbox_actions.Add(self.btn_ask, 0, wx.RIGHT, 5)
+        
+        # Translators: Button to force re-scan
+        self.btn_gemini = wx.Button(panel, label=_("Re-scan with Gemini (Alt+R)"))
+        self.btn_gemini.Bind(wx.EVT_BUTTON, self.on_gemini_scan)
+        hbox_actions.Add(self.btn_gemini, 0, wx.RIGHT, 5)
+        
+        # Translators: Button to generate audio
+        self.btn_tts = wx.Button(panel, label=_("Generate Audio (Alt+G)"))
+        self.btn_tts.Bind(wx.EVT_BUTTON, self.on_tts)
+        hbox_actions.Add(self.btn_tts, 0, wx.RIGHT, 5)
+
+        # Translators: Button to view formatted content
+        self.btn_view = wx.Button(panel, label=_("View Formatted"))
+        self.btn_view.Bind(wx.EVT_BUTTON, self.on_view)
+        hbox_actions.Add(self.btn_view, 0, wx.RIGHT, 5)
+
+        # Translators: Button to save text
+        self.btn_save = wx.Button(panel, label=_("Save (Alt+S)"))
+        self.btn_save.Bind(wx.EVT_BUTTON, self.on_save_all)
+        hbox_actions.Add(self.btn_save, 0)
+        
+        vbox.Add(hbox_actions, 0, wx.ALIGN_CENTER | wx.ALL, 5)
+        btn_close = wx.Button(panel, wx.ID_CLOSE, label=_("Close"))
+        btn_close.Bind(wx.EVT_BUTTON, lambda e: self.Destroy())
+        vbox.Add(btn_close, 0, wx.ALIGN_RIGHT | wx.ALL, 10)
+        panel.SetSizer(vbox)
+        accel_tbl = wx.AcceleratorTable([
+            (wx.ACCEL_CTRL, wx.WXK_PAGEDOWN, self.btn_next.GetId()),
+            (wx.ACCEL_CTRL, wx.WXK_PAGEUP, self.btn_prev.GetId()),
+            (wx.ACCEL_CTRL, ord('S'), self.btn_save.GetId()),
+            (wx.ACCEL_ALT, ord('S'), self.btn_save.GetId()),
+            (wx.ACCEL_ALT, ord('A'), self.btn_ask.GetId()),
+            (wx.ACCEL_ALT, ord('R'), self.btn_gemini.GetId()),
+            (wx.ACCEL_ALT, ord('G'), self.btn_tts.GetId())
+        ])
+        self.SetAcceleratorTable(accel_tbl)
+        self.cmb_pages.SetSelection(0)
+        self.update_view()
+        self.txt_content.SetFocus()
+
+    def start_auto_processing(self):
+        engine = config.conf["VisionAssistant"]["ocr_engine"]
+        
+        if engine == 'gemini':
+            threading.Thread(target=self.gemini_scan_batch_thread, daemon=True).start()
+        else:
+            for i in range(self.start_page, self.end_page + 1):
+                self.thread_pool.submit(self.process_page_worker, i)
+
+    def process_page_worker(self, page_num):
+        if page_num in self.page_cache: return
+        text = self._get_page_text_logic(page_num)
+        self.page_cache[page_num] = text
+        if page_num == self.current_page:
+            wx.CallAfter(self.update_view)
+            # Translators: Spoken message when the current page is ready
+            wx.CallAfter(ui.message, _("Page {num} ready").format(num=page_num + 1))
+
+    def _get_page_text_logic(self, page_num):
+        file_path, page_idx = self.v_doc.get_page_info(page_num)
+        if not file_path: return ""
+        try:
+            doc = fitz.open(file_path)
+            page = doc.load_page(page_idx)
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+            img_bytes = pix.tobytes("jpg")
+            doc.close()
+            engine = config.conf["VisionAssistant"]["ocr_engine"]
+            text = None
+            if engine == 'gemini':
+                try: text = GeminiHandler.ocr_page(img_bytes)
+                except: text = None
+            if not text or not text.strip() or engine == 'chrome':
+                text = ChromeOCREngine.recognize(img_bytes)
+                if not text or not text.strip():
+                    text = SmartProgrammersOCREngine.recognize(img_bytes)
+            if not text or not text.strip():
+                # Translators: Placeholder text when OCR fails
+                text = _("[OCR failed. Try Gemini Re-scan.]")
+            if self.do_translate and text and "[OCR failed" not in text:
+                if engine == 'gemini':
+                    text = GeminiHandler.translate(text, self.target_lang)
+                else:
+                    text = GoogleTranslator.translate(text, self.target_lang)
+            return text
+        except: 
+            # Translators: Error message for page processing failure
+            return _("Error processing page.")
+
+    def update_view(self):
+        rel_page = self.current_page - self.start_page + 1
+        # Translators: Status label format
+        self.lbl_status.SetLabel(_("Page {current} of {total}").format(current=rel_page, total=self.range_count))
+        if self.current_page in self.page_cache:
+            self.txt_content.SetValue(self.page_cache[self.current_page])
+            self.txt_content.SetInsertionPoint(0)
+            self.txt_content.SetFocus()
+        else:
+            # Translators: Status when page is loading
+            self.txt_content.SetValue(_("Processing in background..."))
+            self.txt_content.SetInsertionPoint(0)
+            self.txt_content.SetFocus()
+        self.btn_prev.Enable(self.current_page > self.start_page)
+        self.btn_next.Enable(self.current_page < self.end_page)
+
+    def load_page(self, page_num):
+        if page_num < self.start_page or page_num > self.end_page: return
+        self.current_page = page_num
+        self.cmb_pages.SetSelection(page_num - self.start_page)
+        # Translators: Spoken message when switching pages
+        ui.message(_("Page {num}").format(num=page_num + 1))
+        self.update_view()
+
+    def on_prev(self, event):
+        if self.current_page > self.start_page: self.load_page(self.current_page - 1)
+
+    def on_next(self, event):
+        if self.current_page < self.end_page: self.load_page(self.current_page + 1)
+
+    def on_page_select(self, event):
+        self.load_page(self.start_page + self.cmb_pages.GetSelection())
+
+    def on_view(self, event):
+        text = self.txt_content.GetValue()
+        if not text: return
+        html = markdown_to_html(text, full_page=False)
+        try:
+            # Translators: Title of the formatted result window
+            ui.browseableMessage(html, _("Formatted Content"), isHtml=True)
+        except Exception as e:
+            show_error_dialog(str(e))
+
+    def on_gemini_scan(self, event):
+        if not config.conf["VisionAssistant"]["api_key"]:
+            wx.MessageBox(_("Please configure Gemini API Key."), _("Error"), wx.ICON_ERROR)
+            return
+        menu = wx.Menu()
+        # Translators: Menu option for current page
+        item_curr = menu.Append(wx.ID_ANY, _("Current Page"))
+        # Translators: Menu option for all pages
+        item_all = menu.Append(wx.ID_ANY, _("All Pages (In Range)"))
+        self.Bind(wx.EVT_MENU, self.do_rescan_current, item_curr)
+        self.Bind(wx.EVT_MENU, self.do_rescan_all, item_all)
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def do_rescan_current(self, event):
+        if self.current_page in self.page_cache: del self.page_cache[self.current_page]
+        self.update_view()
+        # Translators: Message during manual scan
+        ui.message(_("Scanning with Gemini..."))
+        threading.Thread(target=self.gemini_scan_single_thread, args=(self.current_page,), daemon=True).start()
+
+    def gemini_scan_single_thread(self, page_num):
+        try:
+            file_path, page_idx = self.v_doc.get_page_info(page_num)
+            doc = fitz.open(file_path)
+            page = doc.load_page(page_idx)
+            pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+            text = GeminiHandler.ocr_page(pix.tobytes("jpg"))
+            doc.close()
+            if self.do_translate: text = GeminiHandler.translate(text, self.target_lang)
+            self.page_cache[page_num] = text
+            if self.current_page == page_num: 
+                wx.CallAfter(self.update_view)
+                # Translators: Message when scan is complete
+                wx.CallAfter(ui.message, _("Scan complete"))
+        except: pass
+
+    def do_rescan_all(self, event):
+        threading.Thread(target=self.gemini_scan_batch_thread, daemon=True).start()
+
+    def gemini_scan_batch_thread(self):
+        # Translators: Message when batch scan starts
+        msg = _("Batch Processing Started")
+        if _vision_assistant_instance: _vision_assistant_instance.current_status = msg
+        wx.CallAfter(ui.message, msg)
+        
+        for i in range(self.start_page, self.end_page + 1):
+            if i in self.page_cache: del self.page_cache[i]
+        wx.CallAfter(self.update_view)
+        
+        upload_path = self.v_doc.create_merged_pdf(self.start_page, self.end_page)
+        if not upload_path:
+            # Translators: Error message if PDF creation fails
+            wx.CallAfter(self.lbl_status.SetLabel, _("Error creating temporary PDF."))
+            return
+
+        try:
+            count = (self.end_page - self.start_page) + 1
+            results = GeminiHandler.upload_and_process_batch(upload_path, "application/pdf", count)
+            
+            if not results or (len(results) == 1 and str(results[0]).startswith("ERROR:")):
+                err_msg = results[0][6:] if results else _("Unknown error")
+                wx.CallAfter(ui.message, _("Scan failed: {err}").format(err=err_msg))
+                return
+
+            for i, text_part in enumerate(results):
+                if i >= count: break
+                idx = self.start_page + i
+                clean = text_part.strip()
+                if self.do_translate:
+                    clean = GeminiHandler.translate(clean, self.target_lang)
+                self.page_cache[idx] = clean
+
+            wx.CallAfter(self.update_view)
+            # Translators: Message when batch scan is complete
+            final_msg = _("Batch Scan Complete")
+            if _vision_assistant_instance: 
+                # Translators: Initial status when the add-on is doing nothing
+                _vision_assistant_instance.current_status = _("Idle")
+            wx.CallAfter(ui.message, final_msg)
+        finally:
+            if upload_path and os.path.exists(upload_path):
+                try: os.remove(upload_path)
+                except: pass
+
+    def on_tts(self, event):
+        if not config.conf["VisionAssistant"]["api_key"]:
+            wx.MessageBox(_("Please configure Gemini API Key."), _("Error"), wx.ICON_ERROR)
+            return
+        menu = wx.Menu()
+        # Translators: Menu option for TTS current page
+        item_curr = menu.Append(wx.ID_ANY, _("Generate for Current Page"))
+        # Translators: Menu option for TTS all pages
+        item_all = menu.Append(wx.ID_ANY, _("Generate for All Pages (In Range)"))
+        self.Bind(wx.EVT_MENU, self.do_tts_current, item_curr)
+        self.Bind(wx.EVT_MENU, self.do_tts_all, item_all)
+        self.PopupMenu(menu)
+        menu.Destroy()
+
+    def do_tts_current(self, event):
+        text = self.txt_content.GetValue().strip()
+        if not text: 
+            # Translators: Error message when text field is empty
+            wx.MessageBox(_("No text to read."), "Error")
+            return
+        self._save_tts(text)
+
+    def do_tts_all(self, event):
+        threading.Thread(target=self.tts_batch_thread, daemon=True).start()
+
+    def tts_batch_thread(self):
+        full_text = []
+        # Translators: Message while gathering text
+        wx.CallAfter(ui.message, _("Gathering text for audio..."))
+        for i in range(self.start_page, self.end_page + 1):
+            while i not in self.page_cache: time.sleep(0.1)
+            full_text.append(self.page_cache[i])
+        final_text = "\n".join(full_text).strip()
+        if not final_text: return
+        wx.CallAfter(self._save_tts, final_text)
+
+    def _save_tts(self, text):
+        # Translators: File dialog title for saving audio
+        path = get_file_path(_("Save Audio"), "WAV Files (*.wav)|*.wav", mode="save")
+        if path:
+            voice = config.conf["VisionAssistant"]["tts_voice"]
+            threading.Thread(target=self.tts_worker, args=(text, voice, path), daemon=True).start()
+
+    def tts_worker(self, text, voice, path):
+        # Translators: Message while generating audio
+        msg = _("Generating Audio...")
+        if _vision_assistant_instance: _vision_assistant_instance.current_status = msg
+        wx.CallAfter(ui.message, msg)
+        try:
+            audio_b64 = GeminiHandler.generate_speech(text, voice)
+            if not audio_b64 or " " in audio_b64[:50] or len(audio_b64) < 100:
+                 wx.CallAfter(wx.MessageBox, f"TTS Error: {audio_b64}", "Error", wx.ICON_ERROR)
+                 return
+            missing_padding = len(audio_b64) % 4
+            if missing_padding: audio_b64 += '=' * (4 - missing_padding)
+            pcm_data = base64.b64decode(audio_b64)
+            with wave.open(path, "wb") as wf:
+                wf.setnchannels(1)
+                wf.setsampwidth(2)
+                wf.setframerate(24000)
+                wf.writeframes(pcm_data)
+            # Translators: Spoken message when audio is saved
+            res_msg = _("Audio Saved")
+            if _vision_assistant_instance: _vision_assistant_instance.current_status = _("Idle")
+            wx.CallAfter(ui.message, res_msg)
+            wx.CallAfter(wx.MessageBox, _("Audio file generated and saved successfully."), _("Success"), wx.OK | wx.ICON_INFORMATION)
+        except Exception as e:
+            if _vision_assistant_instance: _vision_assistant_instance.current_status = _("Idle")
+            wx.CallAfter(wx.MessageBox, f"TTS Error: {e}", "Error", wx.ICON_ERROR)
+
+    def on_ask(self, event):
+        if not config.conf["VisionAssistant"]["api_key"]:
+            wx.MessageBox(_("Please configure Gemini API Key."), _("Error"), wx.ICON_ERROR)
+            return
+        if ChatDialog.instance:
+            ChatDialog.instance.Raise()
+            ChatDialog.instance.SetFocus()
+            return
+        file_path, _ = self.v_doc.get_page_info(self.current_page)
+        if file_path: 
+            dlg = ChatDialog(self, file_path)
+            dlg.Show()
+
+    def on_save_all(self, event):
+        # Translators: File dialog filter for saving text/html
+        wildcard = "Text File (*.txt)|*.txt|HTML File (*.html)|*.html"
+        # Translators: File dialog title for saving
+        path = get_file_path(_("Save"), wildcard, mode="save")
+        if path:
+            is_html = path.lower().endswith('.html')
+            self.btn_save.Disable()
+            threading.Thread(target=self.save_thread, args=(path, is_html), daemon=True).start()
+
+    def save_thread(self, path, is_html):
+        full_content = []
+        try:
+            for i in range(self.start_page, self.end_page + 1):
+                # Translators: Message showing save progress
+                wx.CallAfter(self.lbl_status.SetLabel, _("Saving Page {num}...").format(num=i+1))
+                while i not in self.page_cache: time.sleep(0.1)
+                txt = self.page_cache[i]
+                if is_html:
+                    h = markdown_to_html(txt)
+                    if "<body>" in h: h = h.split("<body>")[1].split("</body>")[0]
+                    full_content.append(f"<hr><h2>Page {i+1}</h2>{h}")
+                else:
+                    full_content.append(f"--- Page {i+1} ---\n{txt}\n")
+            with open(path, "w", encoding="utf-8") as f:
+                if is_html: f.write(f"<html><body>{''.join(full_content)}</body></html>")
+                else: f.write("\n".join(full_content))
+            # Translators: Status label when save is complete
+            wx.CallAfter(self.lbl_status.SetLabel, _("Saved"))
+            # Translators: Message box content for successful save
+            wx.CallAfter(wx.MessageBox, _("File saved successfully."), _("Success"), wx.OK | wx.ICON_INFORMATION)
+        except Exception as e:
+            wx.CallAfter(wx.MessageBox, f"Save Error: {e}", "Error", wx.ICON_ERROR)
+        finally: wx.CallAfter(self.btn_save.Enable)
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
-    # Translators: Name of the add-on category in Input Gestures
     scriptCategory = ADDON_NAME
     
     last_translation = "" 
@@ -783,10 +1647,46 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def __init__(self):
         super(GlobalPlugin, self).__init__()
-        config.conf.spec["VisionAssistant"] = confspec
+        global _vision_assistant_instance
+        _vision_assistant_instance = self
         gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(SettingsPanel)
         
         self.updater = UpdateManager(GITHUB_REPO)
+        
+        self.va_menu = wx.Menu()
+        
+        # Translators: Menu item for Document Reader
+        item_doc = self.va_menu.Append(wx.ID_ANY, _("&Document Reader..."))
+        self.va_menu.Bind(wx.EVT_MENU, lambda e: wx.CallAfter(self._open_document_reader), item_doc)
+        
+        # Translators: Menu item for Audio Transcription
+        item_audio = self.va_menu.Append(wx.ID_ANY, _("Transcribe &Audio File..."))
+        self.va_menu.Bind(wx.EVT_MENU, lambda e: wx.CallAfter(self._open_audio), item_audio)
+        
+        # Translators: Menu item for Video Analysis
+        item_video = self.va_menu.Append(wx.ID_ANY, _("Analyze &Video URL..."))
+        self.va_menu.Bind(wx.EVT_MENU, lambda e: wx.CallAfter(self._open_video_dialog), item_video)
+        
+        self.va_menu.AppendSeparator()
+        
+        # Translators: Menu item to open settings
+        item_settings = self.va_menu.Append(wx.ID_ANY, _("&Settings..."))
+        self.va_menu.Bind(wx.EVT_MENU, self.on_settings_click, item_settings)
+        
+        # Translators: Menu item to check for updates
+        item_update = self.va_menu.Append(wx.ID_ANY, _("Check for &Update"))
+        self.va_menu.Bind(wx.EVT_MENU, lambda e: self.updater.check_for_updates(silent=False), item_update)
+        
+        # Translators: Menu item to open documentation
+        item_help = self.va_menu.Append(wx.ID_ANY, _("Docu&mentation"))
+        self.va_menu.Bind(wx.EVT_MENU, self.on_help_click, item_help)
+        
+        # Translators: Menu item for donations
+        item_donate = self.va_menu.Append(wx.ID_ANY, _("D&onate"))
+        self.va_menu.Bind(wx.EVT_MENU, self.on_donate_click, item_donate)
+        
+        self.tools_menu = gui.mainFrame.sysTrayIcon.toolsMenu
+        self.va_submenu_item = self.tools_menu.AppendSubMenu(self.va_menu, _("Vision Assistant"))
         
         self.refine_dlg = None
         self.refine_menu_dlg = None
@@ -796,6 +1696,44 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         
         if config.conf["VisionAssistant"]["check_update_startup"]:
             self.update_timer = wx.CallLater(10000, self.updater.check_for_updates, True)
+
+    def _browse_and_run(self, worker_fn, wildcard, multiple=False):
+        # Translators: Standard title for opening a file
+        title = _("Open")
+        path = get_file_path(title, wildcard, multiple=multiple)
+        if path:
+            threading.Thread(target=worker_fn, args=(path,), daemon=True).start()
+
+
+    def _open_document_reader(self):
+        # Translators: File dialog filter for supported files
+        wc = _("Supported Files") + "|*.pdf;*.jpg;*.jpeg;*.png;*.tif;*.tiff"
+        self._browse_and_run(self._scan_and_open, wc, multiple=True)
+
+    def _scan_and_open(self, paths):
+        try:
+            if not fitz:
+                # Translators: Error when PyMuPDF is missing
+                wx.CallAfter(wx.MessageBox, _("PyMuPDF library is missing."), "Error", wx.ICON_ERROR)
+                return
+            
+            v_doc = VirtualDocument(paths)
+            v_doc.scan() 
+            
+            if v_doc.total_pages == 0:
+                 # Translators: Error when no pages found
+                 wx.CallAfter(wx.MessageBox, _("No readable pages found."), "Error", wx.ICON_ERROR)
+                 return
+
+            wx.CallAfter(self._show_range_dialog, v_doc)
+        except Exception as e:
+            log.error(f"Error opening files: {e}", exc_info=True)
+
+    def _show_range_dialog(self, v_doc):
+        range_dlg = RangeDialog(gui.mainFrame, v_doc.total_pages)
+        if range_dlg.ShowModal() == wx.ID_OK:
+            wx.CallAfter(lambda: DocumentViewerDialog(gui.mainFrame, v_doc, range_dlg.get_settings()).Show())
+        range_dlg.Destroy()
 
     def getScript(self, gesture):
         if not self.toggling:
@@ -826,10 +1764,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         tones.beep(500, 100)
 
     def terminate(self):
-        try: gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(SettingsPanel)
+        global _vision_assistant_instance
+        try:
+            if hasattr(self, 'va_submenu_item') and self.va_submenu_item:
+                self.tools_menu.Remove(self.va_submenu_item.GetId())
+            
+            gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(SettingsPanel)
+            
+            if LauncherDialog.instance:
+                LauncherDialog.instance.Destroy()
         except: pass
         
-        if self.update_timer and self.update_timer.IsRunning():
+        if hasattr(self, 'update_timer') and self.update_timer.IsRunning():
             self.update_timer.Stop()
         
         for dlg in [self.refine_dlg, self.refine_menu_dlg, self.vision_dlg, self.doc_dlg]:
@@ -844,6 +1790,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         
         self.translation_cache = {}
         self._last_source_text = None
+        _vision_assistant_instance = None
         gc.collect()
 
     def report_status(self, msg):
@@ -869,17 +1816,16 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             "R: " + _("Opens a menu to Explain, Summarize, or Fix the selected text.") + "\n" + \
             "O: " + _("Performs OCR and description on the entire screen.") + "\n" + \
             "V: " + _("Describes the current object (Navigator Object).") + "\n" + \
-            "D: " + _("Allows asking questions about a selected document (PDF/Text/Image).") + "\n" + \
+            "D: " + _("Opens the Document Reader for detailed page-by-page analysis (PDF/Images).") + "\n" + \
             "F: " + _("Recognizes text from a selected image or PDF file.") + "\n" + \
             "A: " + _("Transcribes a selected audio file.") + "\n" + \
-"Shift+V: " + _("Analyzes a YouTube, Instagram or Twitter video URL.") + "\n" +
+            "Shift+V: " + _("Analyzes a YouTube, Instagram or Twitter video URL.") + "\n" + \
             "C: " + _("Attempts to solve a CAPTCHA on the screen or navigator object.") + "\n" + \
             "S: " + _("Records voice, transcribes it using AI, and types the result.") + "\n" + \
             "L: " + _("Announces the current status of the add-on.") + "\n" + \
             "U: " + _("Checks for updates manually.") + "\n" + \
             "H: " + _("Shows a list of available commands in the layer.")
 )
-        
         # Translators: Title of the help dialog
         ui.browseableMessage(help_msg, _("{name} Help").format(name=ADDON_NAME))
 
@@ -894,15 +1840,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def _browse_file(self, wildcard):
         # Translators: Standard title for opening a file
-        dlg = wx.FileDialog(gui.mainFrame, _("Open"), wildcard=wildcard, style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
-        path = None
-        if dlg.ShowModal() == wx.ID_OK:
-            path = dlg.GetPath()
-        dlg.Destroy()
-        return path
+        return get_file_path(_("Open"), wildcard)
 
     def _upload_file_to_gemini(self, file_path, mime_type):
         api_key = config.conf["VisionAssistant"]["api_key"].strip()
+        keys = GeminiHandler._get_api_keys()
+        if not keys: return None
+        api_key = keys[0]
+
         proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
         base_url = proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
         
@@ -916,13 +1861,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 "X-Goog-Upload-Command": "start",
                 "X-Goog-Upload-Header-Content-Length": str(file_size),
                 "X-Goog-Upload-Header-Content-Type": mime_type,
-                "Content-Type": "application/json",
-                "x-goog-api-key": api_key
+                "Content-Type": "application/json"
             }
             metadata = {"file": {"display_name": filename}}
             req_init = request.Request(initial_url, data=json.dumps(metadata).encode('utf-8'), headers=headers_init, method="POST")
             
-            with request.urlopen(req_init, timeout=30) as response:
+            with get_proxy_opener().open(req_init, timeout=30) as response:
                 upload_url = response.headers.get("x-goog-upload-url")
                 
             if not upload_url: return None
@@ -938,7 +1882,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             req_upload = request.Request(upload_url, data=file_data, headers=headers_upload, method="POST")
             
             file_name_id = None
-            with request.urlopen(req_upload, timeout=300) as response:
+            with get_proxy_opener().open(req_upload, timeout=300) as response:
                 if response.status == 200:
                     res_json = json.loads(response.read().decode('utf-8'))
                     file = res_json.get('file', {})
@@ -947,10 +1891,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if not file_name_id: return None
 
             check_url = f"{base_url}/v1beta/{file_name_id}?key={api_key}"
-            for _ in range(30): # Poll for up to 60s
+            for _ in range(30):
                 try:
-                    req_check = request.Request(check_url, headers={"x-goog-api-key": api_key})
-                    with request.urlopen(req_check, timeout=10) as response:
+                    with get_proxy_opener().open(check_url, timeout=10) as response:
                         state_data = json.loads(response.read().decode('utf-8'))
                         state = state_data.get('state')
                         if state == "ACTIVE":
@@ -981,121 +1924,65 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             show_error_dialog(msg)
             return None
 
-    def _call_gemini(self, prompt_or_contents, attachments=[], json_mode=False, raise_errors=False):
-        api_key = config.conf["VisionAssistant"]["api_key"].strip()
-        proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
-        model = config.conf["VisionAssistant"]["model_name"]
-        
-        if not api_key:
-            # Translators: Message of a dialog which may pop up while performing an AI call
-            msg = _("API Key missing.")
-            wx.CallAfter(self.report_status, msg)
-            return None
 
-        base_url = proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
-        url = f"{base_url}/v1beta/models/{model}:generateContent?key={api_key}"
-        headers = {
-            "Content-Type": "application/json; charset=UTF-8",
-            "x-goog-api-key": api_key
-        }
-        
-        contents = []
-        if isinstance(prompt_or_contents, list):
-            contents = prompt_or_contents
-        else:
-            parts = []
-            for att in attachments:
-                if 'file_uri' in att:
-                    parts.append({"file_data": {"mime_type": att['mime_type'], "file_uri": att['file_uri']}})
-                else:
-                    parts.append({"inline_data": {"mime_type": att['mime_type'], "data": att['data']}})
-            if prompt_or_contents:
-                parts.append({"text": prompt_or_contents})
-            contents = [{"parts": parts}]
+
+    def _call_gemini_safe(self, prompt_or_contents, attachments=[], json_mode=False):
+        def _logic(key, p_or_c, atts, j_mode):
+            model = config.conf["VisionAssistant"]["model_name"]
+            proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
+            base_url = proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
+            url = f"{base_url}/v1beta/models/{model}:generateContent?key={key}"
+            headers = {"Content-Type": "application/json; charset=UTF-8", "x-api-key": key}
             
-        data = {
-            "contents": contents,
-            "generationConfig": {
-                "temperature": 0.0, 
-                "topK": 40
-            },
-            "safetySettings": [
-                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
-            ]
-        }
-        if json_mode: data["generationConfig"]["response_mime_type"] = "application/json"
-
-        max_retries = 3
-        for attempt in range(max_retries + 1):
-            try:
-                req = request.Request(url, data=json.dumps(data).encode('utf-8'), headers=headers)
-                with request.urlopen(req, timeout=600) as response:
-                    if response.status == 200:
-                        res = json.loads(response.read().decode('utf-8'))
-                        
-                        if not res.get('candidates'):
-                            return None
-                            
-                        candidate = res['candidates'][0]
-                        
-                        if candidate.get('finishReason') == 'SAFETY':
-                            # Translators: Error message when AI refuses to answer due to safety guidelines
-                            return _("Error: Response blocked by AI safety filters.")
-                        
-                        content = candidate.get('content', {})
-                        parts = content.get('parts', [])
-                        
-                        if parts and 'text' in parts[0]:
-                            text = parts[0]['text'].strip()
-                            return text 
-                        else:
-                            return None
-
-            except error.HTTPError as e:
-                if (e.code == 503 or e.code == 429) and attempt < max_retries:
-                    time.sleep(2)
-                    continue
-                log.error(f"Gemini HTTP Error: {e.code} - {e.reason}")
-                if raise_errors: raise e
-                return None
-            except Exception as e:
-                log.error(f"Gemini General Error: {e}")
-                if raise_errors: raise e
-                return None
-        return None
-
-    def _call_gemini_safe(self, *args, **kwargs):
-        try:
-            return self._call_gemini(*args, raise_errors=True, **kwargs)
-        except error.HTTPError as e:
-            if e.code == 400:
-                # Translators: Message of a dialog which may pop up while performing an AI call
-                msg = _("Error 400: Bad Request (Check API Key Format)")
-            elif e.code == 403:
-                # Translators: Message of a dialog which may pop up while performing an AI call
-                msg = _("Error 403: Forbidden (Check Region/Permission)")
-            elif e.code == 429:
-                # Translators: Message of a dialog which may pop up while performing an AI call
-                msg = _("Error 429: Quota Exceeded (Try later)")
+            contents = []
+            if isinstance(p_or_c, list):
+                contents = p_or_c
             else:
-                # Translators: Message of a dialog which may pop up while performing an AI call
-                msg = _("Server Error {code}: {reason}").format(code=e.code, reason=e.reason)
-            self.report_status(msg) 
-            show_error_dialog(msg)
-        except error.URLError as e:
-            # Translators: Message of a dialog which may pop up while performing an AI call
-            msg = _("Connection Error: {reason}").format(reason=e.reason)
-            self.report_status(msg) 
-            show_error_dialog(msg)
-        except Exception as e:
-            # Translators: Message of a dialog which may pop up while performing an AI call
-            msg = _("Error: {error}").format(error=e)
-            self.report_status(msg) 
-            show_error_dialog(msg)
-        return None
+                parts = [{"text": p_or_c}]
+                for att in atts:
+                    if 'file_uri' in att:
+                        parts.append({"file_data": {"mime_type": att['mime_type'], "file_uri": att['file_uri']}})
+                    else:
+                        parts.append({"inline_data": {"mime_type": att['mime_type'], "data": att['data']}})
+                contents = [{"parts": parts}]
+                
+            data = {
+                "contents": contents,
+                "generationConfig": {"temperature": 0.0, "topK": 40},
+                "safetySettings": [
+                    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+                ]
+            }
+            if j_mode: data["generationConfig"]["response_mime_type"] = "application/json"
+
+            req = request.Request(url, data=json.dumps(data).encode('utf-8'), headers=headers)
+            with get_proxy_opener().open(req, timeout=600) as response:
+                if response.status == 200:
+                    res = json.loads(response.read().decode('utf-8'))
+                    if not res.get('candidates'): return None
+                    candidate = res['candidates'][0]
+                    if candidate.get('finishReason') == 'SAFETY':
+                        # Translators: Error message when AI refuses to answer due to safety guidelines
+                        return "ERROR:" + _("Error: Response blocked by AI safety filters.")
+                    content = candidate.get('content', {})
+                    parts = content.get('parts', [])
+                    if parts and 'text' in parts[0]:
+                        return parts[0]['text'].strip()
+                    return None
+
+        res = GeminiHandler._call_with_rotation(_logic, prompt_or_contents, attachments, json_mode)
+        
+        if isinstance(res, str) and res.startswith("ERROR:"):
+            err_msg = res[6:]
+            # Translators: Status reported when an error occurs
+            self.report_status(_("Error"))
+            show_error_dialog(err_msg)
+            return None
+            
+        return res
 
     # Translators: Script description for Input Gestures dialog
     @scriptHandler.script(description=_("Records voice, transcribes it using AI, and types the result."))
@@ -1426,10 +2313,16 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     ext = os.path.splitext(f_path)[1].lower()
                     
                     if "[file_ocr]" in prompt_text:
-                        if ext in ['.tif', '.tiff']:
-                            pages_data = process_tiff_pages(f_path)
-                            for p_data in pages_data:
-                                attachments.append({'mime_type': 'image/jpeg', 'data': p_data})
+                        if ext in ['.pdf', '.tif', '.tiff'] and fitz:
+                            try:
+                                doc = fitz.open(f_path)
+                                for i in range(len(doc)):
+                                    page = doc.load_page(i)
+                                    pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+                                    data = base64.b64encode(pix.tobytes("jpg")).decode('utf-8')
+                                    attachments.append({'mime_type': 'image/jpeg', 'data': data})
+                                doc.close()
+                            except: pass
                         else:
                             file_uri = self._upload_file_to_gemini(f_path, mime_type)
                             if file_uri:
@@ -1522,119 +2415,98 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def _open_file_ocr_dialog(self):
         wc = "Files|*.pdf;*.jpg;*.jpeg;*.png;*.webp;*.tif;*.tiff"
-        # Translators: Standard title for opening a file
-        dlg = wx.FileDialog(gui.mainFrame, _("Open"), wildcard=wc, style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.FD_MULTIPLE)
-        if dlg.ShowModal() == wx.ID_OK:
-            paths = dlg.GetPaths()
-            paths.sort()
-            threading.Thread(target=self._process_file_ocr, args=(paths,), daemon=True).start()
-        dlg.Destroy()
+        self._browse_and_run(self._pre_process_ocr, wc, multiple=True)
 
-    def _process_file_ocr(self, paths):
-        if isinstance(paths, str): paths = [paths]
+    def _pre_process_ocr(self, paths):
+        try:
+            if not fitz:
+                # Translators: Error when PyMuPDF is missing
+                wx.CallAfter(wx.MessageBox, _("PyMuPDF library is missing."), "Error", wx.ICON_ERROR)
+                return
+            
+            v_doc = VirtualDocument(paths)
+            v_doc.scan()
+            
+            if v_doc.total_pages == 0:
+                # Translators: Error when no pages found
+                wx.CallAfter(wx.MessageBox, _("No readable pages found."), "Error", wx.ICON_ERROR)
+                return
+
+            wx.CallAfter(self._show_ocr_range_dialog, v_doc)
+        except Exception as e:
+            log.error(f"Error preparing OCR: {e}")
+
+    def _show_ocr_range_dialog(self, v_doc):
+        range_dlg = RangeDialog(gui.mainFrame, v_doc.total_pages)
+        if range_dlg.ShowModal() == wx.ID_OK:
+            settings = range_dlg.get_settings()
+            threading.Thread(target=self._process_file_ocr, args=(v_doc, settings['start'], settings['end']), daemon=True).start()
+        range_dlg.Destroy()
+
+    def _process_file_ocr(self, v_doc, start_page, end_page):
+        engine = config.conf["VisionAssistant"]["ocr_engine"]
+        target_lang = config.conf["VisionAssistant"]["target_language"]
         
         # Translators: Message reported when calling the OCR file recognition command
         msg = _("Uploading & Extracting...")
         wx.CallAfter(self.report_status, msg)
         
-        attachments = []
-        for path in paths:
-            try:
-                ext = os.path.splitext(path)[1].lower()
-                if ext in ['.tif', '.tiff']:
-                    pages_data = process_tiff_pages(path)
-                    for p_data in pages_data:
-                        attachments.append({'mime_type': 'image/jpeg', 'data': p_data})
-                else:
-                    mime_type = get_mime_type(path)
-                    file_uri = self._upload_file_to_gemini(path, mime_type)
-                    if file_uri:
-                        attachments.append({'mime_type': mime_type, 'file_uri': file_uri})
-            except: pass
-        
-        if not attachments:
-            self.current_status = _("Idle")
-            return
+        if engine == 'chrome':
+            def chrome_page_worker(page_idx):
+                try:
+                    file_path, internal_idx = v_doc.get_page_info(page_idx)
+                    doc = fitz.open(file_path)
+                    page = doc.load_page(internal_idx)
+                    pix = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+                    img_bytes = pix.tobytes("jpg")
+                    doc.close()
+                    
+                    txt = ChromeOCREngine.recognize(img_bytes)
+                    if not txt: return ""
+                    
+                    if target_lang != "English":
+                        txt = GoogleTranslator.translate(txt, target_lang)
+                    return f"--- Page {page_idx + 1} ---\n{txt}\n"
+                except Exception as e:
+                    return f"Error on page {page_idx + 1}: {e}\n"
 
-        p = "Extract all visible text from these files. Preserve original formatting (headings, lists, tables) using Markdown. Output ONLY the extracted text, without any introductory or concluding remarks. Separate content of different files with '---'."
-        
-        res = self._call_gemini_safe(p, attachments=attachments)
-        if res:
-            if not self._handle_direct_output(res):
-                wx.CallAfter(self._open_doc_chat_dialog, res, attachments, "", res)
-        else:
+            with ThreadPoolExecutor(max_workers=5) as executor:
+                results_gen = executor.map(chrome_page_worker, range(start_page, end_page + 1))
+                full_text = "\n".join(results_gen)
+            
             self.current_status = _("Idle")
+            if not self._handle_direct_output(full_text):
+                wx.CallAfter(self._open_doc_chat_dialog, full_text, [], "", full_text)
+                
+        else: # Gemini Engine
+            upload_path = v_doc.create_merged_pdf(start_page, end_page)
+            if not upload_path:
+                # Translators: Error message if PDF creation fails
+                wx.CallAfter(self.report_status, _("Error creating PDF."))
+                return
+
+            mime_type = "application/pdf"
+            file_uri = self._upload_file_to_gemini(upload_path, mime_type)
+            attachments = []
+            if file_uri: attachments = [{'mime_type': mime_type, 'file_uri': file_uri}]
+            
+            p = f"Extract all text from this document. Preserve formatting (Markdown). Then translate the content to {target_lang}. Output ONLY the translated content. Do not add explanations."
+            res = self._call_gemini_safe(p, attachments=attachments)
+            
+            try: os.remove(upload_path)
+            except: pass
+
+            if res:
+                if not self._handle_direct_output(res):
+                    wx.CallAfter(self._open_doc_chat_dialog, res, attachments, "", res)
+            else:
+                self.current_status = _("Idle")
 
     # Translators: Script description for Input Gestures dialog
-    @scriptHandler.script(description=_("Allows asking questions about a selected document (PDF/Text/Image)."))
+    @scriptHandler.script(description=_("Opens the Document Reader for detailed page-by-page analysis (PDF/Images)."))
     def script_analyzeDocument(self, gesture):
         if self.toggling: self.finish()
-        wx.CallLater(100, self._open_doc_dialog)
-
-    def _open_doc_dialog(self):
-        wc = "Doc|*.pdf;*.tif;*.tiff;*.txt;*.py;*.md"
-        path = self._browse_file(wc)
-        if path:
-            threading.Thread(target=self._process_doc_file, args=(path,), daemon=True).start()
-
-    def _process_doc_file(self, path):
-        # Translators: Message reported when calling the file analysis command
-        msg = _("Uploading & Analyzing...")
-        wx.CallAfter(self.report_status, msg)
-        mime_type = get_mime_type(path)
-        model = config.conf["VisionAssistant"]["model_name"]
-
-        if mime_type == "application/pdf" and not model_supports_pdf(model):
-            # Translators: Message reported when selected model doesn't support PDF input
-            msg = _("Models gemini-2.5-flash, gemini-2.0-flash, gemini-2.0-flash-lite do not support PDF input.")
-            wx.CallAfter(self.report_status, msg)
-            show_error_dialog(msg)
-            self.current_status = _("Idle")
-            return
-        
-        file_uri = self._upload_file_to_gemini(path, mime_type)
-        
-        if file_uri:
-            att = [{'mime_type': mime_type, 'file_uri': file_uri}]
-            self.current_status = _("Idle")
-            
-            if config.conf["VisionAssistant"]["skip_chat_dialog"]:
-                wx.CallAfter(self._ask_direct_question, att)
-            else:
-                # Translators: Initial message in document chat when calling the file analysis command
-                init_msg = _("Document ready. Ask your question.")
-                wx.CallAfter(self._open_doc_chat_dialog, init_msg, att, "")
-        else:
-            self.current_status = _("Idle")
-    
-    def _ask_direct_question(self, attachments):
-        # Translators: Title for the direct question dialog
-        title = _("Ask about document")
-        # Translators: Label for the text entry in direct question dialog
-        msg = _("Enter your question:")
-        dlg = wx.TextEntryDialog(gui.mainFrame, msg, title)
-        dlg.Raise()
-        if dlg.ShowModal() == wx.ID_OK:
-            q = dlg.GetValue()
-            if q.strip():
-                # Translators: Message reported when executing a question
-                self.report_status(_("Thinking..."))
-                threading.Thread(target=self._thread_direct_doc_query, args=(attachments, q), daemon=True).start()
-        dlg.Destroy()
-
-    def _thread_direct_doc_query(self, attachments, question):
-        lang = config.conf["VisionAssistant"]["ai_response_language"]
-        p = f"{question} (Strictly respond in {lang})"
-        
-        parts = []
-        for att in attachments:
-            parts.append({"file_data": {"mime_type": att['mime_type'], "file_uri": att['file_uri']}})
-        parts.append({"text": p})
-            
-        res = self._call_gemini_safe([{"parts": parts}])
-        if res:
-            self._handle_direct_output(res)
-        self.current_status = _("Idle")
+        wx.CallAfter(self._open_document_reader)
 
     def _open_doc_chat_dialog(self, init_msg, initial_attachments, doc_text, raw_text_for_save=None):
         if self.doc_dlg:
@@ -1645,32 +2517,19 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
         def doc_callback(ctx_atts, q, history, dum2):
             lang = config.conf["VisionAssistant"]["ai_response_language"]
-            
-            system_instr = (
-                f"STRICTLY Respond in {lang}. "
-                "Use Markdown formatting. "
-                "Analyze the attached content to answer."
-            )
-            
-            context_parts = []
+            system_instr = (f"STRICTLY Respond in {lang}. Use Markdown formatting. Analyze the attached content to answer.")
+            context_parts = [{"text": f"Context: {system_instr}"}]
             if ctx_atts:
                 for att in ctx_atts:
                     if 'file_uri' in att:
                         context_parts.append({"file_data": {"mime_type": att['mime_type'], "file_uri": att['file_uri']}})
                     elif 'data' in att:
                         context_parts.append({"inline_data": {"mime_type": att['mime_type'], "data": att['data']}})
-            context_parts.append({"text": f"Context: {system_instr}"})
-            
             messages = []
-            
             messages.append({"role": "user", "parts": context_parts})
             messages.append({"role": "model", "parts": [{"text": "Context received. Ready for questions."}]})
-
-            if history:
-                messages.extend(history)
-            
+            if history: messages.extend(history)
             messages.append({"role": "user", "parts": [{"text": q}]})
-            
             return self._call_gemini_safe(messages), None
             
         # Translators: Dialog title for a Chat dialog
@@ -1714,14 +2573,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def _thread_vision(self, img, w, h):
         lang = config.conf["VisionAssistant"]["ai_response_language"]
-        
         p = (
             f"Analyze this image. Describe the layout, visible text, and UI elements. "
             f"Use Markdown formatting (headings, lists) to organize the description. "
             f"Language: {lang}. Ensure the response is strictly in {lang}. "
             "IMPORTANT: Start directly with the description content. Do not add introductory sentences like 'Here is the analysis' or 'The image shows'."
         )
-        
         att = [{'mime_type': 'image/png', 'data': img}]
         res = self._call_gemini_safe(p, attachments=att)
         if res:
@@ -1739,7 +2596,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         def cb(atts, q, history, sz):
             lang = config.conf["VisionAssistant"]["ai_response_language"]
             current_user_msg = {"role": "user", "parts": [{"text": f"{q} (Answer strictly in {lang})"}]}
-            
             messages = []
             if not history:
                 parts = [{"text": f"Image Context. Target Language: {lang}"}]
@@ -1747,9 +2603,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     parts.append({"inline_data": {"mime_type": att['mime_type'], "data": att['data']}})
                 messages.append({"role": "user", "parts": parts})
                 messages.append({"role": "model", "parts": [{"text": text}]})
-            else:
-                messages.extend(history)
-                
+            else: messages.extend(history)
             messages.append(current_user_msg)
             return self._call_gemini_safe(messages), None
             
@@ -1775,9 +2629,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def _open_audio(self):
         wc = "Audio|*.mp3;*.wav;*.ogg"
-        path = self._browse_file(wc)
-        if path:
-            threading.Thread(target=self._thread_audio, args=(path,), daemon=True).start()
+        self._browse_and_run(self._thread_audio, wc)
 
     def _thread_audio(self, path):
         try:
@@ -1820,7 +2672,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def _open_video_dialog(self):
         # Translators: Title for the video URL entry dialog
-        title = _("YouTube / Instagram / Twitter Analysis")        # Translators: Label for the text entry in YouTube dialog
+        title = _("YouTube / Instagram / Twitter Analysis")
         # Translators: Label for the text entry in video dialog
         msg = _("Enter Video URL (YouTube/Instagram/Twitter):")
         dlg = wx.TextEntryDialog(gui.mainFrame, msg, title)
@@ -1963,8 +2815,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         msg = _("Captcha: {text}").format(text=text)
         wx.CallLater(200, self.report_status, msg)
 
-    # --- Update Management ---
-
     # Translators: Script description for Input Gestures dialog
     @scriptHandler.script(description=_("Checks for updates manually."))
     def script_checkUpdate(self, gesture):
@@ -2010,6 +2860,37 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             # Translators: Message when calling the command to translate from clipboard
             msg = _("Clipboard empty.")
             self.report_status(msg)
+
+    def on_settings_click(self, event):
+        try:
+            wx.CallAfter(gui.settingsDialogs.NVDASettingsDialog, gui.mainFrame, SettingsPanel)
+        except Exception:
+            # Translators: Message shown when settings dialog is already open
+            ui.message(_("Settings dialog is already open."))
+
+    def on_help_click(self, event):
+        # Translators: Message when opening documentation
+        self.report_status(_("Opening documentation..."))
+        addon = addonHandler.getCodeAddon()
+        doc_path = addon.getDocFilePath("readme.html")
+        if doc_path:
+            try:
+                os.startfile(doc_path)
+            except Exception as e:
+                show_error_dialog(str(e))
+        else:
+            # Translators: Error when help file is missing
+            show_error_dialog(_("Documentation file not found."))
+
+    def on_donate_click(self, event):
+        try:
+            curr_dir = os.path.dirname(__file__)
+            if curr_dir not in sys.path:
+                sys.path.append(curr_dir)
+            import donate_dialog
+            wx.CallAfter(donate_dialog.requestDonations, gui.mainFrame)
+        except Exception as e:
+            show_error_dialog(str(e))
 
     __gestures = {
         "kb:NVDA+shift+v": "activateLayer",

@@ -1,8 +1,4 @@
-# Attention!
-The internet in my country is completely down. I just wanted to inform you that if the project is not updating, this is the reason.
-Vision Assistant Pro Documentation
-
-# Vision Assistant Pro
+# Vision Assistant Pro Documentation
 
 **Vision Assistant Pro** is an advanced, multi-modal AI assistant for NVDA. It leverages Google's Gemini models to provide intelligent screen reading, translation, voice dictation, and document analysis capabilities.
 
@@ -12,13 +8,13 @@ _This add-on was released to the community in honor of the International Day of 
 
 Go to **NVDA Menu > Preferences > Settings > Vision Assistant Pro**.
 
-- **API Key:** Required. The field is masked by default for security (use "Show API Key" to view). Get a free key from [Google AI Studio](https://aistudio.google.com/).
-- **Model:** Choose between **Flash** (Fastest/Free) or **Pro** (High Intelligence) models based on your needs.
-- **Proxy URL:** Optional. Use this if Google is blocked in your region. You need a server address (URL) that receives your requests and forwards them to the Gemini API.
-  > **Note:** This is **not** for standard VPN/SOCKS proxies (like `127.0.0.1:1080`). It must be a web address (e.g., `https://my-custom-proxy.com`) that acts as a bridge to Google.
-- **Languages:** Set Source, Target, and AI Response languages.
+- **API Key:** Required. You can enter multiple keys (separated by commas or new lines). The assistant will automatically rotate between them if a quota limit is reached.
+- **AI Model:** Choose between **Flash** (Fastest/Free), **Lite**, or **Pro** (High Intelligence) models.
+- **Proxy URL:** Optional. Use this if Google is blocked in your region. It must be a web address that acts as a bridge to the Gemini API.
+- **OCR Engine:** Choose between **Chrome (Fast)** for quick results or **Gemini (Formatted)** for superior layout preservation and table recognition.
+- **TTS Voice:** Select the preferred voice style for generating audio files from document pages.
 - **Smart Swap:** Automatically swaps languages if the source text matches the target language.
-- **Direct Output:** Skips the chat window and announces the response directly via speech.
+- **Direct Output:** Skips the chat window and announces the AI response directly via speech.
 - **Clipboard Integration:** Automatically copies the AI response to the clipboard.
 
 ## 2. Command Layer & Shortcuts
@@ -34,19 +30,28 @@ To prevent keyboard conflicts, this add-on uses a **Command Layer**.
 | **R**         | Text Refiner             | Summarize, Fix Grammar, Explain, or run **Custom Prompts**.                 |
 | **V**         | Object Vision            | Describes the current navigator object.                                     |
 | **O**         | Full Screen Vision       | Analyzes the entire screen layout and content.                              |
-| **Shift + V** | Online Video Analysis | Analyze **YouTube**, **Instagram**, or **Twitter (X)** videos via URL. |
-| **D**         | Document Analysis        | Chat with PDF/TXT/MD/PY files.                                              |
-| **F**         | File OCR                 | Direct OCR from image/PDF/TIFF files (Multi-page TIFF supported).           |
-| **A**         | Audio Transcription      | Transcribe MP3/WAV/OGG files.                                               |
-| **C**         | CAPTCHA Solver           | Captures and solves CAPTCHA automatically.                                  |
+| **Shift + V** | Online Video Analysis    | Analyze **YouTube**, **Instagram**, or **Twitter (X)** videos via URL.      |
+| **D**         | Document Reader          | Advanced reader for PDF and images with page range selection.               |
+| **F**         | File OCR                 | Direct text recognition from selected image, PDF, or TIFF files.            |
+| **A**         | Audio Transcription      | Transcribe MP3, WAV, or OGG files into text.                                |
+| **C**         | CAPTCHA Solver           | Captures and solves CAPTCHAs on the screen or navigator object.             |
 | **S**         | Smart Dictation          | Converts speech to text. Press to start recording, again to stop/type.      |
-| **L**         | Status Reporting         | Announces the current status (e.g., "Uploading...", "Idle").                |
-| **U**         | Update Check             | Check GitHub for the latest version.                                        |
-| **H** | Commands Help | Displays a comprehensive list of all available shortcut keys and their descriptions within the command layer. |
+| **L**         | Status Reporting         | Announces current progress (e.g., "Scanning...", "Idle").                   |
+| **U**         | Update Check             | Manually check GitHub for the latest version of the add-on.                 |
+| **H**         | Commands Help            | Displays a list of all available shortcuts within the command layer.        |
+
+### 2.1 Document Reader Shortcuts (Inside Viewer)
+Once a document is opened via the **D** command:
+- **Ctrl + PageDown:** Move to the next page (announces page number).
+- **Ctrl + PageUp:** Move to the previous page (announces page number).
+- **Alt + A:** Open a chat dialog to ask questions about the document.
+- **Alt + R:** Force a re-scan of the current page or all pages using the Gemini engine.
+- **Alt + G:** Generate and save a high-quality audio file (WAV) from the content.
+- **Alt + S / Ctrl + S:** Save the extracted text as a TXT or HTML file.
 
 ## 3. Custom Prompts & Variables
 
-Create commands in Settings: `Name:Prompt Text` (separate with `|` or new lines).
+You can create powerful custom AI commands in Settings using the format: `Name:Prompt Text` (separate multiple commands with `|` or new lines).
 
 ### Available Variables
 
@@ -54,20 +59,32 @@ Create commands in Settings: `Name:Prompt Text` (separate with `|` or new lines)
 |------------------|--------------------------------------------------|------------------|
 | `[selection]`    | Currently selected text                          | Text             |
 | `[clipboard]`    | Clipboard content                                | Text             |
-| `[screen_obj]`   | Screenshot of navigator object                   | Image            |
+| `[screen_obj]`   | Screenshot of the navigator object               | Image            |
 | `[screen_full]`  | Full screen screenshot                           | Image            |
-| `[file_ocr]`     | Select image/PDF/TIFF (defaults to "Extract text")| Image, PDF, TIFF |
-| `[file_read]`    | Select text document                             | TXT, Code, PDF   |
-| `[file_audio]`   | Select audio file                                | MP3, WAV, OGG    |
+| `[file_ocr]`     | Select image/PDF file for text extraction        | Image, PDF, TIFF |
+| `[file_read]`    | Select document for reading                      | TXT, Code, PDF   |
+| `[file_audio]`   | Select audio file for analysis                   | MP3, WAV, OGG    |
 
 ### Example Custom Prompts
 
 - **Quick OCR:** `My OCR:[file_ocr]`
-- **Translate Image:** `Translate Img:Extract text from this image and translate to Persian. [file_ocr]`
+- **Translate Image:** `Translate Img:Extract text from this image and translate to English. [file_ocr]`
 - **Analyze Audio:** `Summarize Audio:Listen to this recording and summarize the main points. [file_audio]`
 - **Code Debugger:** `Debug:Find bugs in this code and explain them: [selection]`
 
-**Note:** An active internet connection is required for all AI features. Multi-page TIFFs are automatically processed.
+***
+**Note:** An active internet connection is required for all AI features. Multi-page documents and TIFFs are processed automatically.
+
+## Changes for 4.0
+*   **Advanced Document Reader:** A powerful new viewer for PDF and images with page range selection, background processing, and seamless `Ctrl+PageUp/Down` navigation.
+*   **New Tools Submenu:** Added a dedicated "Vision Assistant" submenu under NVDA's Tools menu for quicker access to core features, settings, and documentation.
+*   **Flexible Customization:** You can now choose your preferred OCR engine and TTS voice directly from the settings panel.
+*   **Multiple API Key Support:** Added support for multiple Gemini API keys to ensure continuous service. You can enter one key per line or separate them with commas in the settings.
+*   **Alternative OCR Engine:** Introduced a new OCR engine to ensure reliable text recognition even when hitting Gemini API quota limits.
+*   **Smart API Key Rotation:** Automatically switches to and remembers the fastest working API key to bypass quota limits without manual intervention.
+*   **Document to Audio:** Integrated capability to generate and save high-quality audio files (WAV) from document pages directly within the reader.
+*   **Redesigned Update Dialog:** Features a new accessible interface with a scrollable text box to clearly read version changes before installing.
+*   **Unified Status & UX:** Standardized file dialogs across the add-on and enhanced the 'L' command to report real-time progress for all background tasks.
 
 ## Changes for 3.6.0
 *   **Help System:** Added a help command (`H`) within the Command Layer to provide an easy-to-access list of all shortcuts and their functions.
