@@ -10,12 +10,13 @@ Bu eklenti, Engelliler Uluslararası Günü onuruna topluluğa sunulmuştur.
 
 **NVDA Menüsü > Tercihler > Ayarlar > Profesyonel Görsel Asistan** yolunu izleyin.
 
-- **API Anahtarı:** Gereklidir. [Google AI Studio](https://aistudio.google.com/) üzerinden ücretsiz bir anahtar alabilirsiniz.
-- **Model:** `gemini-2.5-flash-lite` (En hızlı) veya standart Flash modellerini seçin.
-- **Diller:** Kaynak, Hedef ve Yapay Zekâ Yanıt dillerini ayarlayın.
-- **Proxy Bağlantısı:** İsteğe bağlı. Bölgenizde Google engellenmişse bunu kullanın. İsteklerinizi alan ve Gemini API'sine ileten bir sunucu adresine (URL) ihtiyacınız vardır.
+- **API Anahtarı:** Gereklidir. [Google AI Studio](https://aistudio.google.com/) üzerinden ücretsiz bir anahtar alabilirsiniz. Birden fazla anahtar girebilirsiniz (virgülle veya yeni satırlarla ayırarak). Kota sınırına ulaşıldığında asistan otomatik olarak bunlar arasında geçiş yapacaktır.
+- **Yapay Zeka Modeli:** **Flash** (En Hızlı/Ücretsiz), **Lite** veya **Pro** (Yüksek Zeka) modelleri arasından seçim yapın.
+- **Proxy Adresi:** İsteğe bağlı. Bölgenizde Google engellenmişse bunu kullanın. Gemini API'sine köprü görevi gören bir web adresi olmalıdır. İsteklerinizi alan ve Gemini API'sine ileten bir sunucu adresine (URL) ihtiyacınız vardır.
   > **Not:** Bu, standart VPN/SOCKS proxy'leri için **değildir** ('127.0.0.1:1080' gibi). Google'a köprü görevi gören bir web adresi (ör. "https://my-custom-proxy.com") olmalıdır.
-- **Diller:** Kaynak, Hedef ve YZ Yanıt dillerini ayarlayın.
+- **OCR Motoru:** Hızlı sonuçlar için **Chrome (Hızlı)** veya üstün düzen koruması ve tablo tanıma için **Gemini (Biçimlendirilmiş)** arasında seçim yapın.
+- **TTS Sesi:** Belge sayfalarından ses dosyaları oluşturmak için tercih edilen ses stilini seçin.
+- **Diller:** Kaynak, Hedef ve Yapay Zekâ Yanıt dillerini ayarlayın.
 - **Akıllı takas:** Kaynak metin hedef dille eşleşirse dilleri otomatik olarak değiştirir.
 - **Doğrudan Çıktı:** Sohbet penceresini atlar ve yanıtı doğrudan konuşma yoluyla duyurur.
 - **Pano Entegrasyonu:** Yapay zeka yanıtını otomatik olarak panoya kopyalar.
@@ -44,6 +45,15 @@ Klavye kısayol çakışmalarını önlemek için bu eklenti bir **Komut Katman�
 | **U**         | Güncelleme Kontrolü     | GitHub üzerinden en son sürümü denetler.                                                |
 | **H** | Komut Yardımı | Kullanılabilir tüm kısayol tuşlarının kapsamlı bir listesini ve bunların komut katmanındaki açıklamalarını görüntüler. |
 
+### 2.1 Belge Okuyucu Kısayolları (İç Görüntüleyici)
+**D** komutuyla bir belge açıldığında:
+- **Ctrl + Sayfa Aşağı:** Sonraki sayfaya gider (sayfa numarasını duyurur).
+- **Ctrl + Sayfa Yukarı:** Önceki sayfaya gider (sayfa numarasını duyurur).
+- **Alt + A:** Belgeyle ilgili sorular sormak için bir sohbet iletişim kutusu açar.
+- **Alt + R:** Gemini motorunu kullanarak geçerli sayfanın veya tüm sayfaların yeniden taranmasını zorlar.
+- **Alt + G:** İçerikten yüksek kaliteli bir ses dosyası (WAV) oluşturur ve kaydeder.
+- **Alt + S / Ctrl + S:** Çıkarılan metni TXT veya HTML dosyası olarak kaydeder.
+
 ## 3. Özel İstemler ve Değişkenler
 
 Ayarlar bölümünde komutlar oluşturun: `Ad:İstem Metni` (`|` veya yeni satır ile ayırın).
@@ -68,6 +78,19 @@ Ayarlar bölümünde komutlar oluşturun: `Ad:İstem Metni` (`|` veya yeni satı
 * **Kod Hata Ayıklayıcı:** `Debug:Bu koddaki hataları bul ve açıkla: [selection]`
 
 **Not:** Tüm yapay zekâ özellikleri için aktif bir internet bağlantısı gereklidir. Çok sayfalı TIFF dosyaları otomatik olarak işlenir.
+
+## 4.0.1 için değişiklikler
+*   **Gelişmiş Belge Okuyucu:** Sayfa aralığı seçimi, arka planda işleme ve kesintisiz "Ctrl+Sayfa Yukarı/Aşağı" dolaşma özellikleriyle PDF ve görüntüler için yeni ve güçlü bir görüntüleyici.
+*   **Yeni Araçlar Alt Menüsü:** Temel özelliklere, ayarlara ve belgelere daha hızlı erişim için NVDA'nın Araçlar menüsü altına özel bir "Görsel Asistan" alt menüsü eklendi.
+*   **Esnek Özelleştirme:** Artık tercih ettiğiniz OCR motorunu ve TTS sesini doğrudan ayarlar panelinden seçebilirsiniz.
+*   **Çoklu API Anahtarı Desteği:** Birden fazla Gemini API anahtarı için destek eklendi. Ayarlarda her satıra bir anahtar girebilir veya bunları virgülle ayırabilirsiniz.
+*   **Alternatif OCR Motoru:** Gemini API kota sınırlarına ulaşıldığında bile güvenilir metin tanıma sağlamak için yeni bir OCR motoru kullanıma sunuldu.
+*   **Akıllı API Anahtarı Döndürme:** Kota sınırlarını aşmak için otomatik olarak en hızlı çalışan API anahtarına geçiş yapar ve onu hatırlar.
+*   **MP3/WAV'a belge Dönüştürme:** Hem MP3 (128kbps) hem de WAV formatlarında yüksek kaliteli ses dosyalarını doğrudan okuyucunun içinde oluşturma ve kaydetmeye yönelik entegre yetenek.
+*   **Instagram Hikayeleri Desteği:** URL'lerini kullanarak Instagram Hikayelerini tanımlama ve analiz etme yeteneği eklendi.
+*   **TikTok Desteği:** Kliplerin tam görsel betimlemesine ve sesli transkripsiyonuna olanak tanıyan TikTok videoları için destek eklendi.
+*   **Yeniden Tasarlanan Güncelleme İletişim Kutusu:** Yüklemeden önce sürüm değişikliklerini net bir şekilde okumak için kaydırılabilir bir metin kutusu içeren yeni, erişilebilir bir arayüz içerir.
+*   **Birleşik Durum ve UX:** Eklenti genelinde standartlaştırılmış dosya iletişim kutuları ve gerçek zamanlı ilerlemeyi bildirmek için 'L' komutu geliştirildi.
 
 ## 3.6.0 için değişiklikler
 * **Yardım Sistemi:** Tüm kısayolların ve işlevlerinin kolay erişilebilen bir listesini sağlamak için Komut Katmanı içine bir yardım komutu (`H`) eklendi.

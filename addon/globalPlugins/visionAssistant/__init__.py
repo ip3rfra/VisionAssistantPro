@@ -26,7 +26,7 @@ if lib_dir not in sys.path:
 
 try:
     import markdown as markdown_lib
-except:
+except ImportError:
     markdown_lib = None
 
 try:
@@ -297,18 +297,56 @@ def get_twitter_download_link(tweet_url):
 def get_instagram_download_link(insta_url):
     cj = cookiejar.CookieJar()
     opener = request.build_opener(request.HTTPCookieProcessor(cj))
-    headers = {'User-Agent': 'Mozilla/5.0', 'X-Requested-With': 'XMLHttpRequest', 'Referer': 'https://anon-viewer.com/'}
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Referer': 'https://anon-viewer.com/',
+        'Accept': '*/*'
+    }
     opener.addheaders = list(headers.items())
     try:
-        opener.open("https://anon-viewer.com/", timeout=120)
-        encoded_url = quote(insta_url, safe='')
-        api_url = f"https://anon-viewer.com/content.php?url={encoded_url}"
+        opener.open("https://anon-viewer.com/", timeout=30)
+        
+        if "/stories/" in insta_url:
+            parts = insta_url.split("/")
+            username = parts[parts.index("stories") + 1]
+            api_url = f"https://anon-viewer.com/content.php?url={username}&method=allstories"
+        else:
+            encoded_url = quote(insta_url, safe='')
+            api_url = f"https://anon-viewer.com/content.php?url={encoded_url}"
+
         response = opener.open(api_url, timeout=60)
         if response.getcode() == 200:
-            data = json.loads(response.read().decode('utf-8'))
+            res_content = response.read().decode('utf-8')
+            data = json.loads(res_content)
             html_text = data.get('html', '')
+            
             match = re.search(r'href="([^"]+anon-viewer\.com/media\.php\?media=[^"]+)"', html_text)
-            if match: return match.group(1).replace('&amp;', '&')
+            if match:
+                return match.group(1).replace('&amp;', '&')
+            
+            source_match = re.search(r'<source src="([^"]+)"', html_text)
+            if source_match:
+                return source_match.group(1).replace('&amp;', '&')
+    except: pass
+    return None
+
+def get_tiktok_download_link(tiktok_url):
+    api_url = "https://www.tikwm.com/api/"
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'X-Requested-With': 'XMLHttpRequest'
+    }
+    try:
+        params = {'url': tiktok_url, 'hd': '1'}
+        data = urlencode(params).encode('utf-8')
+        req = request.Request(api_url, data=data, headers=headers, method='POST')
+        opener = get_proxy_opener()
+        with opener.open(req, timeout=30) as response:
+            res = json.loads(response.read().decode('utf-8'))
+            if res.get('code') == 0:
+                play_url = res['data']['play']
+                return play_url if play_url.startswith('http') else "https://www.tikwm.com" + play_url
     except: pass
     return None
 
@@ -1550,7 +1588,7 @@ class DocumentViewerDialog(wx.Dialog):
 
     def _save_tts(self, text):
         # Translators: File dialog title for saving audio
-        path = get_file_path(_("Save Audio"), "WAV Files (*.wav)|*.wav", mode="save")
+        path = get_file_path(_("Save Audio"), "MP3 Files (*.mp3)|*.mp3|WAV Files (*.wav)|*.wav", mode="save")
         if path:
             voice = config.conf["VisionAssistant"]["tts_voice"]
             threading.Thread(target=self.tts_worker, args=(text, voice, path), daemon=True).start()
@@ -1562,17 +1600,34 @@ class DocumentViewerDialog(wx.Dialog):
         wx.CallAfter(ui.message, msg)
         try:
             audio_b64 = GeminiHandler.generate_speech(text, voice)
-            if not audio_b64 or " " in audio_b64[:50] or len(audio_b64) < 100:
+            if not audio_b64 or len(audio_b64) < 100:
                  wx.CallAfter(wx.MessageBox, f"TTS Error: {audio_b64}", "Error", wx.ICON_ERROR)
                  return
             missing_padding = len(audio_b64) % 4
             if missing_padding: audio_b64 += '=' * (4 - missing_padding)
             pcm_data = base64.b64decode(audio_b64)
-            with wave.open(path, "wb") as wf:
-                wf.setnchannels(1)
-                wf.setsampwidth(2)
-                wf.setframerate(24000)
-                wf.writeframes(pcm_data)
+
+            if path.lower().endswith(".mp3"):
+                import subprocess
+                lame_path = os.path.join(os.path.dirname(__file__), "lib", "lame.exe")
+                if not os.path.exists(lame_path):
+                    wx.CallAfter(wx.MessageBox, _("lame.exe not found in lib folder."), "Error", wx.ICON_ERROR)
+                    return
+                
+                process = subprocess.Popen(
+                    [lame_path, "-r", "-s", "24", "-m", "m", "-b", "128", "--bitwidth", "16", "--resample", "24", "-q", "0", "-", path],
+                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0)
+                )
+
+                process.communicate(input=pcm_data)
+            else:
+                with wave.open(path, "wb") as wf:
+                    wf.setnchannels(1)
+                    wf.setsampwidth(2)
+                    wf.setframerate(24000)
+                    wf.writeframes(pcm_data)
+
             # Translators: Spoken message when audio is saved
             res_msg = _("Audio Saved")
             if _vision_assistant_instance: _vision_assistant_instance.current_status = _("Idle")
@@ -1819,7 +1874,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             "D: " + _("Opens the Document Reader for detailed page-by-page analysis (PDF/Images).") + "\n" + \
             "F: " + _("Recognizes text from a selected image or PDF file.") + "\n" + \
             "A: " + _("Transcribes a selected audio file.") + "\n" + \
-            "Shift+V: " + _("Analyzes a YouTube, Instagram or Twitter video URL.") + "\n" + \
+            "Shift+V: " + _("Analyzes a YouTube, Instagram, Twitter or TikTok video URL.") + "\n" + \
             "C: " + _("Attempts to solve a CAPTCHA on the screen or navigator object.") + "\n" + \
             "S: " + _("Records voice, transcribes it using AI, and types the result.") + "\n" + \
             "L: " + _("Announces the current status of the add-on.") + "\n" + \
@@ -2665,16 +2720,16 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self.current_status = _("Idle")
 
     # Translators: Script description for Input Gestures dialog
-    @scriptHandler.script(description=_("Analyzes a YouTube, Instagram or Twitter video URL."))
+    @scriptHandler.script(description=_("Analyzes a YouTube, Instagram, Twitter or TikTok video URL."))
     def script_analyzeOnlineVideo(self, gesture):
         if self.toggling: self.finish()
         wx.CallLater(100, self._open_video_dialog)
 
     def _open_video_dialog(self):
         # Translators: Title for the video URL entry dialog
-        title = _("YouTube / Instagram / Twitter Analysis")
+        title = _("YouTube / Instagram / Twitter / TikTok Analysis")
         # Translators: Label for the text entry in video dialog
-        msg = _("Enter Video URL (YouTube/Instagram/Twitter):")
+        msg = _("Enter Video URL (YouTube/Instagram/Twitter/TikTok):")
         dlg = wx.TextEntryDialog(gui.mainFrame, msg, title)
         dlg.Raise()
         if dlg.ShowModal() == wx.ID_OK:
@@ -2698,10 +2753,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         is_youtube = any(d in domain for d in ["youtube.com", "youtu.be"])
         is_insta = "instagram.com" in domain
         is_twitter = any(d in domain for d in ["twitter.com", "x.com"])
+        is_tiktok = "tiktok.com" in domain
 
-        if not (is_youtube or is_insta or is_twitter):
+        if not (is_youtube or is_insta or is_twitter or is_tiktok):
             # Translators: Error message when the platform is not supported
-            wx.CallAfter(self.report_status, _("Error: Unsupported platform. Only YouTube, Instagram, and Twitter are supported."))
+            wx.CallAfter(self.report_status, _("Error: Unsupported platform. Only YouTube, Instagram, Twitter, and TikTok are supported."))
             return
 
         # Translators: Message reported when processing video link
@@ -2712,15 +2768,16 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
         chat_attachments = []
 
-        if is_insta or is_twitter:
+        if is_insta or is_twitter or is_tiktok:
             if is_insta:
                 direct_link = get_instagram_download_link(url)
-                # Translators: Error message for Instagram extraction failure
                 err_msg = _("Error: Could not extract Instagram video.")
-            else:
+            elif is_twitter:
                 direct_link = get_twitter_download_link(url)
-                # Translators: Error message for Twitter extraction failure
                 err_msg = _("Error: Could not extract Twitter video.")
+            else:
+                direct_link = get_tiktok_download_link(url)
+                err_msg = _("Error: Could not extract TikTok video.")
 
             if not direct_link:
                 wx.CallAfter(self.report_status, err_msg)
