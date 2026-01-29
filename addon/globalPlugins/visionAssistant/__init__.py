@@ -496,6 +496,7 @@ class GoogleTranslator:
 
 class GeminiHandler:
     _working_key_idx = 0 
+    _file_uri_keys = {}
 
     @staticmethod
     def _get_api_keys():
@@ -517,6 +518,35 @@ class GeminiHandler:
             if e.code == 429: return "QUOTA_EXCEEDED"
             if e.code >= 500: return "SERVER_ERROR"
         return str(e)
+
+    @staticmethod
+    def _register_file_uri(uri, key):
+        if uri and key:
+            GeminiHandler._file_uri_keys[uri] = key
+            while len(GeminiHandler._file_uri_keys) > 200:
+                GeminiHandler._file_uri_keys.pop(next(iter(GeminiHandler._file_uri_keys)))
+
+    @staticmethod
+    def _get_registered_key(uri):
+        if not uri:
+            return None
+        return GeminiHandler._file_uri_keys.get(uri)
+
+    @staticmethod
+    def _call_with_key(func_logic, key, *args):
+        try:
+            return func_logic(key, *args)
+        except error.HTTPError as e:
+            err_msg = GeminiHandler._handle_error(e)
+            if err_msg == "QUOTA_EXCEEDED":
+                # Translators: Message of a dialog which may pop up while performing an AI call
+                err_msg = _("Error 429: Quota Exceeded (Try later)")
+            elif err_msg == "SERVER_ERROR":
+                # Translators: Message of a dialog which may pop up while performing an AI call
+                err_msg = _("Server Error {code}: {reason}").format(code=e.code, reason=e.reason)
+            return "ERROR:" + err_msg
+        except Exception as e:
+            return "ERROR:" + str(e)
 
     @staticmethod
     def _call_with_rotation(func_logic, *args):
@@ -550,7 +580,7 @@ class GeminiHandler:
             model = config.conf["VisionAssistant"]["model_name"]
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
             payload = {"contents": [{"parts": [{"text": f"Translate to {lang}. Output ONLY translation."}, {"text": txt}]}]}
-            req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json"})
+            req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json", "x-goog-api-key": key})
             with GeminiHandler._get_opener().open(req, timeout=90) as r:
                 return json.loads(r.read().decode())['candidates'][0]['content']['parts'][0]['text']
         return GeminiHandler._call_with_rotation(_logic, text, target_lang)
@@ -560,8 +590,8 @@ class GeminiHandler:
         def _logic(key, img_data):
             model = config.conf["VisionAssistant"]["model_name"]
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
-            payload = {"contents": [{"parts": [{"text": "Extract all visible text from this image. Strictly preserve original formatting (headings, lists, tables) using Markdown. Do not output any system messages or code block backticks (```). Output ONLY the raw content."}, {"inline_data": {"mime_type": "image/jpeg", "data": base64.b64encode(img_data).decode('utf-8')}}]}]}
-            req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json"})
+            payload = {"contents": [{"parts": [{"inline_data": {"mime_type": "image/jpeg", "data": base64.b64encode(img_data).decode('utf-8')}}, {"text": "Extract all visible text from this image. Strictly preserve original formatting (headings, lists, tables) using Markdown. Do not output any system messages or code block backticks (```). Output ONLY the raw content."}]}]}
+            req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json", "x-goog-api-key": key})
             with GeminiHandler._get_opener().open(req, timeout=90) as r:
                 return json.loads(r.read().decode())['candidates'][0]['content']['parts'][0]['text']
         return GeminiHandler._call_with_rotation(_logic, image_bytes)
@@ -571,7 +601,8 @@ class GeminiHandler:
         keys = GeminiHandler._get_api_keys()
         if not keys: 
             # Translators: Error message for missing API Keys
-            return [ _("No API Keys.") ]
+            return [ "ERROR:" + _("No API Keys.") ]
+        model = config.conf["VisionAssistant"]["model_name"]
         
         opener = GeminiHandler._get_opener()
         proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
@@ -581,7 +612,7 @@ class GeminiHandler:
             try:
                 f_size = os.path.getsize(file_path)
                 init_url = f"{base_url}/upload/v1beta/files?key={key}"
-                headers = {"X-Goog-Upload-Protocol": "resumable", "X-Goog-Upload-Command": "start", "X-Goog-Upload-Header-Content-Length": str(f_size), "X-Goog-Upload-Header-Content-Type": mime_type, "Content-Type": "application/json"}
+                headers = {"X-Goog-Upload-Protocol": "resumable", "X-Goog-Upload-Command": "start", "X-Goog-Upload-Header-Content-Length": str(f_size), "X-Goog-Upload-Header-Content-Type": mime_type, "Content-Type": "application/json", "x-goog-api-key": key}
                 
                 req = request.Request(init_url, data=json.dumps({"file": {"display_name": "batch"}}).encode(), headers=headers, method="POST")
                 with opener.open(req, timeout=60) as r: upload_url = r.headers.get("x-goog-upload-url")
@@ -592,28 +623,51 @@ class GeminiHandler:
                     res = json.loads(r.read().decode())
                     uri, name = res['file']['uri'], res['file']['name']
                 
+                active = False
                 for _ in range(30):
-                    with opener.open(f"{base_url}/v1beta/{name}?key={key}", timeout=30) as r:
-                        if json.loads(r.read().decode()).get('state') == "ACTIVE": break
+                    req_check = request.Request(f"{base_url}/v1beta/{name}?key={key}", headers={"x-goog-api-key": key})
+                    with opener.open(req_check, timeout=30) as r:
+                        state = json.loads(r.read().decode()).get('state')
+                        if state == "ACTIVE":
+                            active = True
+                            break
+                        if state == "FAILED":
+                            break
                     time.sleep(2)
+
+                if not active:
+                    if i < len(keys) - 1:
+                        continue
+                    return [ "ERROR:" + _("Upload failed.") ]
+
+                GeminiHandler._register_file_uri(uri, key)
                 
-                model = config.conf["VisionAssistant"]["model_name"]
                 url = f"{base_url}/v1beta/models/{model}:generateContent?key={key}"
                 prompt = "Extract all visible text from this document. Strictly preserve original formatting (headings, lists, tables) using Markdown. You MUST insert the exact delimiter '[[[PAGE_SEP]]]' immediately after the content of every single page. Do not output any system messages or code block backticks (```). Output ONLY the raw content."
                 contents = [{"parts": [{"file_data": {"mime_type": mime_type, "file_uri": uri}}, {"text": prompt}]}]
                 
-                req_gen = request.Request(url, data=json.dumps({"contents": contents}).encode(), headers={"Content-Type": "application/json"})
+                req_gen = request.Request(url, data=json.dumps({"contents": contents}).encode(), headers={"Content-Type": "application/json", "x-goog-api-key": key})
                 with opener.open(req_gen, timeout=180) as r:
                     res = json.loads(r.read().decode())
                     text = res['candidates'][0]['content']['parts'][0]['text']
                     return text.split('[[[PAGE_SEP]]]')
                     
             except error.HTTPError as e:
-                err_msg = GeminiHandler._handle_error(e)
-                if err_msg in ["QUOTA_EXCEEDED", "SERVER_ERROR"] and i < len(keys) - 1: continue
-                return [err_msg]
-            except Exception as e: return [str(e)]
-        return [_("All keys failed.")]
+                err_code = GeminiHandler._handle_error(e)
+                if err_code in ["QUOTA_EXCEEDED", "SERVER_ERROR"] and i < len(keys) - 1:
+                    continue
+                if err_code == "QUOTA_EXCEEDED":
+                    # Translators: Message of a dialog which may pop up while performing an AI call
+                    err_msg = _("Error 429: Quota Exceeded (Try later)")
+                elif err_code == "SERVER_ERROR":
+                    # Translators: Message of a dialog which may pop up while performing an AI call
+                    err_msg = _("Server Error {code}: {reason}").format(code=e.code, reason=e.reason)
+                else:
+                    err_msg = err_code
+                return ["ERROR:" + err_msg]
+            except Exception as e:
+                return ["ERROR:" + str(e)]
+        return ["ERROR:" + _("All keys failed.")]
 
     @staticmethod
     def chat(history, new_msg, file_uri, mime_type):
@@ -624,14 +678,19 @@ class GeminiHandler:
             url = f"{base_url}/v1beta/models/{model}:generateContent?key={key}"
             
             contents = list(hist)
-            user_parts = [{"text": msg}]
             if uri: 
-                user_parts.append({"file_data": {"mime_type": mime, "file_uri": uri}})
+                user_parts = [{"file_data": {"mime_type": mime, "file_uri": uri}}]
+            else:
+                user_parts = []
+            user_parts.append({"text": msg})
             contents.append({"role": "user", "parts": user_parts})
             
-            req = request.Request(url, data=json.dumps({"contents": contents}).encode(), headers={"Content-Type": "application/json"})
+            req = request.Request(url, data=json.dumps({"contents": contents}).encode(), headers={"Content-Type": "application/json", "x-goog-api-key": key})
             with GeminiHandler._get_opener().open(req, timeout=90) as r:
                 return json.loads(r.read().decode())['candidates'][0]['content']['parts'][0]['text']
+        forced_key = GeminiHandler._get_registered_key(file_uri) if file_uri else None
+        if forced_key:
+            return GeminiHandler._call_with_key(_logic, forced_key, history, new_msg, file_uri, mime_type)
         return GeminiHandler._call_with_rotation(_logic, history, new_msg, file_uri, mime_type)
 
     @staticmethod
@@ -646,7 +705,7 @@ class GeminiHandler:
             try:
                 f_size = os.path.getsize(file_path)
                 init_url = f"{base_url}/upload/v1beta/files?key={key}"
-                headers = {"X-Goog-Upload-Protocol": "resumable", "X-Goog-Upload-Command": "start", "X-Goog-Upload-Header-Content-Length": str(f_size), "X-Goog-Upload-Header-Content-Type": mime_type, "Content-Type": "application/json"}
+                headers = {"X-Goog-Upload-Protocol": "resumable", "X-Goog-Upload-Command": "start", "X-Goog-Upload-Header-Content-Length": str(f_size), "X-Goog-Upload-Header-Content-Type": mime_type, "Content-Type": "application/json", "x-goog-api-key": key}
                 req = request.Request(init_url, data=json.dumps({"file": {"display_name": os.path.basename(file_path)}}).encode(), headers=headers, method="POST")
                 with opener.open(req, timeout=60) as r: upload_url = r.headers.get("x-goog-upload-url")
                 with open(file_path, 'rb') as f: f_data = f.read()
@@ -655,8 +714,12 @@ class GeminiHandler:
                     res = json.loads(r.read().decode())
                     uri, name = res['file']['uri'], res['file']['name']
                 for _ in range(30):
-                    with opener.open(f"{base_url}/v1beta/{name}?key={key}", timeout=30) as r:
-                        if json.loads(r.read().decode()).get('state') == "ACTIVE": return uri
+                    req_check = request.Request(f"{base_url}/v1beta/{name}?key={key}", headers={"x-goog-api-key": key})
+                    with opener.open(req_check, timeout=30) as r:
+                        state = json.loads(r.read().decode()).get('state')
+                        if state == "ACTIVE":
+                            GeminiHandler._register_file_uri(uri, key)
+                            return uri
                     time.sleep(2)
                 return None 
             except: continue 
@@ -682,7 +745,7 @@ class GeminiHandler:
                     "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}}
                 }
             }
-            req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json"})
+            req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json", "x-goog-api-key": key})
             with GeminiHandler._get_opener().open(req, timeout=600) as r:
                 res = json.loads(r.read().decode())
                 candidates = res.get('candidates', [])
@@ -1213,6 +1276,7 @@ class ChatDialog(wx.Dialog):
         ChatDialog.instance = self
         self.file_path = file_path
         self.file_uri = None
+        self.mime_type = get_mime_type(file_path)
         self.history = []
         
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -1246,8 +1310,7 @@ class ChatDialog(wx.Dialog):
         self.Destroy()
 
     def init_upload(self):
-        mime = get_mime_type(self.file_path)
-        uri = GeminiHandler.upload_for_chat(self.file_path, mime)
+        uri = GeminiHandler.upload_for_chat(self.file_path, self.mime_type)
         if uri and not str(uri).startswith("ERROR:"):
             self.file_uri = uri
             wx.CallAfter(self.on_ready)
@@ -1272,7 +1335,7 @@ class ChatDialog(wx.Dialog):
         threading.Thread(target=self.do_chat, args=(msg,), daemon=True).start()
 
     def do_chat(self, msg):
-        resp = GeminiHandler.chat(self.history, msg, self.file_uri, "application/pdf")
+        resp = GeminiHandler.chat(self.history, msg, self.file_uri, self.mime_type)
         
         if str(resp).startswith("ERROR:"):
             show_error_dialog(resp[6:])
@@ -1830,7 +1893,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 LauncherDialog.instance.Destroy()
         except: pass
         
-        if hasattr(self, 'update_timer') and self.update_timer.IsRunning():
+        if hasattr(self, 'update_timer') and self.update_timer and self.update_timer.IsRunning():
             self.update_timer.Stop()
         
         for dlg in [self.refine_dlg, self.refine_menu_dlg, self.vision_dlg, self.doc_dlg]:
@@ -1901,7 +1964,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         api_key = config.conf["VisionAssistant"]["api_key"].strip()
         keys = GeminiHandler._get_api_keys()
         if not keys: return None
-        api_key = keys[0]
+        key_idx = GeminiHandler._working_key_idx % len(keys)
+        api_key = keys[key_idx]
 
         proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
         base_url = proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
@@ -1916,7 +1980,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 "X-Goog-Upload-Command": "start",
                 "X-Goog-Upload-Header-Content-Length": str(file_size),
                 "X-Goog-Upload-Header-Content-Type": mime_type,
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "x-goog-api-key": api_key
             }
             metadata = {"file": {"display_name": filename}}
             req_init = request.Request(initial_url, data=json.dumps(metadata).encode('utf-8'), headers=headers_init, method="POST")
@@ -1948,11 +2013,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             check_url = f"{base_url}/v1beta/{file_name_id}?key={api_key}"
             for _ in range(30):
                 try:
-                    with get_proxy_opener().open(check_url, timeout=10) as response:
+                    req_check = request.Request(check_url, headers={"x-goog-api-key": api_key})
+                    with get_proxy_opener().open(req_check, timeout=10) as response:
                         state_data = json.loads(response.read().decode('utf-8'))
                         state = state_data.get('state')
                         if state == "ACTIVE":
-                            return state_data.get('uri')
+                            file_uri = state_data.get('uri')
+                            GeminiHandler._register_file_uri(file_uri, api_key)
+                            return file_uri
                         elif state == "FAILED":
                             return None
                 except: pass
@@ -1982,23 +2050,50 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 
     def _call_gemini_safe(self, prompt_or_contents, attachments=[], json_mode=False):
+        def _has_parts(contents):
+            for item in contents:
+                if not isinstance(item, dict):
+                    continue
+                parts = item.get("parts", [])
+                for part in parts:
+                    if isinstance(part, dict) and part:
+                        return True
+            return False
+
+        if isinstance(prompt_or_contents, list):
+            if not _has_parts(prompt_or_contents):
+                # Translators: Error message when there's no content to send
+                err_msg = _("Nothing to send.")
+                self.report_status(_("Error"))
+                show_error_dialog(err_msg)
+                return None
+        else:
+            if not prompt_or_contents and not attachments:
+                # Translators: Error message when there's no content to send
+                err_msg = _("Nothing to send.")
+                self.report_status(_("Error"))
+                show_error_dialog(err_msg)
+                return None
+
         def _logic(key, p_or_c, atts, j_mode):
             model = config.conf["VisionAssistant"]["model_name"]
             proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
             base_url = proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
             url = f"{base_url}/v1beta/models/{model}:generateContent?key={key}"
-            headers = {"Content-Type": "application/json; charset=UTF-8", "x-api-key": key}
+            headers = {"Content-Type": "application/json; charset=UTF-8", "x-goog-api-key": key}
             
             contents = []
             if isinstance(p_or_c, list):
                 contents = p_or_c
             else:
-                parts = [{"text": p_or_c}]
+                parts = []
                 for att in atts:
                     if 'file_uri' in att:
                         parts.append({"file_data": {"mime_type": att['mime_type'], "file_uri": att['file_uri']}})
                     else:
                         parts.append({"inline_data": {"mime_type": att['mime_type'], "data": att['data']}})
+                if p_or_c:
+                    parts.append({"text": p_or_c})
                 contents = [{"parts": parts}]
                 
             data = {
@@ -2028,7 +2123,19 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                         return parts[0]['text'].strip()
                     return None
 
-        res = GeminiHandler._call_with_rotation(_logic, prompt_or_contents, attachments, json_mode)
+        forced_key = None
+        if attachments:
+            for att in attachments:
+                file_uri = att.get("file_uri") if isinstance(att, dict) else None
+                registered_key = GeminiHandler._get_registered_key(file_uri)
+                if registered_key:
+                    forced_key = registered_key
+                    break
+
+        if forced_key:
+            res = GeminiHandler._call_with_key(_logic, forced_key, prompt_or_contents, attachments, json_mode)
+        else:
+            res = GeminiHandler._call_with_rotation(_logic, prompt_or_contents, attachments, json_mode)
         
         if isinstance(res, str) and res.startswith("ERROR:"):
             err_msg = res[6:]
@@ -2527,11 +2634,17 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
             with ThreadPoolExecutor(max_workers=5) as executor:
                 results_gen = executor.map(chrome_page_worker, range(start_page, end_page + 1))
-                full_text = "\n".join(results_gen)
+                full_text = "\n".join(results_gen).strip()
+
+            if not full_text:
+                self.current_status = _("Idle")
+                # Translators: Error shown when OCR finds no text in the selected files
+                wx.CallAfter(show_error_dialog, _("No text detected in the selected file(s)."))
+                return
             
             self.current_status = _("Idle")
             if not self._handle_direct_output(full_text):
-                wx.CallAfter(self._open_doc_chat_dialog, full_text, [], "", full_text)
+                wx.CallAfter(self._open_doc_chat_dialog, full_text, [], full_text, full_text)
                 
         else: # Gemini Engine
             upload_path = v_doc.create_merged_pdf(start_page, end_page)
@@ -2542,8 +2655,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
             mime_type = "application/pdf"
             file_uri = self._upload_file_to_gemini(upload_path, mime_type)
-            attachments = []
-            if file_uri: attachments = [{'mime_type': mime_type, 'file_uri': file_uri}]
+            if not file_uri:
+                try: os.remove(upload_path)
+                except: pass
+                self.current_status = _("Idle")
+                wx.CallAfter(self.report_status, _("Upload failed."))
+                return
+            attachments = [{'mime_type': mime_type, 'file_uri': file_uri}]
             
             p = f"Extract all text from this document. Preserve formatting (Markdown). Then translate the content to {target_lang}. Output ONLY the translated content. Do not add explanations."
             res = self._call_gemini_safe(p, attachments=attachments)
@@ -2551,9 +2669,15 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             try: os.remove(upload_path)
             except: pass
 
+            if isinstance(res, str) and not res.strip():
+                self.current_status = _("Idle")
+                # Translators: Error shown when OCR finds no text in the selected files
+                wx.CallAfter(show_error_dialog, _("No text detected in the selected file(s)."))
+                return
+
             if res:
                 if not self._handle_direct_output(res):
-                    wx.CallAfter(self._open_doc_chat_dialog, res, attachments, "", res)
+                    wx.CallAfter(self._open_doc_chat_dialog, res, attachments, res, res)
             else:
                 self.current_status = _("Idle")
 
@@ -2573,13 +2697,16 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         def doc_callback(ctx_atts, q, history, dum2):
             lang = config.conf["VisionAssistant"]["ai_response_language"]
             system_instr = (f"STRICTLY Respond in {lang}. Use Markdown formatting. Analyze the attached content to answer.")
-            context_parts = [{"text": f"Context: {system_instr}"}]
+            context_parts = []
             if ctx_atts:
                 for att in ctx_atts:
                     if 'file_uri' in att:
                         context_parts.append({"file_data": {"mime_type": att['mime_type'], "file_uri": att['file_uri']}})
                     elif 'data' in att:
                         context_parts.append({"inline_data": {"mime_type": att['mime_type'], "data": att['data']}})
+            elif doc_text and not history:
+                context_parts.append({"text": f"Document OCR text:\n{doc_text}"})
+            context_parts.append({"text": f"Context: {system_instr}"})
             messages = []
             messages.append({"role": "user", "parts": context_parts})
             messages.append({"role": "model", "parts": [{"text": "Context received. Ready for questions."}]})
@@ -2652,13 +2779,19 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             lang = config.conf["VisionAssistant"]["ai_response_language"]
             current_user_msg = {"role": "user", "parts": [{"text": f"{q} (Answer strictly in {lang})"}]}
             messages = []
-            if not history:
-                parts = [{"text": f"Image Context. Target Language: {lang}"}]
+            initial_history = (not history) or (len(history) == 1 and history[0].get("role") == "model")
+            if initial_history:
+                parts = []
                 for att in atts:
                     parts.append({"inline_data": {"mime_type": att['mime_type'], "data": att['data']}})
+                parts.append({"text": f"Image Context. Target Language: {lang}"})
                 messages.append({"role": "user", "parts": parts})
-                messages.append({"role": "model", "parts": [{"text": text}]})
-            else: messages.extend(history)
+                if history and history[0].get("role") == "model":
+                    messages.append(history[0])
+                else:
+                    messages.append({"role": "model", "parts": [{"text": text}]})
+            else:
+                messages.extend(history)
             messages.append(current_user_msg)
             return self._call_gemini_safe(messages), None
             
@@ -2710,7 +2843,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if res:
                 self.current_status = _("Idle")
                 if not self._handle_direct_output(res):
-                    wx.CallAfter(self._open_doc_chat_dialog, res, att, "", res)
+                    wx.CallAfter(self._open_doc_chat_dialog, res, att, res, res)
             else:
                 self.current_status = _("Idle")
         except: 
@@ -2804,7 +2937,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     if res:
                         self.current_status = _("Idle")
                         if not self._handle_direct_output(res):
-                            wx.CallAfter(self._open_doc_chat_dialog, res, chat_attachments, "", res)
+                            wx.CallAfter(self._open_doc_chat_dialog, res, chat_attachments, res, res)
             finally:
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
@@ -2817,7 +2950,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if res:
                 self.current_status = _("Idle")
                 if not self._handle_direct_output(res):
-                    wx.CallAfter(self._open_doc_chat_dialog, res, chat_attachments, "", res)
+                    wx.CallAfter(self._open_doc_chat_dialog, res, chat_attachments, res, res)
             else:
                 self.current_status = _("Idle")
 
