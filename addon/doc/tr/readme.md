@@ -56,7 +56,11 @@ Klavye kısayol çakışmalarını önlemek için bu eklenti bir **Komut Katman�
 
 ## 3. Özel İstemler ve Değişkenler
 
-Ayarlar bölümünde komutlar oluşturun: `Ad:İstem Metni` (`|` veya yeni satır ile ayırın).
+Sistemi ve özel istemleri yapılandırmak için **Ayarlar > İstemler > İstemleri Yönet...**'i açın.
+
+- **Varsayılan İstemler sekmesi:** yerleşik istemleri düzenleyin. Tek bir istemi sıfırlayabilir veya tüm varsayılanları sıfırlayabilirsiniz.
+- **Özel İstemler sekmesi:** özel istemleri ekleyin, düzenleyin, kaldırın ve yeniden sıralayın.
+- **Değişken Kılavuzu düğmesi:** desteklenen tüm değişkenleri ve giriş türlerini içeren bir yardım penceresi açar.
 
 ### Kullanılabilir Değişkenler
 
@@ -77,7 +81,16 @@ Ayarlar bölümünde komutlar oluşturun: `Ad:İstem Metni` (`|` veya yeni satı
 * **Ses Analizi:** `Summarize Audio:Bu kaydı dinle ve ana noktaları özetle. [file_audio]`
 * **Kod Hata Ayıklayıcı:** `Debug:Bu koddaki hataları bul ve açıkla: [selection]`
 
+***
 **Not:** Tüm yapay zekâ özellikleri için aktif bir internet bağlantısı gereklidir. Çok sayfalı TIFF dosyaları otomatik olarak işlenir.
+
+## 4.0.3 için değişiklikler
+*   **Gelişmiş Ağ Dayanıklılığı:** Kararsız internet bağlantılarını ve geçici sunucu hatalarını daha iyi ele almak ve daha güvenilir AI yanıtları sağlamak için otomatik yeniden deneme mekanizması eklendi.
+*   **Görsel Çeviri İletişim Kutusu:** Çeviri sonuçları için özel bir pencere eklendi. Kullanıcılar artık OCR sonuçlarına benzer şekilde kolayca dolaşabilir ve uzun çevirileri satır satır okuyabilir.
+*   **Toplu Biçimlendirilmiş Görünüm:** Belge Okuyucudaki "Biçimlendirilmiş Görünüm" özelliği artık işlenen tüm sayfaları anlaşılır sayfa başlıklarına sahip tek, düzenli bir pencerede görüntülüyor.
+*   **Optimize Edilmiş OCR İş Akışı:** Tek sayfalı belgeler için sayfa aralığı seçimini otomatik olarak atlayarak tanıma sürecini daha hızlı ve sorunsuz hale getirir.
+*   **Geliştirilmiş API Kararlılığı:** Anahtar yönlendirme çakışmalarından kaynaklanan olası "Tüm API Anahtarları başarısız oldu" hatalarını çözen, daha sağlam bir başlık tabanlı kimlik doğrulama yöntemine geçildi.
+*   **Hata Düzeltmeleri:** Eklentinin sonlandırılması sırasında ortaya çıkan bir sorun ve sohbet iletişim kutusundaki odaklanma hatası da dahil olmak üzere çeşitli olası kilitlenmeler çözüldü.
 
 ## 4.0.1 için değişiklikler
 *   **Gelişmiş Belge Okuyucu:** Sayfa aralığı seçimi, arka planda işleme ve kesintisiz "Ctrl+Sayfa Yukarı/Aşağı" dolaşma özellikleriyle PDF ve görüntüler için yeni ve güçlü bir görüntüleyici.
