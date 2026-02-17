@@ -80,36 +80,65 @@ MODELS = [
 ]
 
 GEMINI_VOICES = [
-    # Translators: Voice style description (e.g., Bright, Calm, Formal).
+    # Translators: Adjective describing a bright AI voice style.
     ("Zephyr", _("Bright")), 
+    # Translators: Adjective describing an upbeat AI voice style.
     ("Puck", _("Upbeat")), 
+    # Translators: Adjective describing an informative AI voice style.
     ("Charon", _("Informative")), 
+    # Translators: Adjective describing a firm AI voice style.
     ("Kore", _("Firm")), 
+    # Translators: Adjective describing an excitable AI voice style.
     ("Fenrir", _("Excitable")), 
+    # Translators: Adjective describing a youthful AI voice style.
     ("Leda", _("Youthful")), 
+    # Translators: Adjective describing a firm AI voice style.
     ("Orus", _("Firm")), 
+    # Translators: Adjective describing a breezy AI voice style.
     ("Aoede", _("Breezy")), 
+    # Translators: Adjective describing an easy-going AI voice style.
     ("Callirrhoe", _("Easy-going")), 
+    # Translators: Adjective describing a bright AI voice style.
     ("Autonoe", _("Bright")), 
+    # Translators: Adjective describing a breathy AI voice style.
     ("Enceladus", _("Breathy")), 
+    # Translators: Adjective describing a clear AI voice style.
     ("Iapetus", _("Clear")), 
+    # Translators: Adjective describing an easy-going AI voice style.
     ("Umbriel", _("Easy-going")), 
+    # Translators: Adjective describing a smooth AI voice style.
     ("Algieba", _("Smooth")), 
+    # Translators: Adjective describing a smooth AI voice style.
     ("Despina", _("Smooth")), 
+    # Translators: Adjective describing a clear AI voice style.
     ("Erinome", _("Clear")), 
+    # Translators: Adjective describing a gravelly AI voice style.
     ("Algenib", _("Gravelly")), 
+    # Translators: Adjective describing an informative AI voice style.
     ("Rasalgethi", _("Informative")), 
+    # Translators: Adjective describing an upbeat AI voice style.
     ("Laomedeia", _("Upbeat")), 
+    # Translators: Adjective describing a soft AI voice style.
     ("Achernar", _("Soft")), 
+    # Translators: Adjective describing a firm AI voice style.
     ("Alnilam", _("Firm")), 
+    # Translators: Adjective describing an even AI voice style.
     ("Schedar", _("Even")), 
+    # Translators: Adjective describing a mature AI voice style.
     ("Gacrux", _("Mature")), 
+    # Translators: Adjective describing a forward AI voice style.
     ("Pulcherrima", _("Forward")), 
+    # Translators: Adjective describing a friendly AI voice style.
     ("Achird", _("Friendly")), 
+    # Translators: Adjective describing a casual AI voice style.
     ("Zubenelgenubi", _("Casual")), 
+    # Translators: Adjective describing a gentle AI voice style.
     ("Vindemiatrix", _("Gentle")), 
+    # Translators: Adjective describing a lively AI voice style.
     ("Sadachbia", _("Lively")), 
+    # Translators: Adjective describing a knowledgeable AI voice style.
     ("Sadaltager", _("Knowledgeable")), 
+    # Translators: Adjective describing a warm AI voice style.
     ("Sulafat", _("Warm"))
 ]
 
@@ -183,12 +212,6 @@ Input Text:
 PROMPT_UI_LOCATOR = "Analyze UI (Size: {width}x{height}). Request: '{query}'. Output JSON: {{\"x\": int, \"y\": int, \"found\": bool}}."
 
 REFINE_PROMPT_KEYS = ("summarize", "fix_grammar", "fix_translate", "explain")
-ADVANCED_PROMPT_KEYS = {
-    "document_chat_ack",
-    "vision_followup_context",
-    "vision_followup_suffix",
-    "refine_files_only",
-}
 
 LEGACY_REFINER_TOKENS = {
     "summarize": "[summarize]",
@@ -200,55 +223,74 @@ LEGACY_REFINER_TOKENS = {
 DEFAULT_SYSTEM_PROMPTS = (
     {
         "key": "summarize",
+        # Translators: Section header for text refinement prompts in Prompt Manager.
         "section": _("Refine"),
+        # Translators: Label for the text summarization prompt.
         "label": _("Summarize"),
         "prompt": "Summarize the text below in {response_lang}.",
     },
     {
         "key": "fix_grammar",
+        # Translators: Section header for text refinement prompts in Prompt Manager.
         "section": _("Refine"),
+        # Translators: Label for the grammar correction prompt.
         "label": _("Fix Grammar"),
         "prompt": "Fix grammar in the text below. Output ONLY the fixed text.",
     },
     {
         "key": "fix_translate",
+        # Translators: Section header for text refinement prompts in Prompt Manager.
         "section": _("Refine"),
+        # Translators: Label for the grammar correction and translation prompt.
         "label": _("Fix Grammar & Translate"),
         "prompt": "Fix grammar and translate to {target_lang}.{swap_instruction} Output ONLY the result.",
     },
     {
         "key": "explain",
+        # Translators: Section header for text refinement prompts in Prompt Manager.
         "section": _("Refine"),
+        # Translators: Label for the text explanation prompt.
         "label": _("Explain"),
         "prompt": "Explain the text below in {response_lang}.",
     },
     {
         "key": "translate_main",
+        # Translators: Section header for translation-related prompts in Prompt Manager.
         "section": _("Translation"),
+        # Translators: Label for the smart translation prompt.
         "label": _("Smart Translation"),
         "prompt": PROMPT_TRANSLATE.strip(),
     },
     {
         "key": "translate_quick",
+        # Translators: Section header for translation-related prompts in Prompt Manager.
         "section": _("Translation"),
+        # Translators: Label for the quick translation prompt.
         "label": _("Quick Translation"),
         "prompt": "Translate to {target_lang}. Output ONLY translation.",
     },
     {
         "key": "document_chat_system",
+        # Translators: Section header for document-related prompts in Prompt Manager.
         "section": _("Document"),
+        # Translators: Label for the initial context prompt in document chat.
         "label": _("Document Chat Context"),
         "prompt": "STRICTLY Respond in {response_lang}. Use Markdown formatting. Analyze the attached content to answer.",
     },
     {
         "key": "document_chat_ack",
+        # Translators: Section header for advanced/internal prompts in Prompt Manager.
         "section": _("Advanced"),
+        # Translators: Label for the AI's acknowledgement reply in document chat.
         "label": _("Document Chat Bootstrap Reply"),
+        "internal": True,
         "prompt": "Context received. Ready for questions.",
     },
     {
         "key": "vision_navigator_object",
+        # Translators: Section header for image analysis prompts in Prompt Manager.
         "section": _("Vision"),
+        # Translators: Label for the prompt used to analyze the current navigator object.
         "label": _("Navigator Object Analysis"),
         "prompt": (
             "Analyze this image. Describe the layout, visible text, and UI elements. "
@@ -260,7 +302,9 @@ DEFAULT_SYSTEM_PROMPTS = (
     },
     {
         "key": "vision_fullscreen",
+        # Translators: Section header for image analysis prompts in Prompt Manager.
         "section": _("Vision"),
+        # Translators: Label for the prompt used to analyze the entire screen.
         "label": _("Full Screen Analysis"),
         "prompt": (
             "Analyze this image. Describe the layout, visible text, and UI elements. "
@@ -272,19 +316,27 @@ DEFAULT_SYSTEM_PROMPTS = (
     },
     {
         "key": "vision_followup_context",
+        # Translators: Section header for advanced/internal prompts in Prompt Manager.
         "section": _("Advanced"),
+        # Translators: Label for the follow-up context in image analysis chat.
         "label": _("Vision Follow-up Context"),
+        "internal": True,
         "prompt": "Image Context. Target Language: {response_lang}",
     },
     {
         "key": "vision_followup_suffix",
+        # Translators: Section header for advanced/internal prompts in Prompt Manager.
         "section": _("Advanced"),
+        # Translators: Label for the rule enforced during image analysis follow-up questions.
         "label": _("Vision Follow-up Answer Rule"),
+        "internal": True,
         "prompt": "Answer strictly in {response_lang}",
     },
     {
         "key": "video_analysis",
+        # Translators: Section header for video analysis prompts in Prompt Manager.
         "section": _("Video"),
+        # Translators: Label for the video content analysis prompt.
         "label": _("Video Analysis"),
         "prompt": (
             "Analyze this video. Provide a detailed description of the visual content and a "
@@ -294,13 +346,17 @@ DEFAULT_SYSTEM_PROMPTS = (
     },
     {
         "key": "audio_transcription",
+        # Translators: Section header for audio-related prompts in Prompt Manager.
         "section": _("Audio"),
+        # Translators: Label for the audio file transcription prompt.
         "label": _("Audio Transcription"),
         "prompt": "Transcribe this audio in {response_lang}.",
     },
     {
         "key": "dictation_transcribe",
+        # Translators: Section header for audio-related prompts in Prompt Manager.
         "section": _("Audio"),
+        # Translators: Label for the smart voice dictation prompt.
         "label": _("Smart Dictation"),
         "prompt": (
             "Transcribe speech. Use native script. Fix stutters. If there is no speech, silence, "
@@ -309,7 +365,9 @@ DEFAULT_SYSTEM_PROMPTS = (
     },
     {
         "key": "ocr_image_extract",
+        # Translators: Section header for OCR-related prompts in Prompt Manager.
         "section": _("OCR"),
+        # Translators: Label for the OCR prompt used for image text extraction.
         "label": _("OCR Image Extraction"),
         "prompt": (
             "Extract all visible text from this image. Strictly preserve original formatting "
@@ -319,7 +377,9 @@ DEFAULT_SYSTEM_PROMPTS = (
     },
     {
         "key": "ocr_document_extract",
+        # Translators: Section header for OCR-related prompts in Prompt Manager.
         "section": _("OCR"),
+        # Translators: Label for the OCR prompt used for document text extraction.
         "label": _("OCR Document Extraction"),
         "prompt": (
             "Extract all visible text from this document. Strictly preserve original formatting "
@@ -330,7 +390,9 @@ DEFAULT_SYSTEM_PROMPTS = (
     },
     {
         "key": "ocr_document_translate",
+        # Translators: Section header for document-related prompts in Prompt Manager.
         "section": _("Document"),
+        # Translators: Label for the combined OCR and translation prompt for documents.
         "label": _("Document OCR + Translate"),
         "prompt": (
             "Extract all text from this document. Preserve formatting (Markdown). Then translate "
@@ -340,8 +402,11 @@ DEFAULT_SYSTEM_PROMPTS = (
     },
     {
         "key": "captcha_solver_base",
+        # Translators: Section header for CAPTCHA-related prompts in Prompt Manager.
         "section": _("CAPTCHA"),
+        # Translators: Label for the CAPTCHA solving prompt.
         "label": _("CAPTCHA Solver"),
+        "internal": True,
         "prompt": (
             "Blind user. Return CAPTCHA code only. If NO CAPTCHA is detected in the image, "
             "strictly return: [[[NO_CAPTCHA]]].{captcha_extra}"
@@ -349,19 +414,29 @@ DEFAULT_SYSTEM_PROMPTS = (
     },
     {
         "key": "refine_files_only",
+        # Translators: Section header for advanced/internal prompts in Prompt Manager.
         "section": _("Advanced"),
+        # Translators: Label for the fallback prompt when only files are provided in Refine.
         "label": _("Refine Files-Only Fallback"),
+        "internal": True,
         "prompt": "Analyze these files.",
     },
 )
 
 PROMPT_VARIABLES_GUIDE = (
+    # Translators: Description and input type for the [selection] variable in the Variables Guide.
     ("[selection]", _("Currently selected text"), _("Text")),
+    # Translators: Description for the [clipboard] variable in the Variables Guide.
     ("[clipboard]", _("Clipboard content"), _("Text")),
+    # Translators: Description and input type for the [screen_obj] variable in the Variables Guide.
     ("[screen_obj]", _("Screenshot of the navigator object"), _("Image")),
+    # Translators: Description for the [screen_full] variable in the Variables Guide.
     ("[screen_full]", _("Screenshot of the entire screen"), _("Image")),
+    # Translators: Description and input type for the [file_ocr] variable in the Variables Guide.
     ("[file_ocr]", _("Select image/PDF/TIFF for text extraction"), _("Image, PDF, TIFF")),
+    # Translators: Description and input type for the [file_read] variable in the Variables Guide.
     ("[file_read]", _("Select document for reading"), _("TXT, Code, PDF")),
+    # Translators: Description and input type for the [file_audio] variable in the Variables Guide.
     ("[file_audio]", _("Select audio file for analysis"), _("MP3, WAV, OGG")),
 )
 
@@ -376,6 +451,7 @@ def get_builtin_default_prompts():
             "section": item["section"],
             "label": item["label"],
             "display_label": f"{item['section']} - {item['label']}",
+            "internal": bool(item.get("internal")),
             "prompt": p,
             "default": p,
         })
@@ -562,15 +638,12 @@ def get_configured_default_prompts():
     prompt_map = get_configured_default_prompt_map()
     items = []
     for item in DEFAULT_SYSTEM_PROMPTS:
+        if item.get("internal"):
+            continue
         key = item["key"]
         if key in prompt_map:
             items.append(dict(prompt_map[key]))
-    items.sort(
-        key=lambda item: (
-            item.get("key", "") in ADVANCED_PROMPT_KEYS,
-            item.get("display_label", "").casefold(),
-        )
-    )
+    items.sort(key=lambda item: item.get("display_label", "").casefold())
     return items
 
 def get_prompt_text(prompt_key):
@@ -785,7 +858,7 @@ def get_tiktok_download_link(tiktok_url):
         data = urlencode(params).encode('utf-8')
         req = request.Request(api_url, data=data, headers=headers, method='POST')
         opener = get_proxy_opener()
-        with opener.open(req, timeout=30) as response:
+        with opener.open(req, timeout=120) as response:
             res = json.loads(response.read().decode('utf-8'))
             if res.get('code') == 0:
                 play_url = res['data']['play']
@@ -796,7 +869,7 @@ def get_tiktok_download_link(tiktok_url):
 def _download_temp_video(url):
     try:
         req = request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with request.urlopen(req, timeout=60) as response:
+        with request.urlopen(req, timeout=120) as response:
             fd, path = tempfile.mkstemp(suffix=".mp4")
             os.close(fd)
             with open(path, 'wb') as f:
@@ -876,7 +949,7 @@ class ChromeOCREngine:
         try:
             req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers=headers, method="POST")
             opener = get_proxy_opener()
-            with opener.open(req, timeout=30) as response:
+            with opener.open(req, timeout=120) as response:
                 if response.status == 200:
                     data = json.loads(response.read().decode('utf-8'))
                     regions = data['results'][0]['engineResults'][0]['ocrEngine'].get('ocrRegions', [])
@@ -906,14 +979,16 @@ class SmartProgrammersOCREngine:
         try:
             req = request.Request(url, data=b'\r\n'.join(body), headers={'Content-Type': f"multipart/form-data; boundary={boundary.decode('utf-8')}"}, method="POST")
             opener = get_proxy_opener()
-            with opener.open(req, timeout=40) as response:
+            with opener.open(req, timeout=120) as response:
                 if response.status == 200:
                     data = json.loads(response.read().decode('utf-8'))
                     text = data.get("text", "").replace("\\n", "\n")
                     return text if text.strip() else None
-        except Exception as e:
-            log.error(f"SmartProgrammers OCR Failed: {e}", exc_info=True)
-            return None
+        except error.HTTPError as e:
+            if e.code == 400:
+                return None
+        except Exception:
+            pass
         return None
 
 class GoogleTranslator:
@@ -926,7 +1001,7 @@ class GoogleTranslator:
             url = f"{base_url}?{parse.urlencode(params)}"
             req = request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
             opener = get_proxy_opener()
-            with opener.open(req, timeout=30) as response:
+            with opener.open(req, timeout=120) as response:
                 if response.status == 200:
                     data = json.loads(response.read().decode('utf-8'))
                     if data and isinstance(data, list) and len(data) > 0:
@@ -1056,7 +1131,7 @@ class GeminiHandler:
             ocr_image_prompt = get_prompt_text("ocr_image_extract")
             payload = {"contents": [{"parts": [{"inline_data": {"mime_type": "image/jpeg", "data": base64.b64encode(img_data).decode('utf-8')}}, {"text": ocr_image_prompt}]}]}
             req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={"Content-Type": "application/json", "x-goog-api-key": key})
-            with GeminiHandler._get_opener().open(req, timeout=90) as r:
+            with GeminiHandler._get_opener().open(req, timeout=120) as r:
                 return json.loads(r.read().decode())['candidates'][0]['content']['parts'][0]['text']
         return GeminiHandler._call_with_rotation(_logic, image_bytes)
 
@@ -1079,7 +1154,7 @@ class GeminiHandler:
                 headers = {"X-Goog-Upload-Protocol": "resumable", "X-Goog-Upload-Command": "start", "X-Goog-Upload-Header-Content-Length": str(f_size), "X-Goog-Upload-Header-Content-Type": mime_type, "Content-Type": "application/json", "x-goog-api-key": key}
                 
                 req = request.Request(init_url, data=json.dumps({"file": {"display_name": "batch"}}).encode(), headers=headers, method="POST")
-                with opener.open(req, timeout=60) as r: upload_url = r.headers.get("x-goog-upload-url")
+                with opener.open(req, timeout=120) as r: upload_url = r.headers.get("x-goog-upload-url")
                 
                 with open(file_path, 'rb') as f: f_data = f.read()
                 req_up = request.Request(upload_url, data=f_data, headers={"Content-Length": str(f_size), "X-Goog-Upload-Offset": "0", "X-Goog-Upload-Command": "upload, finalize"}, method="POST")
@@ -1088,7 +1163,7 @@ class GeminiHandler:
                     uri, name = res['file']['uri'], res['file']['name']
                 
                 active = False
-                for _ in range(30):
+                for attempt in range(30):
                     req_check = request.Request(f"{base_url}/v1beta/{name}", headers={"x-goog-api-key": key})
                     with opener.open(req_check, timeout=30) as r:
                         state = json.loads(r.read().decode()).get('state')
@@ -1150,7 +1225,7 @@ class GeminiHandler:
             contents.append({"role": "user", "parts": user_parts})
             
             req = request.Request(url, data=json.dumps({"contents": contents}).encode(), headers={"Content-Type": "application/json", "x-goog-api-key": key})
-            with GeminiHandler._get_opener().open(req, timeout=90) as r:
+            with GeminiHandler._get_opener().open(req, timeout=120) as r:
                 return json.loads(r.read().decode())['candidates'][0]['content']['parts'][0]['text']
         forced_key = GeminiHandler._get_registered_key(file_uri) if file_uri else None
         if forced_key:
@@ -1171,13 +1246,13 @@ class GeminiHandler:
                 init_url = f"{base_url}/upload/v1beta/files"
                 headers = {"X-Goog-Upload-Protocol": "resumable", "X-Goog-Upload-Command": "start", "X-Goog-Upload-Header-Content-Length": str(f_size), "X-Goog-Upload-Header-Content-Type": mime_type, "Content-Type": "application/json", "x-goog-api-key": key}
                 req = request.Request(init_url, data=json.dumps({"file": {"display_name": os.path.basename(file_path)}}).encode(), headers=headers, method="POST")
-                with opener.open(req, timeout=60) as r: upload_url = r.headers.get("x-goog-upload-url")
+                with opener.open(req, timeout=120) as r: upload_url = r.headers.get("x-goog-upload-url")
                 with open(file_path, 'rb') as f: f_data = f.read()
                 req_up = request.Request(upload_url, data=f_data, headers={"Content-Length": str(f_size), "X-Goog-Upload-Offset": "0", "X-Goog-Upload-Command": "upload, finalize"}, method="POST")
                 with opener.open(req_up, timeout=180) as r:
                     res = json.loads(r.read().decode())
                     uri, name = res['file']['uri'], res['file']['name']
-                for _ in range(30):
+                for attempt in range(30):
                     req_check = request.Request(f"{base_url}/v1beta/{name}", headers={"x-goog-api-key": key})
                     with opener.open(req_check, timeout=30) as r:
                         state = json.loads(r.read().decode()).get('state')
@@ -1277,7 +1352,7 @@ class UpdateManager:
         try:
             url = f"https://api.github.com/repos/{self.repo_name}/releases/latest"
             req = request.Request(url, headers={"User-Agent": "NVDA-Addon"})
-            with request.urlopen(req, timeout=10) as response:
+            with request.urlopen(req, timeout=60) as response:
                 if response.status == 200:
                     data = json.loads(response.read().decode('utf-8'))
                     latest_tag = data.get("tag_name", "").lstrip("v")
@@ -1295,9 +1370,11 @@ class UpdateManager:
                             
                             wx.CallAfter(self._prompt_update, latest_tag, download_url, clean_changes)
                         elif not silent:
+                            # Translators: Error message when an update is found but the addon file is missing from GitHub.
                             msg = _("Update found but no .nvda-addon file in release.")
                             show_error_dialog(msg)
                     elif not silent:
+                        # Translators: Status message informing the user they are already on the latest version.
                         msg = _("You have the latest version.")
                         wx.CallAfter(ui.message, msg)
         except Exception as e:
@@ -1497,7 +1574,7 @@ class VisionQADialog(wx.Dialog):
         if path:
             try:
                 with open(path, "w", encoding="utf-8") as f: f.write(self.outputArea.GetValue())
-                # Translators: Message on successful save
+                # Translators: Message shown on successful save of a file.
                 self.report_save(_("Saved."))
             except Exception as e:
                 # Translators: Message in the error dialog when saving fails.
@@ -1652,7 +1729,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         promptsSizer = wx.StaticBoxSizer(promptsBox, wx.VERTICAL)
         pHelper = gui.guiHelper.BoxSizerHelper(promptsBox, sizer=promptsSizer)
         # Translators: Description for the prompt manager button.
-        pHelper.addItem(wx.StaticText(promptsBox, label=_("Manage default system prompts and custom refine prompts.")))
+        pHelper.addItem(wx.StaticText(promptsBox, label=_("Manage default and custom prompts.")))
         # Translators: Button label to open prompt manager dialog.
         self.managePromptsBtn = wx.Button(promptsBox, label=_("Manage Prompts..."))
         self.managePromptsBtn.Bind(wx.EVT_BUTTON, self.onManagePrompts)
@@ -1867,7 +1944,9 @@ class ChatDialog(wx.Dialog):
 
 class DocumentViewerDialog(wx.Dialog):
     def __init__(self, parent, virtual_doc, settings):
-        super().__init__(parent, title=ADDON_NAME, size=(800, 600), style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER | wx.MAXIMIZE_BOX)
+        # Translators: Title of the Document Reader window.
+        title_text = f"{ADDON_NAME} - {_('Document Reader')}"
+        super().__init__(parent, title=title_text, size=(800, 600), style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER | wx.MAXIMIZE_BOX)
         self.v_doc = virtual_doc
         self.start_page = settings['start']
         self.end_page = settings['end']
@@ -2119,7 +2198,13 @@ class DocumentViewerDialog(wx.Dialog):
             
             if not results or (len(results) == 1 and str(results[0]).startswith("ERROR:")):
                 err_msg = results[0][6:] if results else _("Unknown error")
-                wx.CallAfter(ui.message, _("Scan failed: {err}").format(err=err_msg))
+                # Translators: Message reported when batch scan fails
+                error_text = _("Scan failed: {err}").format(err=err_msg)
+                for i in range(self.start_page, self.end_page + 1):
+                    self.page_cache[i] = error_text
+                
+                wx.CallAfter(self.update_view)
+                wx.CallAfter(ui.message, error_text)
                 return
 
             for i, text_part in enumerate(results):
@@ -2337,6 +2422,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.va_menu.Bind(wx.EVT_MENU, self.on_donate_click, item_donate)
         
         self.tools_menu = gui.mainFrame.sysTrayIcon.toolsMenu
+        # Translators: The name of the addon's sub-menu in the NVDA Tools menu.
         self.va_submenu_item = self.tools_menu.AppendSubMenu(self.va_menu, _("Vision Assistant"))
         
         self.refine_dlg = None
@@ -2546,7 +2632,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if not file_name_id: return None
 
             check_url = f"{base_url}/v1beta/{file_name_id}"
-            for _ in range(30):
+            for attempt in range(30):
                 try:
                     req_check = request.Request(check_url, headers={"x-goog-api-key": api_key})
                     with get_proxy_opener().open(req_check, timeout=10) as response:

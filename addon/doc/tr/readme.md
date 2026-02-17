@@ -84,6 +84,14 @@ Sistemi ve özel istemleri yapılandırmak için **Ayarlar > İstemler > İsteml
 ***
 **Not:** Tüm yapay zekâ özellikleri için aktif bir internet bağlantısı gereklidir. Çok sayfalı TIFF dosyaları otomatik olarak işlenir.
 
+## 4.5 için değişiklikler
+*   **Gelişmiş İstem Yöneticisi:** Varsayılan sistem istemlerini özelleştirmek ve ekleme, düzenleme, yeniden sıralama ve önizleme için tam destekle kullanıcı tanımlı istemleri yönetmek için ayarlara özel bir yönetim iletişim kutusu sunuldu.
+*   **Kapsamlı Proxy Desteği:** Kullanıcı tarafından yapılandırılan proxy ayarlarının çeviri, OCR ve konuşma oluşturma dahil tüm API isteklerine sıkı bir şekilde uygulanmasını sağlayarak ağ bağlantısı sorunları çözüldü.
+*   **Otomatik Veri Taşıma:** Eski istem yapılandırmalarını, ilk çalıştırmada veri kaybı olmadan otomatik olarak güçlü bir v2 JSON biçimine yükseltmek için entegre bir akıllı geçiş sistemi.
+*   **Güncellenmiş Uyumluluk (2025.1):** İstikrarlı performans sağlamak için Belge Okuyucu gibi gelişmiş özelliklerdeki kitaplık bağımlılıkları nedeniyle gerekli minimum NVDA sürümünü 2025.1 olarak ayarlandı.
+*   **Optimize Edilmiş Ayarlar Arayüzü:** Bilgi istemi yönetimini ayrı bir iletişim kutusunda yeniden düzenleyerek ayarlar arayüzünü kolaylaştırarak daha temiz ve daha erişilebilir bir kullanıcı deneyimi sağlandı.
+*   **İstem Değişkenleri Kılavuzu:** Kullanıcıların [selection], [clipboard] ve [screen_obj] gibi dinamik değişkenleri kolayca tanımlamasına ve kullanmasına yardımcı olmak için bilgi istemi iletişim kutularına yerleşik bir kılavuz eklendi.
+
 ## 4.0.3 için değişiklikler
 *   **Gelişmiş Ağ Dayanıklılığı:** Kararsız internet bağlantılarını ve geçici sunucu hatalarını daha iyi ele almak ve daha güvenilir AI yanıtları sağlamak için otomatik yeniden deneme mekanizması eklendi.
 *   **Görsel Çeviri İletişim Kutusu:** Çeviri sonuçları için özel bir pencere eklendi. Kullanıcılar artık OCR sonuçlarına benzer şekilde kolayca dolaşabilir ve uzun çevirileri satır satır okuyabilir.
