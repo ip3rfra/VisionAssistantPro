@@ -211,7 +211,8 @@ class WindowsAesGcm:
         key_handle = ctypes.c_void_p()
         try:
             key_object_length, tag_len = WindowsAesGcm._get_algorithm_properties(provider, alg_handle)
-            key_handle, _ = WindowsAesGcm._create_key(provider, alg_handle, key, key_object_length)
+            # Keep key_object alive for the full key-handle lifetime.
+            key_handle, key_object = WindowsAesGcm._create_key(provider, alg_handle, key, key_object_length)
             nonce_buf = ctypes.create_string_buffer(nonce, len(nonce))
             tag_buf = ctypes.create_string_buffer(tag_len)
             plain_buf = ctypes.create_string_buffer(plaintext, len(plaintext))
@@ -253,12 +254,15 @@ class WindowsAesGcm:
         alg_handle = WindowsAesGcm._open_aes_algorithm(provider)
         key_handle = ctypes.c_void_p()
         try:
-            key_handle, _ = WindowsAesGcm._create_key(provider, alg_handle, key)
+            key_object_length, tag_len = WindowsAesGcm._get_algorithm_properties(provider, alg_handle)
+            if len(tag) != tag_len:
+                raise ValueError("Invalid AES-GCM tag length.")
+            key_handle, key_object = WindowsAesGcm._create_key(provider, alg_handle, key, key_object_length)
             nonce_buf = ctypes.create_string_buffer(nonce, len(nonce))
             tag_buf = ctypes.create_string_buffer(tag, len(tag))
             cipher_buf = ctypes.create_string_buffer(ciphertext, len(ciphertext))
             out_buf = ctypes.create_string_buffer(len(ciphertext))
-            auth_info = WindowsAesGcm._build_auth_info(nonce_buf, len(nonce), tag_buf, len(tag))
+            auth_info = WindowsAesGcm._build_auth_info(nonce_buf, len(nonce), tag_buf, tag_len)
             out_len = ctypes.c_ulong()
             status = provider.BCryptDecrypt(
                 key_handle,
