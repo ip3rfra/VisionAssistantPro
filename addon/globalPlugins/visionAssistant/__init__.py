@@ -1050,11 +1050,13 @@ def _show_missing_api_key_message():
     vault_error = get_api_key_vault_last_error()
     if vault_error:
         wx.MessageBox(
+            # Translators: Error shown when encrypted API keys cannot be decrypted from local storage.
             _("Stored Gemini API keys could not be loaded. Please enter them again in settings."),
             _("Error"),
             wx.ICON_ERROR,
         )
     else:
+        # Translators: Error shown when no Gemini API key is configured in settings.
         wx.MessageBox(_("Please configure Gemini API Key."), _("Error"), wx.ICON_ERROR)
 
 
@@ -1826,6 +1828,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         val = self.apiKeyCtrl_visible.GetValue() if self.showApiCheck.IsChecked() else self.apiKeyCtrl_hidden.GetValue()
         if not _save_configured_api_keys(val):
             wx.MessageBox(
+                # Translators: Error shown when saving encrypted Gemini API keys to disk fails.
                 _("Unable to securely save Gemini API Key. Check file permissions and try again."),
                 _("Error"),
                 wx.OK | wx.ICON_ERROR,
