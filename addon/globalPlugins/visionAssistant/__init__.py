@@ -3,7 +3,6 @@ import sys
 import os
 import json
 import threading
-import logging
 import base64
 import io
 import ctypes
@@ -45,8 +44,16 @@ import tones
 import NVDAObjects.behaviors
 import scriptHandler
 from .prompt_manager_dialog import PromptManagerDialog
+from .secure_api_keys import (
+    api_keys_for_settings as _api_keys_for_settings,
+    get_api_key_vault_last_error,
+    has_configured_api_keys as _has_configured_api_keys,
+    load_configured_api_keys as _load_configured_api_keys,
+    migrate_api_key_storage_if_needed,
+    save_configured_api_keys as _save_configured_api_keys,
+)
 
-log = logging.getLogger(__name__)
+from logHandler import log
 addonHandler.initTranslation()
 
 _vision_assistant_instance = None
@@ -1038,6 +1045,19 @@ class GoogleTranslator:
             return text 
         return text
 
+
+def _show_missing_api_key_message():
+    vault_error = get_api_key_vault_last_error()
+    if vault_error:
+        wx.MessageBox(
+            _("Stored Gemini API keys could not be loaded. Please enter them again in settings."),
+            _("Error"),
+            wx.ICON_ERROR,
+        )
+    else:
+        wx.MessageBox(_("Please configure Gemini API Key."), _("Error"), wx.ICON_ERROR)
+
+
 class GeminiHandler:
     _working_key_idx = 0 
     _file_uri_keys = {}
@@ -1045,9 +1065,7 @@ class GeminiHandler:
 
     @staticmethod
     def _get_api_keys():
-        raw = config.conf["VisionAssistant"]["api_key"]
-        clean_raw = raw.replace('\r\n', ',').replace('\n', ',')
-        return [k.strip() for k in clean_raw.split(',') if k.strip()]
+        return _load_configured_api_keys()
 
     @staticmethod
     def _get_opener():
@@ -1635,7 +1653,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         apiLabel = wx.StaticText(self.connectionBox, label=_("Gemini API Key (Separate multiple keys with comma or newline):"))
         cHelper.addItem(apiLabel)
         
-        api_value = config.conf["VisionAssistant"]["api_key"]
+        api_value = _api_keys_for_settings()
         
         self.apiKeyCtrl_hidden = wx.TextCtrl(self.connectionBox, value=api_value, style=wx.TE_PASSWORD, size=(-1, -1))
         
@@ -1806,7 +1824,13 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
 
     def onSave(self):
         val = self.apiKeyCtrl_visible.GetValue() if self.showApiCheck.IsChecked() else self.apiKeyCtrl_hidden.GetValue()
-        config.conf["VisionAssistant"]["api_key"] = val.strip()
+        if not _save_configured_api_keys(val):
+            wx.MessageBox(
+                _("Unable to securely save Gemini API Key. Check file permissions and try again."),
+                _("Error"),
+                wx.OK | wx.ICON_ERROR,
+            )
+            return
         config.conf["VisionAssistant"]["model_name"] = MODELS[self.model.GetSelection()][1]
         config.conf["VisionAssistant"]["proxy_url"] = self.proxyUrl.Value.strip()
         config.conf["VisionAssistant"]["source_language"] = SOURCE_NAMES[self.sourceLang.GetSelection()]
@@ -2163,8 +2187,8 @@ class DocumentViewerDialog(wx.Dialog):
             show_error_dialog(str(e))
 
     def on_gemini_scan(self, event):
-        if not config.conf["VisionAssistant"]["api_key"]:
-            wx.MessageBox(_("Please configure Gemini API Key."), _("Error"), wx.ICON_ERROR)
+        if not _has_configured_api_keys():
+            _show_missing_api_key_message()
             return
         menu = wx.Menu()
         # Translators: Menu option for current page
@@ -2254,8 +2278,8 @@ class DocumentViewerDialog(wx.Dialog):
                 except: pass
 
     def on_tts(self, event):
-        if not config.conf["VisionAssistant"]["api_key"]:
-            wx.MessageBox(_("Please configure Gemini API Key."), _("Error"), wx.ICON_ERROR)
+        if not _has_configured_api_keys():
+            _show_missing_api_key_message()
             return
         menu = wx.Menu()
         # Translators: Menu option for TTS current page
@@ -2341,8 +2365,8 @@ class DocumentViewerDialog(wx.Dialog):
             wx.CallAfter(wx.MessageBox, f"TTS Error: {e}", "Error", wx.ICON_ERROR)
 
     def on_ask(self, event):
-        if not config.conf["VisionAssistant"]["api_key"]:
-            wx.MessageBox(_("Please configure Gemini API Key."), _("Error"), wx.ICON_ERROR)
+        if not _has_configured_api_keys():
+            _show_missing_api_key_message()
             return
         if ChatDialog.instance:
             ChatDialog.instance.Raise()
@@ -2411,6 +2435,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             migrate_prompt_config_if_needed()
         except Exception as e:
             log.warning(f"Prompt config migration failed: {e}")
+        try:
+            migrate_api_key_storage_if_needed()
+        except Exception as e:
+            log.warning(f"API key migration failed: {e}")
         gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(SettingsPanel)
         
         self.updater = UpdateManager(GITHUB_REPO)
@@ -2599,7 +2627,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         return get_file_path(_("Open"), wildcard)
 
     def _upload_file_to_gemini(self, file_path, mime_type):
-        api_key = config.conf["VisionAssistant"]["api_key"].strip()
         keys = GeminiHandler._get_api_keys()
         if not keys: return None
         key_idx = GeminiHandler._working_key_idx % len(keys)
