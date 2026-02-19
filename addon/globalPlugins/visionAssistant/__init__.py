@@ -187,28 +187,6 @@ confspec = {
 
 config.conf.spec["VisionAssistant"] = confspec
 
-PROMPT_TRANSLATE = """
-Task: Translate the text below to "{target_lang}".
-
-Configuration:
-- Target Language: "{target_lang}"
-- Swap Language: "{swap_target}"
-- Smart Swap: {smart_swap}
-
-Rules:
-1. DEFAULT: Translate the input strictly to "{target_lang}".
-2. MIXED CONTENT: If the text contains mixed languages (e.g., Arabic content with English UI terms like 'Reply', 'From', 'Forwarded'), translate EVERYTHING to "{target_lang}".
-3. EXCEPTION: If (and ONLY if) the input is already completely in "{target_lang}" AND "Smart Swap" is True, then translate to "{swap_target}".
-
-Constraints:
-- Output ONLY the translation.
-- Do NOT translate actual programming code (Python, C++, etc.) or URLs.
-- Translate ALL UI elements, menus, and interface labels.
-
-Input Text:
-{text_content}
-"""
-
 PROMPT_UI_LOCATOR = "Analyze UI (Size: {width}x{height}). Request: '{query}'. Output JSON: {{\"x\": int, \"y\": int, \"found\": bool}}."
 
 REFINE_PROMPT_KEYS = ("summarize", "fix_grammar", "fix_translate", "explain")
@@ -259,7 +237,11 @@ DEFAULT_SYSTEM_PROMPTS = (
         "section": _("Translation"),
         # Translators: Label for the smart translation prompt.
         "label": _("Smart Translation"),
-        "prompt": PROMPT_TRANSLATE.strip(),
+        "guarded": True,
+        # Translators: Feature name used in guarded prompt warnings for smart translation.
+        "guardedFeatureLabel": _("Smart Translation"),
+        "requiredMarkers": ["{target_lang}", "{swap_target}", "{smart_swap}", "{text_content}"],
+        "prompt": "Task: Translate the text below to \"{target_lang}\".\n\nConfiguration:\n- Target Language: \"{target_lang}\"\n- Swap Language: \"{swap_target}\"\n- Smart Swap: {smart_swap}\n\nRules:\n1. DEFAULT: Translate the input strictly to \"{target_lang}\".\n2. MIXED CONTENT: If the text contains mixed languages (e.g., Arabic content with English UI terms like 'Reply', 'From', 'Forwarded'), translate EVERYTHING to \"{target_lang}\".\n3. EXCEPTION: If (and ONLY if) the input is already completely in \"{target_lang}\" AND \"Smart Swap\" is True, then translate to \"{swap_target}\".\n\nConstraints:\n- Output ONLY the translation.\n- Do NOT translate actual programming code (Python, C++, etc.) or URLs.\n- Translate ALL UI elements, menus, and interface labels.\n\nInput Text:\n{text_content}",
     },
     {
         "key": "translate_quick",
@@ -358,6 +340,10 @@ DEFAULT_SYSTEM_PROMPTS = (
         "section": _("Audio"),
         # Translators: Label for the smart voice dictation prompt.
         "label": _("Smart Dictation"),
+        "guarded": True,
+        # Translators: Feature name used in guarded prompt warnings for smart dictation.
+        "guardedFeatureLabel": _("Smart Dictation"),
+        "requiredMarkers": ["[[[NOSPEECH]]]"],
         "prompt": (
             "Transcribe speech. Use native script. Fix stutters. If there is no speech, silence, "
             "or background noise only, write exactly: [[[NOSPEECH]]]"
@@ -381,6 +367,10 @@ DEFAULT_SYSTEM_PROMPTS = (
         "section": _("OCR"),
         # Translators: Label for the OCR prompt used for document text extraction.
         "label": _("OCR Document Extraction"),
+        "guarded": True,
+        # Translators: Feature name used in guarded prompt warnings for OCR document extraction.
+        "guardedFeatureLabel": _("OCR Document Extraction"),
+        "requiredMarkers": ["[[[PAGE_SEP]]]"],
         "prompt": (
             "Extract all visible text from this document. Strictly preserve original formatting "
             "(headings, lists, tables) using Markdown. You MUST insert the exact delimiter "
@@ -406,7 +396,10 @@ DEFAULT_SYSTEM_PROMPTS = (
         "section": _("CAPTCHA"),
         # Translators: Label for the CAPTCHA solving prompt.
         "label": _("CAPTCHA Solver"),
-        "internal": True,
+        "guarded": True,
+        # Translators: Feature name used in guarded prompt warnings for CAPTCHA solver.
+        "guardedFeatureLabel": _("CAPTCHA Solver"),
+        "requiredMarkers": ["[[[NO_CAPTCHA]]]"],
         "prompt": (
             "Blind user. Return CAPTCHA code only. If NO CAPTCHA is detected in the image, "
             "strictly return: [[[NO_CAPTCHA]]].{captcha_extra}"
@@ -442,16 +435,57 @@ PROMPT_VARIABLES_GUIDE = (
 
 # --- Helpers ---
 
+def _normalize_required_markers(markers):
+    if not isinstance(markers, (list, tuple)):
+        return []
+    normalized = []
+    for marker in markers:
+        if not isinstance(marker, str):
+            continue
+        marker = marker.strip()
+        if marker and marker not in normalized:
+            normalized.append(marker)
+    return normalized
+
+def _normalize_required_regex_checks(regex_checks):
+    if not isinstance(regex_checks, (list, tuple)):
+        return []
+    normalized = []
+    seen = set()
+    for regex_item in regex_checks:
+        if isinstance(regex_item, dict):
+            pattern = regex_item.get("pattern")
+            description = regex_item.get("description")
+        else:
+            pattern = regex_item
+            description = ""
+        if not isinstance(pattern, str):
+            continue
+        pattern = pattern.strip()
+        if not pattern or pattern in seen:
+            continue
+        seen.add(pattern)
+        if not isinstance(description, str):
+            description = ""
+        description = description.strip() or pattern
+        normalized.append({"pattern": pattern, "description": description})
+    return normalized
+
 def get_builtin_default_prompts():
     builtins = []
     for item in DEFAULT_SYSTEM_PROMPTS:
         p = str(item["prompt"]).strip()
+        guarded = bool(item.get("guarded"))
         builtins.append({
             "key": item["key"],
             "section": item["section"],
             "label": item["label"],
             "display_label": f"{item['section']} - {item['label']}",
             "internal": bool(item.get("internal")),
+            "guarded": guarded,
+            "guardedFeatureLabel": str(item.get("guardedFeatureLabel", item["label"])).strip() if guarded else "",
+            "requiredMarkers": _normalize_required_markers(item.get("requiredMarkers")),
+            "requiredRegex": _normalize_required_regex_checks(item.get("requiredRegex")),
             "prompt": p,
             "default": p,
         })

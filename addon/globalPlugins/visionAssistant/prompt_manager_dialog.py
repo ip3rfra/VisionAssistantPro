@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+
 import wx
 
 import addonHandler
@@ -262,6 +264,92 @@ class PromptManagerDialog(wx.Dialog):
 
         self._refresh_custom_list()
 
+    def _is_guarded_prompt(self, item):
+        return bool(item.get("guarded"))
+
+    def _get_guarded_feature_label(self, item):
+        label = item.get("guardedFeatureLabel") or item.get("label") or item.get("key") or ""
+        return str(label).strip()
+
+    def _validate_guarded_prompt(self, item, prompt_text):
+        if not self._is_guarded_prompt(item):
+            return True
+
+        missing_markers = []
+        for marker in item.get("requiredMarkers", []):
+            if not isinstance(marker, str):
+                continue
+            marker = marker.strip()
+            if marker and marker not in prompt_text:
+                missing_markers.append(marker)
+
+        failed_regex = []
+        for check in item.get("requiredRegex", []):
+            pattern = ""
+            description = ""
+            if isinstance(check, dict):
+                pattern = str(check.get("pattern", "")).strip()
+                description = str(check.get("description", "")).strip()
+            elif isinstance(check, str):
+                pattern = check.strip()
+            if not pattern:
+                continue
+            try:
+                if re.search(pattern, prompt_text, re.MULTILINE | re.DOTALL):
+                    continue
+            except re.error:
+                continue
+            failed_regex.append(description or pattern)
+
+        if not missing_markers and not failed_regex:
+            return True
+
+        feature = self._get_guarded_feature_label(item)
+        required_items = []
+        seen_required_items = set()
+        for required_item in list(missing_markers) + list(failed_regex):
+            required_item = str(required_item).strip()
+            if not required_item or required_item in seen_required_items:
+                continue
+            seen_required_items.add(required_item)
+            required_items.append(required_item)
+        lines = [
+            # Translators: Validation message shown when required text is missing in a guarded prompt.
+            _("This prompt is used by {feature}. To save it, add the required text below:").format(feature=feature),
+            "",
+        ]
+        lines.extend([f"- {required_item}" for required_item in required_items])
+        lines.append("")
+        # Translators: Guidance shown after listing missing required text.
+        lines.append(_("Add these items exactly as written, then try again."))
+        # Translators: Title of validation warning dialog for guarded prompt checks.
+        title = _("Required Text Missing")
+        wx.MessageBox("\n".join(lines), title, wx.OK | wx.ICON_WARNING)
+        self.default_prompt_ctrl.SetFocus()
+        return False
+
+    def _confirm_guarded_save(self, item):
+        if not self._is_guarded_prompt(item):
+            return True
+
+        feature = self._get_guarded_feature_label(item)
+        # Translators: Confirmation message shown before saving a guarded prompt.
+        msg = _(
+            "You are editing a prompt used by {feature}.\n\nIf this prompt is changed, this feature may not work correctly.\n\nDo you understand the risk and want to save anyway?"
+        ).format(feature=feature)
+        # Translators: Title of confirmation dialog shown before saving guarded prompts.
+        title = _("Confirm")
+        dlg = wx.MessageDialog(self, msg, title, wx.YES_NO | wx.NO_DEFAULT | wx.ICON_WARNING)
+        try:
+            # Translators: Confirm button label for guarded prompt save confirmation.
+            yes_label = _("Yes, Save Anyway")
+            # Translators: Cancel button label for guarded prompt save confirmation.
+            no_label = _("No, Go Back")
+            dlg.SetYesNoLabels(yes_label, no_label)
+            return dlg.ShowModal() == wx.ID_YES
+        finally:
+            dlg.Destroy()
+
     def _save_current_default_editor(self):
         if self._default_selection == wx.NOT_FOUND or self._default_selection >= len(self.default_items):
             return True
@@ -275,6 +363,17 @@ class PromptManagerDialog(wx.Dialog):
             wx.MessageBox(msg, title, wx.OK | wx.ICON_WARNING)
             self.default_prompt_ctrl.SetFocus()
             return False
+
+        current_item = self.default_items[self._default_selection]
+        if prompt_text == current_item.get("prompt", ""):
+            return True
+
+        if self._is_guarded_prompt(current_item):
+            if not self._validate_guarded_prompt(current_item, prompt_text):
+                return False
+            if not self._confirm_guarded_save(current_item):
+                self.default_prompt_ctrl.SetFocus()
+                return False
 
         self.default_items[self._default_selection]["prompt"] = prompt_text
         return True
