@@ -168,8 +168,9 @@ class WindowsAesGcm:
         return int(object_length.value), tag_len
 
     @staticmethod
-    def _create_key(provider, alg_handle, key):
-        key_object_length, _ = WindowsAesGcm._get_algorithm_properties(provider, alg_handle)
+    def _create_key(provider, alg_handle, key, key_object_length=None):
+        if key_object_length is None:
+            key_object_length, _ = WindowsAesGcm._get_algorithm_properties(provider, alg_handle)
         key_object = ctypes.create_string_buffer(key_object_length)
         key_material = ctypes.create_string_buffer(key, len(key))
         key_handle = ctypes.c_void_p()
@@ -209,8 +210,8 @@ class WindowsAesGcm:
         alg_handle = WindowsAesGcm._open_aes_algorithm(provider)
         key_handle = ctypes.c_void_p()
         try:
-            _, tag_len = WindowsAesGcm._get_algorithm_properties(provider, alg_handle)
-            key_handle, _ = WindowsAesGcm._create_key(provider, alg_handle, key)
+            key_object_length, tag_len = WindowsAesGcm._get_algorithm_properties(provider, alg_handle)
+            key_handle, _ = WindowsAesGcm._create_key(provider, alg_handle, key, key_object_length)
             nonce_buf = ctypes.create_string_buffer(nonce, len(nonce))
             tag_buf = ctypes.create_string_buffer(tag_len)
             plain_buf = ctypes.create_string_buffer(plaintext, len(plaintext))
