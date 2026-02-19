@@ -1134,6 +1134,9 @@ class GeminiHandler:
     def _call_with_rotation(func_logic, *args):
         keys = GeminiHandler._get_api_keys()
         if not keys: 
+            if get_api_key_vault_last_error():
+                # Translators: Error shown when encrypted API keys cannot be decrypted from local storage.
+                return "ERROR:" + _("Stored Gemini API keys could not be loaded. Please enter them again in settings.")
             # Translators: Error when no API keys are found in settings
             return "ERROR:" + _("No API Keys configured.")
         
@@ -1656,10 +1659,15 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         cHelper.addItem(apiLabel)
         
         api_value = _api_keys_for_settings()
+        self._apiKeyDraft = api_value
+        self._syncing_api_fields = False
+        self._hiddenEditedSinceSync = False
         
         self.apiKeyCtrl_hidden = wx.TextCtrl(self.connectionBox, value=api_value, style=wx.TE_PASSWORD, size=(-1, -1))
+        self.apiKeyCtrl_hidden.Bind(wx.EVT_TEXT, self.onHiddenApiTextChanged)
         
         self.apiKeyCtrl_visible = wx.TextCtrl(self.connectionBox, value=api_value, style=wx.TE_MULTILINE | wx.TE_DONTWRAP, size=(-1, 60))
+        self.apiKeyCtrl_visible.Bind(wx.EVT_TEXT, self.onVisibleApiTextChanged)
         self.apiKeyCtrl_visible.Bind(wx.EVT_CHAR_HOOK, self.onApiKeyVisibleCharHook)
         self.apiKeyCtrl_visible.Hide()
         
@@ -1815,16 +1823,37 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
 
     def onToggleApiVisibility(self, event):
         if self.showApiCheck.IsChecked():
-            self.apiKeyCtrl_visible.SetValue(self.apiKeyCtrl_hidden.GetValue())
+            self._syncing_api_fields = True
+            try:
+                self.apiKeyCtrl_visible.SetValue(self._apiKeyDraft)
+            finally:
+                self._syncing_api_fields = False
             self.apiKeyCtrl_hidden.Hide()
             self.apiKeyCtrl_visible.Show()
             self.apiKeyCtrl_visible.SetFocus()
         else:
-            self.apiKeyCtrl_hidden.SetValue(self.apiKeyCtrl_visible.GetValue())
+            self._apiKeyDraft = self.apiKeyCtrl_visible.GetValue()
+            self._hiddenEditedSinceSync = False
+            self._syncing_api_fields = True
+            try:
+                self.apiKeyCtrl_hidden.SetValue(self._apiKeyDraft)
+            finally:
+                self._syncing_api_fields = False
             self.apiKeyCtrl_visible.Hide()
             self.apiKeyCtrl_hidden.Show()
         
         self.connectionBox.GetParent().Layout()
+
+    def onHiddenApiTextChanged(self, event):
+        if not self._syncing_api_fields and not self.showApiCheck.IsChecked():
+            self._hiddenEditedSinceSync = True
+            self._apiKeyDraft = self.apiKeyCtrl_hidden.GetValue()
+        event.Skip()
+
+    def onVisibleApiTextChanged(self, event):
+        if not self._syncing_api_fields and self.showApiCheck.IsChecked():
+            self._apiKeyDraft = self.apiKeyCtrl_visible.GetValue()
+        event.Skip()
 
     def onApiKeyVisibleCharHook(self, event):
         key = event.GetKeyCode()
@@ -1834,7 +1863,11 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         event.Skip()
 
     def onSave(self):
-        val = self.apiKeyCtrl_visible.GetValue() if self.showApiCheck.IsChecked() else self.apiKeyCtrl_hidden.GetValue()
+        if self.showApiCheck.IsChecked():
+            self._apiKeyDraft = self.apiKeyCtrl_visible.GetValue()
+        elif self._hiddenEditedSinceSync:
+            self._apiKeyDraft = self.apiKeyCtrl_hidden.GetValue()
+        val = self._apiKeyDraft
         if not _save_configured_api_keys(val):
             wx.MessageBox(
                 # Translators: Error shown when saving encrypted Gemini API keys to disk fails.
