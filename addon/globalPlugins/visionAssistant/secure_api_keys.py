@@ -191,8 +191,6 @@ class _ApiKeyVault:
             if len(data) == self._KEY_BYTES:
                 return data
             log.warning("Secure API key vault key has invalid length; regenerating key.")
-            if not create_if_missing:
-                return None
         if not create_if_missing:
             return None
         self._ensure_storage_dir()
@@ -400,10 +398,7 @@ def save_configured_api_keys(raw):
     keys = _split_api_keys(raw)
     if not keys:
         _api_key_vault.clear()
-        config.conf["VisionAssistant"]["api_key"] = ""
-        _persist_config()
-        return True
-    if not _api_key_vault.save_keys(keys):
+    elif not _api_key_vault.save_keys(keys):
         return False
     config.conf["VisionAssistant"]["api_key"] = ""
     _persist_config()
