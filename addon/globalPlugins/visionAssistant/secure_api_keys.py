@@ -377,13 +377,11 @@ def _split_api_keys(raw):
     return [k.strip() for k in clean_raw.split(",") if k.strip()]
 
 
-def _persist_config_if_possible():
-    save_fn = getattr(config.conf, "save", None)
-    if callable(save_fn):
-        try:
-            save_fn()
-        except Exception as e:
-            log.warning(f"Unable to persist config after API key update: {e}")
+def _persist_config():
+    try:
+        config.conf.save()
+    except Exception as e:
+        log.warning(f"Unable to persist config after API key update: {e}")
 
 
 def load_configured_api_keys():
@@ -394,7 +392,7 @@ def load_configured_api_keys():
     legacy_keys = _split_api_keys(legacy_raw)
     if legacy_keys and _api_key_vault.save_keys(legacy_keys):
         config.conf["VisionAssistant"]["api_key"] = ""
-        _persist_config_if_possible()
+        _persist_config()
     return legacy_keys
 
 
@@ -403,12 +401,12 @@ def save_configured_api_keys(raw):
     if not keys:
         _api_key_vault.clear()
         config.conf["VisionAssistant"]["api_key"] = ""
-        _persist_config_if_possible()
+        _persist_config()
         return True
     if not _api_key_vault.save_keys(keys):
         return False
     config.conf["VisionAssistant"]["api_key"] = ""
-    _persist_config_if_possible()
+    _persist_config()
     return True
 
 
@@ -431,6 +429,6 @@ def migrate_api_key_storage_if_needed():
         return
     if _api_key_vault.save_keys(legacy_keys):
         config.conf["VisionAssistant"]["api_key"] = ""
-        _persist_config_if_possible()
+        _persist_config()
     else:
         log.warning("Unable to migrate plaintext API keys to secure vault; leaving legacy value in place.")
