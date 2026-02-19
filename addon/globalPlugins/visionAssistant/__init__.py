@@ -1660,6 +1660,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.apiKeyCtrl_hidden = wx.TextCtrl(self.connectionBox, value=api_value, style=wx.TE_PASSWORD, size=(-1, -1))
         
         self.apiKeyCtrl_visible = wx.TextCtrl(self.connectionBox, value=api_value, style=wx.TE_MULTILINE | wx.TE_DONTWRAP, size=(-1, 60))
+        self.apiKeyCtrl_visible.Bind(wx.EVT_CHAR_HOOK, self.onApiKeyVisibleCharHook)
         self.apiKeyCtrl_visible.Hide()
         
         cHelper.addItem(self.apiKeyCtrl_hidden)
@@ -1817,12 +1818,20 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             self.apiKeyCtrl_visible.SetValue(self.apiKeyCtrl_hidden.GetValue())
             self.apiKeyCtrl_hidden.Hide()
             self.apiKeyCtrl_visible.Show()
+            self.apiKeyCtrl_visible.SetFocus()
         else:
             self.apiKeyCtrl_hidden.SetValue(self.apiKeyCtrl_visible.GetValue())
             self.apiKeyCtrl_visible.Hide()
             self.apiKeyCtrl_hidden.Show()
         
         self.connectionBox.GetParent().Layout()
+
+    def onApiKeyVisibleCharHook(self, event):
+        key = event.GetKeyCode()
+        if key in (wx.WXK_RETURN, wx.WXK_NUMPAD_ENTER):
+            self.apiKeyCtrl_visible.WriteText("\n")
+            return
+        event.Skip()
 
     def onSave(self):
         val = self.apiKeyCtrl_visible.GetValue() if self.showApiCheck.IsChecked() else self.apiKeyCtrl_hidden.GetValue()
