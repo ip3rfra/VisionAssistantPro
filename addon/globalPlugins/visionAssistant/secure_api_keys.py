@@ -65,13 +65,12 @@ class _ApiKeyVault:
             os.chmod(path, mode)
         except Exception:
             pass
-        if os.name == "nt":
-            try:
-                attrs = ctypes.windll.kernel32.GetFileAttributesW(path)
-                if attrs != 0xFFFFFFFF and not (attrs & 0x2):
-                    ctypes.windll.kernel32.SetFileAttributesW(path, attrs | 0x2)
-            except Exception:
-                pass
+        try:
+            attrs = ctypes.windll.kernel32.GetFileAttributesW(path)
+            if attrs != 0xFFFFFFFF and not (attrs & 0x2):
+                ctypes.windll.kernel32.SetFileAttributesW(path, attrs | 0x2)
+        except Exception:
+            pass
 
     def _key_path(self):
         return os.path.join(self._storage_dir(), self._key_file_name)
