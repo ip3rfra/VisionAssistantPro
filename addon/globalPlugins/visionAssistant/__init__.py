@@ -1661,13 +1661,11 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         api_value = _api_keys_for_settings()
         self._apiKeyDraft = api_value
         self._syncing_api_fields = False
-        self._hiddenEditedSinceSync = False
         
         self.apiKeyCtrl_hidden = wx.TextCtrl(self.connectionBox, value=api_value, style=wx.TE_PASSWORD, size=(-1, -1))
         self.apiKeyCtrl_hidden.Bind(wx.EVT_TEXT, self.onHiddenApiTextChanged)
         
         self.apiKeyCtrl_visible = wx.TextCtrl(self.connectionBox, value=api_value, style=wx.TE_MULTILINE | wx.TE_DONTWRAP, size=(-1, 60))
-        self.apiKeyCtrl_visible.Bind(wx.EVT_TEXT, self.onVisibleApiTextChanged)
         self.apiKeyCtrl_visible.Bind(wx.EVT_CHAR_HOOK, self.onApiKeyVisibleCharHook)
         self.apiKeyCtrl_visible.Hide()
         
@@ -1833,7 +1831,6 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             self.apiKeyCtrl_visible.SetFocus()
         else:
             self._apiKeyDraft = self.apiKeyCtrl_visible.GetValue()
-            self._hiddenEditedSinceSync = False
             self._syncing_api_fields = True
             try:
                 self.apiKeyCtrl_hidden.SetValue(self._apiKeyDraft)
@@ -1846,13 +1843,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
 
     def onHiddenApiTextChanged(self, event):
         if not self._syncing_api_fields and not self.showApiCheck.IsChecked():
-            self._hiddenEditedSinceSync = True
             self._apiKeyDraft = self.apiKeyCtrl_hidden.GetValue()
-        event.Skip()
-
-    def onVisibleApiTextChanged(self, event):
-        if not self._syncing_api_fields and self.showApiCheck.IsChecked():
-            self._apiKeyDraft = self.apiKeyCtrl_visible.GetValue()
         event.Skip()
 
     def onApiKeyVisibleCharHook(self, event):
@@ -1865,8 +1856,6 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
     def onSave(self):
         if self.showApiCheck.IsChecked():
             self._apiKeyDraft = self.apiKeyCtrl_visible.GetValue()
-        elif self._hiddenEditedSinceSync:
-            self._apiKeyDraft = self.apiKeyCtrl_hidden.GetValue()
         val = self._apiKeyDraft
         if not _save_configured_api_keys(val):
             wx.MessageBox(

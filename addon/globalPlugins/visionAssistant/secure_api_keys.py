@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import ctypes
-from ctypes import wintypes
 import hashlib
 import json
 import os
@@ -16,50 +14,6 @@ from .windows_aesgcm import WindowsAesGcm, b64decode_text, b64encode_bytes
 
 _rng = random.SystemRandom()
 
-_ADVAPI32 = ctypes.windll.advapi32
-_KERNEL32 = ctypes.windll.kernel32
-
-_PSECURITY_DESCRIPTOR = ctypes.c_void_p
-_PACL = ctypes.c_void_p
-
-_SDDL_REVISION_1 = 1
-_SE_FILE_OBJECT = 1
-_DACL_SECURITY_INFORMATION = 0x00000004
-_PROTECTED_DACL_SECURITY_INFORMATION = 0x80000000
-_SECURITY_SDDL_FILE = "D:P(A;;FA;;;SY)(A;;FA;;;BA)(A;;FA;;;OW)"
-_SECURITY_SDDL_DIR = "D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;FA;;;OW)"
-
-_ADVAPI32.ConvertStringSecurityDescriptorToSecurityDescriptorW.argtypes = [
-    wintypes.LPCWSTR,
-    wintypes.DWORD,
-    ctypes.POINTER(_PSECURITY_DESCRIPTOR),
-    ctypes.POINTER(wintypes.DWORD),
-]
-_ADVAPI32.ConvertStringSecurityDescriptorToSecurityDescriptorW.restype = wintypes.BOOL
-_ADVAPI32.GetSecurityDescriptorDacl.argtypes = [
-    _PSECURITY_DESCRIPTOR,
-    ctypes.POINTER(wintypes.BOOL),
-    ctypes.POINTER(_PACL),
-    ctypes.POINTER(wintypes.BOOL),
-]
-_ADVAPI32.GetSecurityDescriptorDacl.restype = wintypes.BOOL
-_ADVAPI32.SetNamedSecurityInfoW.argtypes = [
-    wintypes.LPWSTR,
-    wintypes.DWORD,
-    wintypes.DWORD,
-    ctypes.c_void_p,
-    ctypes.c_void_p,
-    _PACL,
-    ctypes.c_void_p,
-]
-_ADVAPI32.SetNamedSecurityInfoW.restype = wintypes.DWORD
-_KERNEL32.LocalFree.argtypes = [ctypes.c_void_p]
-_KERNEL32.LocalFree.restype = ctypes.c_void_p
-_KERNEL32.GetFileAttributesW.argtypes = [wintypes.LPCWSTR]
-_KERNEL32.GetFileAttributesW.restype = wintypes.DWORD
-_KERNEL32.SetFileAttributesW.argtypes = [wintypes.LPCWSTR, wintypes.DWORD]
-_KERNEL32.SetFileAttributesW.restype = wintypes.BOOL
-
 
 def _token_bytes(size):
     return os.urandom(size)
@@ -73,45 +27,6 @@ def _randbelow(limit):
     if limit <= 0:
         raise ValueError("limit must be greater than zero.")
     return _rng.randrange(limit)
-
-
-def _apply_windows_acl(path, is_dir=False):
-    sddl = _SECURITY_SDDL_DIR if is_dir else _SECURITY_SDDL_FILE
-    security_descriptor = _PSECURITY_DESCRIPTOR()
-    if not _ADVAPI32.ConvertStringSecurityDescriptorToSecurityDescriptorW(
-        sddl,
-        _SDDL_REVISION_1,
-        ctypes.byref(security_descriptor),
-        None,
-    ):
-        raise ctypes.WinError(ctypes.get_last_error())
-    try:
-        dacl_present = wintypes.BOOL()
-        dacl_defaulted = wintypes.BOOL()
-        dacl = _PACL()
-        if not _ADVAPI32.GetSecurityDescriptorDacl(
-            security_descriptor,
-            ctypes.byref(dacl_present),
-            ctypes.byref(dacl),
-            ctypes.byref(dacl_defaulted),
-        ):
-            raise ctypes.WinError(ctypes.get_last_error())
-        if not dacl_present.value:
-            raise RuntimeError("Missing DACL in security descriptor.")
-        result = _ADVAPI32.SetNamedSecurityInfoW(
-            ctypes.c_wchar_p(path),
-            _SE_FILE_OBJECT,
-            _DACL_SECURITY_INFORMATION | _PROTECTED_DACL_SECURITY_INFORMATION,
-            None,
-            None,
-            dacl,
-            None,
-        )
-        if result != 0:
-            raise ctypes.WinError(result)
-    finally:
-        if security_descriptor.value:
-            _KERNEL32.LocalFree(security_descriptor)
 
 
 class _ApiKeyVault:
@@ -142,19 +57,6 @@ class _ApiKeyVault:
     def _storage_dir(self):
         return os.path.join(self._get_config_dir(), self._store_dir_name)
 
-    @staticmethod
-    def _harden_path(path, is_dir=False):
-        try:
-            _apply_windows_acl(path, is_dir=is_dir)
-        except Exception as e:
-            log.warning(f"Failed to apply ACL hardening to {path}: {e}")
-        try:
-            attrs = _KERNEL32.GetFileAttributesW(path)
-            if attrs != 0xFFFFFFFF and not (attrs & 0x2):
-                _KERNEL32.SetFileAttributesW(path, attrs | 0x2)
-        except Exception as e:
-            log.warning(f"Failed to set hidden attribute for {path}: {e}")
-
     def _key_path(self):
         return os.path.join(self._storage_dir(), self._key_file_name)
 
@@ -163,7 +65,6 @@ class _ApiKeyVault:
 
     def _ensure_storage_dir(self):
         os.makedirs(self._storage_dir(), exist_ok=True)
-        self._harden_path(self._storage_dir(), is_dir=True)
 
     @staticmethod
     def _write_bytes_atomic(path, data):
@@ -171,7 +72,6 @@ class _ApiKeyVault:
         with open(tmp, "wb") as f:
             f.write(data)
         os.replace(tmp, path)
-        _ApiKeyVault._harden_path(path, is_dir=False)
 
     @staticmethod
     def _write_json_atomic(path, payload):
@@ -396,9 +296,7 @@ def load_configured_api_keys():
 
 def save_configured_api_keys(raw):
     keys = _split_api_keys(raw)
-    if not keys:
-        _api_key_vault.clear()
-    elif not _api_key_vault.save_keys(keys):
+    if not _api_key_vault.save_keys(keys):
         return False
     config.conf["VisionAssistant"]["api_key"] = ""
     _persist_config()
