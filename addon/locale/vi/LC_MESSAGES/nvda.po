@@ -1,15 +1,16 @@
-# Vision Assistant Pro Translation File.
-# Copyright (C) 2026
-# This file is distributed under the same license as the VisionAssistant package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the 'VisionAssistant' package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: VisionAssistant 4.0.0\n"
+"Project-Id-Version: 'VisionAssistant' '4.6'\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
-"POT-Creation-Date: 2026-01-26 16:50+0330\n"
-"PO-Revision-Date: 2026-01-27 10:05+0700\n"
-"Last-Translator: Gemini\n"
-"Language-Team: Vietnamese\n"
+"POT-Creation-Date: 2026-02-27 13:25+0330\n"
+"PO-Revision-Date: 2026-04-27 08:23+0700\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "Language: vi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,42 +18,45 @@ msgstr ""
 "X-Generator: Poedit 3.6\n"
 
 #. Translators: Label for the button to copy the TON cryptocurrency wallet address.
-#: addon\globalPlugins\visionAssistant\donate_dialog.py:17
+#: addon\globalPlugins\visionAssistant\donate_dialog.py:18
 msgid "Copy TON Address"
-msgstr "Sao chép địa chỉ ví TON"
+msgstr "Sao chép địa chỉ TON"
 
 #. Translators: Label for the button to copy the USDT (TRC20 network) wallet address.
-#: addon\globalPlugins\visionAssistant\donate_dialog.py:19
+#: addon\globalPlugins\visionAssistant\donate_dialog.py:20
 msgid "Copy USDT (TRC20) Address"
 msgstr "Sao chép địa chỉ USDT (TRC20)"
 
+#. Translators: Label for the button to copy the support email address for gift cards.
+#: addon\globalPlugins\visionAssistant\donate_dialog.py:22
+msgid "Copy Support Email"
+msgstr "Sao chép email hỗ trợ"
+
 #. Translators: Button to dismiss the donation dialog without taking any action.
-#: addon\globalPlugins\visionAssistant\donate_dialog.py:25
+#: addon\globalPlugins\visionAssistant\donate_dialog.py:29
 msgid "Maybe Later"
 msgstr "Để sau"
 
-#. Translators: Success message shown after a wallet address is copied to the clipboard.
-#: addon\globalPlugins\visionAssistant\donate_dialog.py:36
-msgid ""
-"Address copied to clipboard! If you'd like, you can now proceed to your "
-"wallet and donate any amount you can. Your support is greatly appreciated!"
-msgstr ""
-"Địa chỉ đã được sao chép vào bộ nhớ tạm! Nếu muốn, bạn có thể truy cập ví "
-"của mình và ủng hộ bất kỳ số tiền nào. Sự giúp đỡ của bạn là niềm khích lệ "
-"rất lớn!"
+#. Translators: Success message shown after an address or email is copied to the clipboard.
+#: addon\globalPlugins\visionAssistant\donate_dialog.py:40
+msgid "Copied to clipboard! Your support is greatly appreciated!"
+msgstr "Đã sao chép vào clipboard! Rất trân trọng sự ủng hộ của bạn!"
 
 #. Translators: Title for the success message box.
-#: addon\globalPlugins\visionAssistant\__init__.py:2221 addon\globalPlugins\visionAssistant\__init__.py:2269 addon\globalPlugins\visionAssistant\donate_dialog.py:38
+#: addon\globalPlugins\visionAssistant\donate_dialog.py:42
+#: addon\globalPlugins\visionAssistant\__init__.py:3325
+#: addon\globalPlugins\visionAssistant\__init__.py:3374
 msgid "Success"
 msgstr "Thành công"
 
 #. Translators: Title of the donation request dialog.
-#: addon\globalPlugins\visionAssistant\donate_dialog.py:49
+#: addon\globalPlugins\visionAssistant\donate_dialog.py:53
 #, python-brace-format
 msgid "Support the Future of {name}"
 msgstr "Ủng hộ tương lai của {name}"
 
-#: addon\globalPlugins\visionAssistant\donate_dialog.py:53
+#. Translators: The main message of the donation dialog.
+#: addon\globalPlugins\visionAssistant\donate_dialog.py:56
 #, python-brace-format
 msgid ""
 "{name} is a project born from a personal vision to bridge the gap between AI "
@@ -65,296 +69,851 @@ msgid ""
 "remains fast, stable, and constantly evolving is a continuous creative "
 "journey that I am passionate about pursuing.\n"
 "\n"
+"Important Note: Due to international banking restrictions in my region, I am "
+"unable to use PayPal or Stripe. If you wish to support this project, you can "
+"donate via Cryptocurrency or by sending an Apple Gift Card (US region) to: "
+"{email}\n"
+"\n"
 "If this assistant has brought value to your daily life, your support is a "
 "wonderful way to show appreciation for the original work and the dedication "
-"behind it. It provides the extra motivation to keep the inspiration alive "
-"and ensures we can continue to push the boundaries together. Thank you for "
-"being part of this mission!"
+"behind it. Thank you for being part of this mission!"
 msgstr ""
-"{name} là một dự án ra đời từ mong muốn cá nhân nhằm xóa nhòa khoảng cách "
-"giữa AI và khả năng tiếp cận thực tế. Ý tưởng ban đầu cũng như nhiều tính "
-"năng bạn đang sử dụng được hình thành từ tâm huyết của tôi để giải quyết các "
-"thách thức thực tế, mang lại sự độc lập mới trong môi trường kỹ thuật số.\n"
+"Dự án {name} ra đời từ tầm nhìn cá nhân nhằm thu hẹp khoảng cách giữa AI và "
+"khả năng tiếp cận thực sự. Ý tưởng ban đầu và nhiều tính năng bạn đang sử "
+"dụng được tạo ra từ chính những ý tưởng của tôi để giải quyết những thách "
+"thức thực tế và mang lại một mức độ độc lập kỹ thuật số mới.\n"
 "\n"
-"Tôi luôn nỗ lực trau chuốt từng chi tiết và biến những cải tiến của bản thân "
-"cũng như những yêu cầu quý báu của bạn thành hiện thực. Việc duy trì công cụ "
-"này luôn nhanh chóng, ổn định và không ngừng phát triển là một hành trình "
-"sáng tạo mà tôi luôn theo đuổi.\n"
+"Tôi rất tự hào khi suy nghĩ thấu đáo từng chi tiết và biến cả những đổi mới "
+"của riêng mình cũng như những yêu cầu quý giá của bạn thành hiện thực. Đảm "
+"bảo công cụ này luôn nhanh chóng, ổn định và không ngừng phát triển là một "
+"hành trình sáng tạo không ngừng mà tôi đam mê theo đuổi.\n"
 "\n"
-"Nếu trợ lý này mang lại giá trị cho cuộc sống của bạn, sự ủng hộ của bạn là "
-"cách tuyệt vời để ghi nhận nỗ lực sáng tạo và tâm huyết đằng sau nó. Đây "
-"cũng là động lực to lớn để giữ vững nguồn cảm hứng và cùng nhau phá vỡ những "
-"rào cản. Cảm ơn bạn đã đồng hành!"
+"Lưu ý quan trọng: Do những hạn chế về ngân hàng quốc tế tại khu vực của tôi, "
+"tôi không thể sử dụng PayPal hoặc Stripe. Nếu bạn muốn ủng hộ dự án này, bạn "
+"có thể quyên góp qua Tiền điện tử hoặc bằng cách gửi Apple Gift Card (khu "
+"vực Mỹ) tới: {email}\n"
+"\n"
+"Nếu trợ lý này mang lại giá trị cho cuộc sống hàng ngày của bạn, sự ủng hộ "
+"của bạn là một cách tuyệt vời để thể hiện sự trân trọng đối với công trình "
+"ban đầu và sự cống hiến đằng sau nó. Cảm ơn bạn đã là một phần của sứ mệnh "
+"này!"
+
+#. Translators: Label for prompt name input field.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:22
+msgid "Name:"
+msgstr "Tên:"
+
+#. Translators: Label for prompt text input field.
+#. Translators: Label above the prompt editor textarea.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:28
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:189
+msgid "Prompt Text:"
+msgstr "Văn bản prompt:"
+
+#. Translators: Button label to open the variables help dialog.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:47
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:142
+msgid "Variables Guide"
+msgstr "Hướng dẫn về biến"
+
+#. Translators: Validation error for empty prompt name.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:64
+msgid "Name cannot be empty."
+msgstr "Tên không được để trống."
+
+#. Translators: Title of validation warning dialog.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:66
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:74
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:361
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:472
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:500
+msgid "Validation Error"
+msgstr "Lỗi xác thực"
+
+#. Translators: Validation error for empty prompt text.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:72
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:359
+msgid "Prompt text cannot be empty."
+msgstr "Văn bản prompt không được để trống."
+
+#. Translators: Title for the prompt variables help dialog.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:95
+msgid "Prompt Variables Guide"
+msgstr "Hướng dẫn về biến prompt"
+
+#. Translators: Intro text for the prompt variables help dialog.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:99
+msgid "Use these variables inside prompt text:"
+msgstr "Sử dụng các biến này bên trong văn bản prompt:"
+
+#. Translators: Button to close chat dialog
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:110
+#: addon\globalPlugins\visionAssistant\__init__.py:1958
+#: addon\globalPlugins\visionAssistant\__init__.py:2987
+msgid "Close"
+msgstr "Đóng"
+
+#. Translators: Title for the prompt manager dialog.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:120
+msgid "Prompt Manager"
+msgstr "Quản lý prompt"
+
+#. Translators: Notebook tab for built-in refine prompts.
+#. Translators: Label above the list of default prompt entries.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:132
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:166
+msgid "Default Prompts"
+msgstr "Prompt mặc định"
+
+#. Translators: Notebook tab for user-defined prompts.
+#. Translators: Label above the list of custom prompts.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:134
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:221
+msgid "Custom Prompts"
+msgstr "Prompt tùy chỉnh"
+
+#. Translators: Note explaining when prompt changes are persisted.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:146
+msgid "Changes are applied only when you press OK."
+msgstr "Các thay đổi chỉ được áp dụng khi bạn nhấn OK."
+
+#. Translators: Button label to reset currently selected default prompt.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:178
+msgid "Reset Selected"
+msgstr "Đặt lại mục đã chọn"
+
+#. Translators: Button label to reset all default prompts.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:183
+msgid "Reset All"
+msgstr "Đặt lại tất cả"
+
+#. Translators: Button label to apply current editor text to the selected default prompt.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:198
+msgid "Apply to Selected"
+msgstr "Áp dụng cho mục đã chọn"
+
+#. Translators: Button label for adding a custom prompt.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:230
+msgid "Add"
+msgstr "Thêm"
+
+#. Translators: Button label for editing a custom prompt.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:232
+msgid "Edit"
+msgstr "Sửa"
+
+#. Translators: Button label for removing a custom prompt.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:234
+msgid "Remove"
+msgstr "Xóa"
+
+#. Translators: Button label for moving selected custom prompt up in the list.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:245
+msgid "Move Up"
+msgstr "Di chuyển lên"
+
+#. Translators: Button label for moving selected custom prompt down in the list.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:247
+msgid "Move Down"
+msgstr "Di chuyển xuống"
+
+#. Translators: Label above the custom prompt preview area.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:256
+msgid "Prompt Preview:"
+msgstr "Xem trước prompt:"
+
+#. Translators: Validation message shown when required text is missing in a guarded prompt.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:318
+#, python-brace-format
+msgid ""
+"This prompt is used by {feature}. To save it, add the required text below:"
+msgstr ""
+"Prompt này được sử dụng bởi {feature}. Để lưu lại, hãy thêm văn bản bắt buộc "
+"bên dưới:"
+
+#. Translators: Guidance shown after listing missing required text.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:324
+msgid "Add these items exactly as written, then try again."
+msgstr "Thêm các mục này chính xác như đã viết, sau đó thử lại."
+
+#. Translators: Title of validation warning dialog for guarded prompt checks.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:326
+msgid "Required Text Missing"
+msgstr "Thiếu văn bản bắt buộc"
+
+#. Translators: Confirmation message shown before saving a guarded prompt.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:337
+#, python-brace-format
+msgid ""
+"You are editing a prompt used by {feature}.\n"
+"\n"
+"If this prompt is changed, this feature may not work correctly.\n"
+"\n"
+"Do you understand the risk and want to save anyway?"
+msgstr ""
+"Bạn đang chỉnh sửa một prompt được sử dụng bởi {feature}.\n"
+"\n"
+"Nếu prompt này bị thay đổi, tính năng này có thể không hoạt động chính xác.\n"
+"\n"
+"Bạn có hiểu rủi ro và vẫn muốn lưu không?"
+
+#. Translators: Title of confirmation dialog shown before saving guarded prompts.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:340
+msgid "Confirm"
+msgstr "Xác nhận"
+
+#. Translators: Confirm button label for guarded prompt save confirmation.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:344
+msgid "Yes, Save Anyway"
+msgstr "Có, vẫn lưu"
+
+#. Translators: Cancel button label for guarded prompt save confirmation.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:346
+msgid "No, Go Back"
+msgstr "Không, quay lại"
+
+#. Translators: Message shown after applying changes to the selected default prompt.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:395
+msgid "Selected prompt updated."
+msgstr "Đã cập nhật prompt được chọn."
+
+#. Translators: Confirmation text before resetting all default prompts.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:408
+msgid "Reset all default prompts to built-in values?"
+msgstr "Đặt lại tất cả prompt mặc định về giá trị gốc?"
+
+#. Translators: Title of confirmation dialog.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:410
+msgid "Confirm Reset"
+msgstr "Xác nhận đặt lại"
+
+#. Translators: Title of dialog for adding a custom prompt.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:465
+msgid "Add Custom Prompt"
+msgstr "Thêm prompt tùy chỉnh"
+
+#. Translators: Validation error for duplicate custom prompt name.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:470
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:498
+msgid "A custom prompt with this name already exists."
+msgstr "Một prompt tùy chỉnh với tên này đã tồn tại."
+
+#. Translators: Title of the dialog for editing an existing custom prompt.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:489
+msgid "Edit Custom Prompt"
+msgstr "Chỉnh sửa prompt tùy chỉnh"
+
+#. Translators: Confirmation text before deleting a custom prompt.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:513
+#, python-brace-format
+msgid "Remove custom prompt '{name}'?"
+msgstr "Xóa prompt tùy chỉnh '{name}'?"
+
+#. Translators: Title of confirmation dialog.
+#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:515
+msgid "Confirm Remove"
+msgstr "Xác nhận xóa"
 
 #. --- 1. Recommended (Auto-Updating) ---
 #. Translators: AI Model info. [Auto] = Automatic updates. (Latest) = Newest version.
-#: addon\globalPlugins\visionAssistant\__init__.py:67 addon\globalPlugins\visionAssistant\__init__.py:68
+#: addon\globalPlugins\visionAssistant\__init__.py:67
+#: addon\globalPlugins\visionAssistant\__init__.py:68
 msgid "[Auto]"
 msgstr "[Tự động]"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:67 addon\globalPlugins\visionAssistant\__init__.py:68
+#: addon\globalPlugins\visionAssistant\__init__.py:67
+#: addon\globalPlugins\visionAssistant\__init__.py:68
 msgid "(Latest)"
 msgstr "(Mới nhất)"
 
 #. --- 2. Current Standard (Free & Fast) ---
 #. Translators: AI Model info. [Free] = Generous usage limits. (Preview) = Experimental or early-access version.
-#: addon\globalPlugins\visionAssistant\__init__.py:72 addon\globalPlugins\visionAssistant\__init__.py:73 addon\globalPlugins\visionAssistant\__init__.py:74
+#: addon\globalPlugins\visionAssistant\__init__.py:72
+#: addon\globalPlugins\visionAssistant\__init__.py:73
+#: addon\globalPlugins\visionAssistant\__init__.py:74
 msgid "[Free]"
 msgstr "[Miễn phí]"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:72 addon\globalPlugins\visionAssistant\__init__.py:78
+#: addon\globalPlugins\visionAssistant\__init__.py:72
+#: addon\globalPlugins\visionAssistant\__init__.py:78
 msgid "(Preview)"
-msgstr "(Thử nghiệm)"
+msgstr "(Bản xem trước)"
 
 #. --- 3. High Intelligence (Paid/Pro/Preview) ---
 #. Translators: AI Model info. [Pro] = High intelligence/Paid tier. (Preview) = Experimental version.
-#: addon\globalPlugins\visionAssistant\__init__.py:78 addon\globalPlugins\visionAssistant\__init__.py:79
+#: addon\globalPlugins\visionAssistant\__init__.py:78
+#: addon\globalPlugins\visionAssistant\__init__.py:79
 msgid "[Pro]"
 msgstr "[Pro]"
 
-#. Translators: Voice style description (e.g., Bright, Calm, Formal).
-#: addon\globalPlugins\visionAssistant\__init__.py:84 addon\globalPlugins\visionAssistant\__init__.py:93
+#. Translators: Adjective describing a bright AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:84
+#: addon\globalPlugins\visionAssistant\__init__.py:102
 msgid "Bright"
-msgstr "Tươi sáng"
+msgstr "Sáng sủa"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:85 addon\globalPlugins\visionAssistant\__init__.py:102
+#. Translators: Adjective describing an upbeat AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:86
+#: addon\globalPlugins\visionAssistant\__init__.py:120
 msgid "Upbeat"
-msgstr "Sôi nổi"
+msgstr "Vui vẻ"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:86 addon\globalPlugins\visionAssistant\__init__.py:101
+#. Translators: Adjective describing an informative AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:88
+#: addon\globalPlugins\visionAssistant\__init__.py:118
 msgid "Informative"
 msgstr "Nhiều thông tin"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:87 addon\globalPlugins\visionAssistant\__init__.py:90 addon\globalPlugins\visionAssistant\__init__.py:104
+#. Translators: Adjective describing a firm AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:90
+#: addon\globalPlugins\visionAssistant\__init__.py:96
+#: addon\globalPlugins\visionAssistant\__init__.py:124
 msgid "Firm"
-msgstr "Mạnh mẽ"
+msgstr "Quả quyết"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:88
+#. Translators: Adjective describing an excitable AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:92
 msgid "Excitable"
-msgstr "Hào hứng"
+msgstr "Sôi nổi"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:89
+#. Translators: Adjective describing a youthful AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:94
 msgid "Youthful"
 msgstr "Trẻ trung"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:91
+#. Translators: Adjective describing a breezy AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:98
 msgid "Breezy"
-msgstr "Phóng khoáng"
-
-#: addon\globalPlugins\visionAssistant\__init__.py:92 addon\globalPlugins\visionAssistant\__init__.py:96
-msgid "Easy-going"
 msgstr "Thoải mái"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:94
-msgid "Breathy"
-msgstr "Hơi mỏng"
+#. Translators: Adjective describing an easy-going AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:100
+#: addon\globalPlugins\visionAssistant\__init__.py:108
+msgid "Easy-going"
+msgstr "Dễ tính"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:95 addon\globalPlugins\visionAssistant\__init__.py:99
+#. Translators: Adjective describing a breathy AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:104
+msgid "Breathy"
+msgstr "Nhẹ nhàng"
+
+#. Translators: Adjective describing a clear AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:106
+#: addon\globalPlugins\visionAssistant\__init__.py:114
+#: addon\globalPlugins\visionAssistant\__init__.py:164
 msgid "Clear"
 msgstr "Rõ ràng"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:97 addon\globalPlugins\visionAssistant\__init__.py:98
+#. Translators: Adjective describing a smooth AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:110
+#: addon\globalPlugins\visionAssistant\__init__.py:112
 msgid "Smooth"
 msgstr "Mượt mà"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:100
+#. Translators: Adjective describing a gravelly AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:116
 msgid "Gravelly"
-msgstr "Trầm khàn"
+msgstr "Khàn"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:103
+#. Translators: Adjective describing a soft AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:122
 msgid "Soft"
-msgstr "Nhẹ nhàng"
+msgstr "Mềm mại"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:105
+#. Translators: Adjective describing an even AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:126
 msgid "Even"
-msgstr "Điềm tĩnh"
+msgstr "Đều đặn"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:106
+#. Translators: Adjective describing a mature AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:128
 msgid "Mature"
 msgstr "Trưởng thành"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:107
+#. Translators: Adjective describing a forward AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:130
 msgid "Forward"
-msgstr "Quyết đoán"
+msgstr "Thẳng thắn"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:108
+#. Translators: Adjective describing a friendly AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:132
 msgid "Friendly"
 msgstr "Thân thiện"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:109
+#. Translators: Adjective describing a casual AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:134
 msgid "Casual"
-msgstr "Tự nhiên"
+msgstr "Bình thường"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:110
+#. Translators: Adjective describing a gentle AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:136
+#: addon\globalPlugins\visionAssistant\__init__.py:162
 msgid "Gentle"
 msgstr "Dịu dàng"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:111
+#. Translators: Adjective describing a lively AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:138
 msgid "Lively"
-msgstr "Sinh động"
+msgstr "Sống động"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:112
+#. Translators: Adjective describing a knowledgeable AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:140
 msgid "Knowledgeable"
-msgstr "Thông thái"
+msgstr "Uyên bác"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:113
+#. Translators: Adjective describing a warm AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:142
 msgid "Warm"
 msgstr "Ấm áp"
 
+#. Translators: Adjective describing a neutral AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:146
+msgid "Neutral"
+msgstr "Trung tính"
+
+#. Translators: Adjective describing a quirky AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:148
+msgid "Quirky"
+msgstr "Độc đáo"
+
+#. Translators: Adjective describing a professional AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:150
+msgid "Professional"
+msgstr "Chuyên nghiệp"
+
+#. Translators: Adjective describing a cheerful AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:152
+msgid "Cheerful"
+msgstr "Tươi vui"
+
+#. Translators: Adjective describing a confident AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:154
+msgid "Confident"
+msgstr "Tự tự tin"
+
+#. Translators: Adjective describing a British AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:156
+msgid "British"
+msgstr "Anh (Anh)"
+
+#. Translators: Adjective describing a pleasant AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:158
+msgid "Pleasant"
+msgstr "Dễ chịu"
+
+#. Translators: Adjective describing a deep AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:160
+msgid "Deep"
+msgstr "Trầm"
+
+#. Translators: Adjective describing an expressive AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:166
+msgid "Expressive"
+msgstr "Diễn cảm"
+
+#. Translators: Adjective describing a reliable AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:168
+msgid "Reliable"
+msgstr "Đáng tin cậy"
+
+#. Translators: Adjective describing an energetic AI voice style.
+#: addon\globalPlugins\visionAssistant\__init__.py:170
+msgid "Energetic"
+msgstr "Năng động"
+
 #. Translators: OCR Engine option (Fast but less formatted)
-#: addon\globalPlugins\visionAssistant\__init__.py:134
+#: addon\globalPlugins\visionAssistant\__init__.py:191
 msgid "Chrome (Fast)"
 msgstr "Chrome (Nhanh)"
 
-#. Translators: OCR Engine option (Slower but better formatting)
-#: addon\globalPlugins\visionAssistant\__init__.py:136
-msgid "Gemini (Formatted)"
-msgstr "Gemini (Có định dạng)"
+#. Translators: OCR Engine option (Slower but better formatting/AI-driven)
+#: addon\globalPlugins\visionAssistant\__init__.py:193
+msgid "AI (Advanced)"
+msgstr "AI (Nâng cao)"
+
+#. Translators: Section header for text refinement prompts in Prompt Manager.
+#. Translators: main message of the Refine dialog
+#: addon\globalPlugins\visionAssistant\__init__.py:273
+#: addon\globalPlugins\visionAssistant\__init__.py:281
+#: addon\globalPlugins\visionAssistant\__init__.py:289
+#: addon\globalPlugins\visionAssistant\__init__.py:297
+#: addon\globalPlugins\visionAssistant\__init__.py:4014
+msgid "Refine"
+msgstr "Tinh chỉnh"
+
+#. Translators: Label for the text summarization prompt.
+#: addon\globalPlugins\visionAssistant\__init__.py:275
+msgid "Summarize"
+msgstr "Tóm tắt"
+
+#. Translators: Label for the grammar correction prompt.
+#: addon\globalPlugins\visionAssistant\__init__.py:283
+msgid "Fix Grammar"
+msgstr "Sửa ngữ pháp"
+
+#. Translators: Label for the grammar correction and translation prompt.
+#: addon\globalPlugins\visionAssistant\__init__.py:291
+msgid "Fix Grammar & Translate"
+msgstr "Sửa ngữ pháp & Dịch"
+
+#. Translators: Label for the text explanation prompt.
+#: addon\globalPlugins\visionAssistant\__init__.py:299
+msgid "Explain"
+msgstr "Giải thích"
+
+#. Translators: Section header for translation-related prompts in Prompt Manager.
+#. Translators: Box title for translation options
+#: addon\globalPlugins\visionAssistant\__init__.py:305
+#: addon\globalPlugins\visionAssistant\__init__.py:317
+#: addon\globalPlugins\visionAssistant\__init__.py:2741
+msgid "Translation"
+msgstr "Dịch thuật"
+
+#. Translators: Label for the smart translation prompt.
+#. Translators: Feature name used in guarded prompt warnings for smart translation.
+#: addon\globalPlugins\visionAssistant\__init__.py:307
+#: addon\globalPlugins\visionAssistant\__init__.py:310
+msgid "Smart Translation"
+msgstr "Dịch thông minh"
+
+#. Translators: Label for the quick translation prompt.
+#: addon\globalPlugins\visionAssistant\__init__.py:319
+msgid "Quick Translation"
+msgstr "Dịch nhanh"
+
+#. Translators: Section header for document-related prompts in Prompt Manager.
+#: addon\globalPlugins\visionAssistant\__init__.py:325
+#: addon\globalPlugins\visionAssistant\__init__.py:446
+msgid "Document"
+msgstr "Tài liệu"
+
+#. Translators: Label for the initial context prompt in document chat.
+#: addon\globalPlugins\visionAssistant\__init__.py:327
+msgid "Document Chat Context"
+msgstr "Ngữ cảnh trò chuyện tài liệu"
+
+#. Translators: Section header for image analysis prompts in Prompt Manager.
+#: addon\globalPlugins\visionAssistant\__init__.py:340
+#: addon\globalPlugins\visionAssistant\__init__.py:354
+msgid "Vision"
+msgstr "Thị giác"
+
+#. Translators: Label for the prompt used to analyze the current navigator object.
+#: addon\globalPlugins\visionAssistant\__init__.py:342
+msgid "Navigator Object Analysis"
+msgstr "Phân tích đối tượng Navigator"
+
+#. Translators: Label for the prompt used to analyze the entire screen.
+#: addon\globalPlugins\visionAssistant\__init__.py:356
+msgid "Full Screen Analysis"
+msgstr "Phân tích toàn màn hình"
+
+#. Translators: Section header for video analysis prompts in Prompt Manager.
+#: addon\globalPlugins\visionAssistant\__init__.py:382
+msgid "Video"
+msgstr "Video"
+
+#. Translators: Label for the video content analysis prompt.
+#: addon\globalPlugins\visionAssistant\__init__.py:384
+msgid "Video Analysis"
+msgstr "Phân tích Video"
+
+#. Translators: Section header for audio-related prompts in Prompt Manager.
+#: addon\globalPlugins\visionAssistant\__init__.py:394
+#: addon\globalPlugins\visionAssistant\__init__.py:402
+msgid "Audio"
+msgstr "Âm thanh"
+
+#. Translators: Label for the audio file transcription prompt.
+#: addon\globalPlugins\visionAssistant\__init__.py:396
+msgid "Audio Transcription"
+msgstr "Chuyển biên âm thanh"
+
+#. Translators: Label for the smart voice dictation prompt.
+#. Translators: Feature name used in guarded prompt warnings for smart dictation.
+#: addon\globalPlugins\visionAssistant\__init__.py:404
+#: addon\globalPlugins\visionAssistant\__init__.py:407
+msgid "Smart Dictation"
+msgstr "Đọc chính tả thông minh"
+
+#. Translators: Section header for OCR-related prompts in Prompt Manager.
+#: addon\globalPlugins\visionAssistant\__init__.py:417
+#: addon\globalPlugins\visionAssistant\__init__.py:429
+msgid "OCR"
+msgstr "OCR"
+
+#. Translators: Label for the OCR prompt used for image text extraction.
+#: addon\globalPlugins\visionAssistant\__init__.py:419
+msgid "OCR Image Extraction"
+msgstr "Trích xuất văn bản từ hình ảnh (OCR)"
+
+#. Translators: Label for the OCR prompt used for document text extraction.
+#. Translators: Feature name used in guarded prompt warnings for OCR document extraction.
+#: addon\globalPlugins\visionAssistant\__init__.py:431
+#: addon\globalPlugins\visionAssistant\__init__.py:434
+msgid "OCR Document Extraction"
+msgstr "Trích xuất văn bản từ tài liệu (OCR)"
+
+#. Translators: Label for the combined OCR and translation prompt for documents.
+#: addon\globalPlugins\visionAssistant\__init__.py:448
+msgid "Document OCR + Translate"
+msgstr "OCR Tài liệu + Dịch"
+
+#. Translators: Section header for CAPTCHA-related prompts in Prompt Manager.
+#. --- CAPTCHA Group ---
+#: addon\globalPlugins\visionAssistant\__init__.py:458
+#: addon\globalPlugins\visionAssistant\__init__.py:2337
+msgid "CAPTCHA"
+msgstr "CAPTCHA"
+
+#. Translators: Label for the CAPTCHA solving prompt.
+#. Translators: Feature name used in guarded prompt warnings for CAPTCHA solver.
+#: addon\globalPlugins\visionAssistant\__init__.py:460
+#: addon\globalPlugins\visionAssistant\__init__.py:463
+msgid "CAPTCHA Solver"
+msgstr "Giải CAPTCHA"
+
+#. Translators: Description and input type for the [selection] variable in the Variables Guide.
+#: addon\globalPlugins\visionAssistant\__init__.py:481
+msgid "Currently selected text"
+msgstr "Văn bản đang được chọn"
+
+#: addon\globalPlugins\visionAssistant\__init__.py:481
+#: addon\globalPlugins\visionAssistant\__init__.py:483
+msgid "Text"
+msgstr "Văn bản"
+
+#. Translators: Description for the [clipboard] variable in the Variables Guide.
+#: addon\globalPlugins\visionAssistant\__init__.py:483
+msgid "Clipboard content"
+msgstr "Nội dung clipboard"
+
+#. Translators: Description and input type for the [screen_obj] variable in the Variables Guide.
+#: addon\globalPlugins\visionAssistant\__init__.py:485
+msgid "Screenshot of the navigator object"
+msgstr "Ảnh chụp màn hình của đối tượng navigator"
+
+#: addon\globalPlugins\visionAssistant\__init__.py:485
+#: addon\globalPlugins\visionAssistant\__init__.py:487
+msgid "Image"
+msgstr "Hình ảnh"
+
+#. Translators: Description for the [screen_full] variable in the Variables Guide.
+#: addon\globalPlugins\visionAssistant\__init__.py:487
+msgid "Screenshot of the entire screen"
+msgstr "Ảnh chụp toàn bộ màn hình"
+
+#. Translators: Description and input type for the [file_ocr] variable in the Variables Guide.
+#: addon\globalPlugins\visionAssistant\__init__.py:489
+msgid "Select image/PDF/TIFF for text extraction"
+msgstr "Chọn hình ảnh/PDF/TIFF để trích xuất văn bản"
+
+#: addon\globalPlugins\visionAssistant\__init__.py:489
+msgid "Image, PDF, TIFF"
+msgstr "Hình ảnh, PDF, TIFF"
+
+#. Translators: Description and input type for the [file_read] variable in the Variables Guide.
+#: addon\globalPlugins\visionAssistant\__init__.py:491
+msgid "Select document for reading"
+msgstr "Chọn tài liệu để đọc"
+
+#: addon\globalPlugins\visionAssistant\__init__.py:491
+msgid "TXT, Code, PDF"
+msgstr "TXT, Code, PDF"
+
+#. Translators: Description and input type for the [file_audio] variable in the Variables Guide.
+#: addon\globalPlugins\visionAssistant\__init__.py:493
+msgid "Select audio file for analysis"
+msgstr "Chọn tệp âm thanh để phân tích"
+
+#: addon\globalPlugins\visionAssistant\__init__.py:493
+msgid "MP3, WAV, OGG"
+msgstr "MP3, WAV, OGG"
+
+#. Translators: Prefix for custom prompts in the Refine menu
+#: addon\globalPlugins\visionAssistant\__init__.py:781
+msgid "Custom: "
+msgstr "Tùy chỉnh: "
 
 #. Translators: Title of the error dialog box
-#: addon\globalPlugins\visionAssistant\__init__.py:698
+#: addon\globalPlugins\visionAssistant\__init__.py:865
 #, python-brace-format
 msgid "{name} Error"
 msgstr "Lỗi {name}"
 
 #. Translators: Error message for Bad Request (400)
-#: addon\globalPlugins\visionAssistant\__init__.py:959
+#: addon\globalPlugins\visionAssistant\__init__.py:1138
 msgid "Error 400: Bad Request (Check API Key)"
-msgstr ""
-"Lỗi 400: Yêu cầu không hợp lệ (Kiểm tra khóa API)Lỗi 400: Yêu cầu không hợp "
-"lệ (Kiểm tra định dạng khóa API)"
+msgstr "Lỗi 400: Yêu cầu không hợp lệ (Kiểm tra Khóa API)"
 
 #. Translators: Error message for Forbidden (403)
-#: addon\globalPlugins\visionAssistant\__init__.py:961
+#: addon\globalPlugins\visionAssistant\__init__.py:1140
 msgid "Error 403: Forbidden (Check Region)"
-msgstr ""
-"Lỗi 403: Bị cấm (Kiểm tra vùng)Lỗi 403: Bị từ chối (Kiểm tra vùng địa lý "
-"hoặc quyền truy cập)"
+msgstr "Lỗi 403: Bị cấm (Kiểm tra Khu vực)"
+
+#. Translators: Message of a dialog which may pop up while performing an AI call
+#: addon\globalPlugins\visionAssistant\__init__.py:1183
+#: addon\globalPlugins\visionAssistant\__init__.py:1346
+msgid "Error 429: Quota Exceeded (Try later)"
+msgstr "Lỗi 429: Vượt quá hạn ngạch (Thử lại sau)"
+
+#. Translators: Message of a dialog which may pop up while performing an AI call
+#: addon\globalPlugins\visionAssistant\__init__.py:1186
+#: addon\globalPlugins\visionAssistant\__init__.py:1349
+#, python-brace-format
+msgid "Server Error {code}: {reason}"
+msgstr "Lỗi máy chủ {code}: {reason}"
 
 #. Translators: Error when no API keys are found in settings
-#: addon\globalPlugins\visionAssistant\__init__.py:1017
+#: addon\globalPlugins\visionAssistant\__init__.py:1231
+#: addon\globalPlugins\visionAssistant\__init__.py:1614
+#: addon\globalPlugins\visionAssistant\__init__.py:1704
+#: addon\globalPlugins\visionAssistant\__init__.py:1747
+#: addon\globalPlugins\visionAssistant\__init__.py:3124
+#: addon\globalPlugins\visionAssistant\__init__.py:3241
 msgid "No API Keys configured."
-msgstr "Chưa cấu hình khóa API."
+msgstr "Chưa cấu hình Khóa API nào."
 
 #. Translators: Error when all available API keys fail
-#: addon\globalPlugins\visionAssistant\__init__.py:1032
+#: addon\globalPlugins\visionAssistant\__init__.py:1246
 msgid "All API Keys failed (Quota/Server)."
-msgstr "Tất cả khóa API đều thất bại (Hết hạn mức hoặc lỗi máy chủ)."
+msgstr "Tất cả Khóa API đều thất bại (Hạn ngạch/Máy chủ)."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:1036
+#: addon\globalPlugins\visionAssistant\__init__.py:1250
 msgid "Unknown error occurred."
 msgstr "Đã xảy ra lỗi không xác định."
 
 #. Translators: Error message for missing API Keys
-#: addon\globalPlugins\visionAssistant\__init__.py:1068
+#: addon\globalPlugins\visionAssistant\__init__.py:1285
 msgid "No API Keys."
-msgstr "Không có khóa API."
+msgstr "Không có Khóa API."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:1134
+#. Translators: Error message for upload failure
+#: addon\globalPlugins\visionAssistant\__init__.py:1326
+#: addon\globalPlugins\visionAssistant\__init__.py:2828
+msgid "Upload failed."
+msgstr "Tải lên thất bại."
+
+#. Translators: Error when all available API keys fail
+#: addon\globalPlugins\visionAssistant\__init__.py:1356
 msgid "All keys failed."
 msgstr "Tất cả các khóa đều thất bại."
 
+#. Translators: Error message when speech-to-text fails.
+#: addon\globalPlugins\visionAssistant\__init__.py:1734
+msgid "Transcription Failed"
+msgstr "Chuyển biên thất bại"
+
+#. Translators: Error message when TTS is not supported by the provider
+#: addon\globalPlugins\visionAssistant\__init__.py:1740
+msgid "TTS is not supported by this provider."
+msgstr "TTS không được hỗ trợ bởi nhà cung cấp này."
+
 #. Translators: Title of update confirmation dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:1231
+#: addon\globalPlugins\visionAssistant\__init__.py:1789
 msgid "Update Available"
 msgstr "Có bản cập nhật mới"
 
 #. Translators: Message asking user to update. {version} is version number.
-#: addon\globalPlugins\visionAssistant\__init__.py:1238
+#: addon\globalPlugins\visionAssistant\__init__.py:1796
 #, python-brace-format
 msgid "A new version ({version}) of {name} is available."
 msgstr "Đã có phiên bản mới ({version}) của {name}."
 
 #. Translators: Label for the changes text box
-#: addon\globalPlugins\visionAssistant\__init__.py:1243
+#: addon\globalPlugins\visionAssistant\__init__.py:1801
 msgid "Changes:"
-msgstr "Thay đổi:"
+msgstr "Những thay đổi:"
 
 #. Translators: Question to download and install
-#: addon\globalPlugins\visionAssistant\__init__.py:1250
+#: addon\globalPlugins\visionAssistant\__init__.py:1808
 msgid "Download and Install?"
-msgstr "Tải về và cài đặt?"
+msgstr "Tải xuống và Cài đặt?"
 
 #. Translators: Button to accept update
-#: addon\globalPlugins\visionAssistant\__init__.py:1255
+#: addon\globalPlugins\visionAssistant\__init__.py:1813
 msgid "&Yes"
 msgstr "&Có"
 
 #. Translators: Button to reject update
-#: addon\globalPlugins\visionAssistant\__init__.py:1257
+#: addon\globalPlugins\visionAssistant\__init__.py:1815
 msgid "&No"
 msgstr "&Không"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:1298
+#. Translators: Error message when an update is found but the addon file is missing from GitHub.
+#: addon\globalPlugins\visionAssistant\__init__.py:1857
 msgid "Update found but no .nvda-addon file in release."
-msgstr "Đã thấy bản cập nhật nhưng không tìm thấy tệp .nvda-addon."
+msgstr ""
+"Đã tìm thấy bản cập nhật nhưng không có tệp .nvda-addon trong bản phát hành."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:1301
+#. Translators: Status message informing the user they are already on the latest version.
+#: addon\globalPlugins\visionAssistant\__init__.py:1861
 msgid "You have the latest version."
 msgstr "Bạn đang sử dụng phiên bản mới nhất."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:1305
+#: addon\globalPlugins\visionAssistant\__init__.py:1865
 #, python-brace-format
 msgid "Update check failed: {error}"
 msgstr "Kiểm tra cập nhật thất bại: {error}"
 
 #. Translators: Message shown while downloading update
-#: addon\globalPlugins\visionAssistant\__init__.py:1324
+#: addon\globalPlugins\visionAssistant\__init__.py:1888
 msgid "Downloading update..."
-msgstr "Đang tải bản cập nhật..."
+msgstr "Đang tải xuống bản cập nhật..."
 
 #. Translators: Error message for download failure
-#: addon\globalPlugins\visionAssistant\__init__.py:1333
+#: addon\globalPlugins\visionAssistant\__init__.py:1897
 #, python-brace-format
 msgid "Download failed: {error}"
 msgstr "Tải xuống thất bại: {error}"
 
 #. Translators: Label for the AI response text area in a chat dialog
 #. Translators: Label for AI Response Language selection
-#: addon\globalPlugins\visionAssistant\__init__.py:1353 addon\globalPlugins\visionAssistant\__init__.py:1595
+#: addon\globalPlugins\visionAssistant\__init__.py:1917
+#: addon\globalPlugins\visionAssistant\__init__.py:2306
 msgid "AI Response:"
-msgstr "Phản hồi từ AI:"
+msgstr "Phản hồi của AI:"
 
 #. Translators: Format for displaying AI message in a chat dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:1363 addon\globalPlugins\visionAssistant\__init__.py:1451 addon\globalPlugins\visionAssistant\__init__.py:1468
+#: addon\globalPlugins\visionAssistant\__init__.py:1927
+#: addon\globalPlugins\visionAssistant\__init__.py:2015
+#: addon\globalPlugins\visionAssistant\__init__.py:2032
 #, python-brace-format
 msgid "AI: {text}\n"
 msgstr "AI: {text}\n"
 
 #. Translators: Label for user input field in a chat dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:1374
+#: addon\globalPlugins\visionAssistant\__init__.py:1938
 msgid "Ask:"
 msgstr "Hỏi:"
 
 #. Translators: Button to send message in a chat dialog
 #. Translators: Button to send message
-#: addon\globalPlugins\visionAssistant\__init__.py:1384 addon\globalPlugins\visionAssistant\__init__.py:1808
+#: addon\globalPlugins\visionAssistant\__init__.py:1948
+#: addon\globalPlugins\visionAssistant\__init__.py:2808
 msgid "Send"
 msgstr "Gửi"
 
 #. Translators: Button to view the content in a formatted HTML window
 #. Translators: Button to view formatted content
-#: addon\globalPlugins\visionAssistant\__init__.py:1386 addon\globalPlugins\visionAssistant\__init__.py:1920
+#: addon\globalPlugins\visionAssistant\__init__.py:1950
+#: addon\globalPlugins\visionAssistant\__init__.py:2956
 msgid "View Formatted"
-msgstr "Xem bản có định dạng"
+msgstr "Xem định dạng"
 
 #. Translators: Button to save only the result content without chat history
-#: addon\globalPlugins\visionAssistant\__init__.py:1389
+#: addon\globalPlugins\visionAssistant\__init__.py:1953
 msgid "Save Content"
 msgstr "Lưu nội dung"
 
 #. Translators: Button to save chat in a chat dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:1392
+#: addon\globalPlugins\visionAssistant\__init__.py:1956
 msgid "Save Chat"
-msgstr "Lưu cuộc trò chuyện"
-
-#. Translators: Button to close chat dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:1394 addon\globalPlugins\visionAssistant\__init__.py:1930 addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:112
-msgid "Close"
-msgstr "Đóng"
+msgstr "Lưu trò chuyện"
 
 #. Translators: Format for displaying User message in a chat dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:1427 addon\globalPlugins\visionAssistant\__init__.py:1466
+#: addon\globalPlugins\visionAssistant\__init__.py:1991
+#: addon\globalPlugins\visionAssistant\__init__.py:2030
 #, python-brace-format
 msgid ""
 "\n"
@@ -365,863 +924,1132 @@ msgstr ""
 
 #. Translators: Message shown while processing in a chat dialog
 #. Translators: Message showing AI is thinking
-#: addon\globalPlugins\visionAssistant\__init__.py:1431 addon\globalPlugins\visionAssistant\__init__.py:1843
+#: addon\globalPlugins\visionAssistant\__init__.py:1995
+#: addon\globalPlugins\visionAssistant\__init__.py:2853
 msgid "Thinking..."
 msgstr "Đang suy nghĩ..."
 
 #. Translators: Title of the formatted result window
-#: addon\globalPlugins\visionAssistant\__init__.py:1488
+#: addon\globalPlugins\visionAssistant\__init__.py:2052
 msgid "Formatted Conversation"
-msgstr "Hội thoại có định dạng"
+msgstr "Cuộc trò chuyện đã định dạng"
 
 #. Translators: Error message if viewing fails
-#: addon\globalPlugins\visionAssistant\__init__.py:1491
+#: addon\globalPlugins\visionAssistant\__init__.py:2055
 #, python-brace-format
 msgid "Error displaying content: {error}"
 msgstr "Lỗi khi hiển thị nội dung: {error}"
 
 #. Translators: Save dialog title
-#: addon\globalPlugins\visionAssistant\__init__.py:1496
+#: addon\globalPlugins\visionAssistant\__init__.py:2060
 msgid "Save Chat Log"
 msgstr "Lưu nhật ký trò chuyện"
 
+#. Translators: Message shown on successful save of a file.
 #. Translators: Message on successful save
-#: addon\globalPlugins\visionAssistant\__init__.py:1501 addon\globalPlugins\visionAssistant\__init__.py:1515
+#: addon\globalPlugins\visionAssistant\__init__.py:2065
+#: addon\globalPlugins\visionAssistant\__init__.py:2079
 msgid "Saved."
 msgstr "Đã lưu."
 
 #. Translators: Message in the error dialog when saving fails.
-#: addon\globalPlugins\visionAssistant\__init__.py:1504 addon\globalPlugins\visionAssistant\__init__.py:1518
+#: addon\globalPlugins\visionAssistant\__init__.py:2068
+#: addon\globalPlugins\visionAssistant\__init__.py:2082
 #, python-brace-format
 msgid "Save failed: {error}"
 msgstr "Lưu thất bại: {error}"
 
 #. Translators: Save dialog title
-#: addon\globalPlugins\visionAssistant\__init__.py:1509
+#: addon\globalPlugins\visionAssistant\__init__.py:2073
 msgid "Save Result"
 msgstr "Lưu kết quả"
 
 #. --- Connection Group ---
 #. Translators: Title of the settings group for connection and updates
-#: addon\globalPlugins\visionAssistant\__init__.py:1526
+#: addon\globalPlugins\visionAssistant\__init__.py:2092
 msgid "Connection"
 msgstr "Kết nối"
 
+#. Translators: Name of the Google Gemini AI provider
+#: addon\globalPlugins\visionAssistant\__init__.py:2099
+msgid "Google Gemini"
+msgstr "Google Gemini"
+
+#. Translators: Name of the OpenAI provider
+#: addon\globalPlugins\visionAssistant\__init__.py:2101
+msgid "OpenAI"
+msgstr "OpenAI"
+
+#. Translators: Name of the Mistral AI provider
+#: addon\globalPlugins\visionAssistant\__init__.py:2103
+msgid "Mistral AI"
+msgstr "Mistral AI"
+
+#. Translators: Name of the Groq AI provider
+#: addon\globalPlugins\visionAssistant\__init__.py:2105
+msgid "Groq"
+msgstr "Groq"
+
+#. Translators: Option for a user-defined custom AI provider
+#: addon\globalPlugins\visionAssistant\__init__.py:2107
+msgid "Custom"
+msgstr "Tùy chỉnh"
+
+#. Translators: Label for AI Provider selection
+#: addon\globalPlugins\visionAssistant\__init__.py:2110
+msgid "Provider:"
+msgstr "Nhà cung cấp:"
+
 #. Translators: Label for API Key input
-#: addon\globalPlugins\visionAssistant\__init__.py:1532
-msgid "Gemini API Key (Separate multiple keys with comma or newline):"
-msgstr "Khóa API Gemini (Phân tách nhiều khóa bằng dấu phẩy hoặc xuống dòng):"
+#: addon\globalPlugins\visionAssistant\__init__.py:2118
+msgid "API Key (Separate multiple keys with comma or newline):"
+msgstr "Khóa API (Phân tách nhiều khóa bằng dấu phẩy hoặc xuống dòng):"
 
 #. Translators: Checkbox to toggle API Key visibility
-#: addon\globalPlugins\visionAssistant\__init__.py:1546
+#: addon\globalPlugins\visionAssistant\__init__.py:2129
 msgid "Show API Key"
-msgstr "Hiện khóa API"
+msgstr "Hiển thị Khóa API"
 
-#. Translators: Label for Model selection
-#: addon\globalPlugins\visionAssistant\__init__.py:1552
+#. Custom Fields Box
+#. Translators: Static box title for custom AI provider settings
+#: addon\globalPlugins\visionAssistant\__init__.py:2135
+msgid "Custom Provider Settings"
+msgstr "Cài đặt nhà cung cấp tùy chỉnh"
+
+#. Translators: Label for Custom API URL input
+#: addon\globalPlugins\visionAssistant\__init__.py:2139
+msgid "API URL:"
+msgstr "URL API:"
+
+#. Translators: Label for Custom Model Name input
+#: addon\globalPlugins\visionAssistant\__init__.py:2144
+msgid "Model Name:"
+msgstr "Tên mô hình:"
+
+#. Translators: Label for Custom API Type selection
+#: addon\globalPlugins\visionAssistant\__init__.py:2149
+msgid "API Type:"
+msgstr "Loại API:"
+
+#. Translators: AI API compatibility types
+#: addon\globalPlugins\visionAssistant\__init__.py:2151
+msgid "OpenAI Compatible"
+msgstr "Tương thích OpenAI"
+
+#: addon\globalPlugins\visionAssistant\__init__.py:2151
+msgid "Gemini Compatible"
+msgstr "Tương thích Gemini"
+
+#. Translators: Checkbox to indicate if custom provider supports file upload
+#: addon\globalPlugins\visionAssistant\__init__.py:2156
+msgid "Supports File Upload"
+msgstr "Hỗ trợ tải lên tệp"
+
+#. Advanced Endpoints Section
+#. Translators: Checkbox to toggle advanced endpoint URLs
+#: addon\globalPlugins\visionAssistant\__init__.py:2162
+msgid "Advanced Endpoint Configuration"
+msgstr "Cấu hình Endpoint nâng cao"
+
+#. Translators: Label for Custom Models List URL
+#: addon\globalPlugins\visionAssistant\__init__.py:2171
+msgid "Models List URL:"
+msgstr "URL danh sách mô hình:"
+
+#. Translators: Label for Custom OCR URL
+#: addon\globalPlugins\visionAssistant\__init__.py:2176
+msgid "OCR Endpoint URL:"
+msgstr "URL Endpoint OCR:"
+
+#. Translators: Label for Custom OCR Model
+#: addon\globalPlugins\visionAssistant\__init__.py:2181
+msgid "Custom OCR Model (Optional):"
+msgstr "Mô hình OCR tùy chỉnh (Tùy chọn):"
+
+#. Translators: Label for Custom STT URL
+#: addon\globalPlugins\visionAssistant\__init__.py:2186
+msgid "Speech-to-Text (STT) URL:"
+msgstr "URL Chuyển giọng nói thành văn bản (STT):"
+
+#. Translators: Label for Custom STT Model
+#: addon\globalPlugins\visionAssistant\__init__.py:2191
+msgid "Custom STT Model (Optional):"
+msgstr "Mô hình STT tùy chỉnh (Tùy chọn):"
+
+#. Translators: Label for Custom TTS URL
+#: addon\globalPlugins\visionAssistant\__init__.py:2196
+msgid "Text-to-Speech (TTS) URL:"
+msgstr "URL Chuyển văn bản thành giọng nói (TTS):"
+
+#. Translators: Label for Custom TTS Model
+#: addon\globalPlugins\visionAssistant\__init__.py:2201
+msgid "Custom TTS Model (Optional):"
+msgstr "Mô hình TTS tùy chỉnh (Tùy chọn):"
+
+#. Translators: Label for Custom TTS Voice Name
+#: addon\globalPlugins\visionAssistant\__init__.py:2206
+msgid "Custom TTS Voice Name (Optional):"
+msgstr "Tên giọng nói TTS tùy chỉnh (Tùy chọn):"
+
+#. Standard Fetch & Model Logic
+#. Translators: Button to fetch available models from the selected provider
+#: addon\globalPlugins\visionAssistant\__init__.py:2217
+msgid "Fetch Models"
+msgstr "Tải mô hình"
+
+#. Translators: Label for AI Model selection choice box
+#: addon\globalPlugins\visionAssistant\__init__.py:2222
 msgid "AI Model:"
 msgstr "Mô hình AI:"
 
-#. Translators: Label for Proxy URL input
-#: addon\globalPlugins\visionAssistant\__init__.py:1560
-msgid "Proxy URL:"
-msgstr "Đường dẫn Proxy:"
+#. Advanced Model Routing Box
+#. Translators: Checkbox to toggle advanced model routing
+#: addon\globalPlugins\visionAssistant\__init__.py:2230
+msgid "Advanced Model Routing (Task-specific)"
+msgstr "Định tuyến mô hình nâng cao (Theo tác vụ)"
 
-#. Translators: Checkbox to enable/disable automatic update checks on NVDA startup
-#: addon\globalPlugins\visionAssistant\__init__.py:1564
+#. Translators: Label for OCR model selection
+#: addon\globalPlugins\visionAssistant\__init__.py:2237
+msgid "OCR / Vision Model:"
+msgstr "Mô hình OCR / Thị giác:"
+
+#. Translators: Label for STT model selection
+#: addon\globalPlugins\visionAssistant\__init__.py:2243
+msgid "Speech-to-Text (STT) Model:"
+msgstr "Mô hình Chuyển giọng nói thành văn bản (STT):"
+
+#. Translators: Label for TTS model selection (Assigning to self to toggle visibility)
+#: addon\globalPlugins\visionAssistant\__init__.py:2249
+msgid "Text-to-Speech (TTS) Model:"
+msgstr "Mô hình Chuyển văn bản thành giọng nói (TTS):"
+
+#. Translators: Label for Proxy URL input
+#: addon\globalPlugins\visionAssistant\__init__.py:2258
+msgid "Proxy URL:"
+msgstr "URL Proxy:"
+
+#. Translators: Checkbox to enable/disable automatic update checks on startup
+#: addon\globalPlugins\visionAssistant\__init__.py:2262
 msgid "Check for updates on startup"
 msgstr "Kiểm tra cập nhật khi khởi động"
 
 #. Translators: Checkbox to toggle markdown cleaning in chat windows
-#: addon\globalPlugins\visionAssistant\__init__.py:1567
+#: addon\globalPlugins\visionAssistant\__init__.py:2265
 msgid "Clean Markdown in Chat"
-msgstr "Làm sạch Markdown trong cửa sổ chat"
+msgstr "Làm sạch Markdown trong trò chuyện"
 
 #. Translators: Checkbox to enable copying AI responses to clipboard
-#: addon\globalPlugins\visionAssistant\__init__.py:1570
+#: addon\globalPlugins\visionAssistant\__init__.py:2268
 msgid "Copy AI responses to clipboard"
-msgstr "Sao chép phản hồi AI vào bộ nhớ tạm"
+msgstr "Sao chép phản hồi của AI vào clipboard"
 
 #. Translators: Checkbox to skip chat window and only speak AI responses
-#: addon\globalPlugins\visionAssistant\__init__.py:1573
+#: addon\globalPlugins\visionAssistant\__init__.py:2271
 msgid "Direct Output (No Chat Window)"
-msgstr "Kết quả trực tiếp (Không hiện cửa sổ chat)"
+msgstr "Đầu ra trực tiếp (Không có cửa sổ trò chuyện)"
+
+#. --- AI Behavior Group ---
+#. Translators: Title of the settings group for AI behavior
+#: addon\globalPlugins\visionAssistant\__init__.py:2277
+msgid "AI Behavior"
+msgstr "Hành vi của AI"
+
+#. Translators: Label for AI Temperature setting
+#: addon\globalPlugins\visionAssistant\__init__.py:2282
+msgid "Creativity (Temperature, does not affect OCR/Translation):"
+msgstr "Độ sáng tạo (Temperature, không ảnh hưởng đến OCR/Dịch thuật):"
 
 #. --- Translation Languages Group ---
 #. Translators: Title of the settings group for translation languages configuration
-#: addon\globalPlugins\visionAssistant\__init__.py:1579
+#: addon\globalPlugins\visionAssistant\__init__.py:2293
 msgid "Translation Languages"
-msgstr "Ngôn ngữ dịch thuật"
+msgstr "Ngôn ngữ dịch"
 
 #. Translators: Label for Source Language selection
-#: addon\globalPlugins\visionAssistant\__init__.py:1585
+#: addon\globalPlugins\visionAssistant\__init__.py:2298
 msgid "Source:"
 msgstr "Nguồn:"
 
 #. Translators: Label for Target Language selection
 #. Translators: Label for target language
-#: addon\globalPlugins\visionAssistant\__init__.py:1590 addon\globalPlugins\visionAssistant\__init__.py:1747
+#: addon\globalPlugins\visionAssistant\__init__.py:2302
+#: addon\globalPlugins\visionAssistant\__init__.py:2747
 msgid "Target:"
 msgstr "Đích:"
 
 #. Translators: Checkbox for Smart Swap feature
-#: addon\globalPlugins\visionAssistant\__init__.py:1600
+#: addon\globalPlugins\visionAssistant\__init__.py:2310
 msgid "Smart Swap"
-msgstr "Hoán đổi thông minh"
+msgstr "Chuyển đổi thông minh"
 
 #. --- Document Reader Settings ---
 #. Translators: Title of settings group for Document Reader features
-#: addon\globalPlugins\visionAssistant\__init__.py:1606
+#. Translators: Title of the Document Reader window.
+#: addon\globalPlugins\visionAssistant\__init__.py:2316
+#: addon\globalPlugins\visionAssistant\__init__.py:2894
 msgid "Document Reader"
 msgstr "Trình đọc tài liệu"
 
 #. Translators: Label for OCR Engine selection
-#: addon\globalPlugins\visionAssistant\__init__.py:1612
+#: addon\globalPlugins\visionAssistant\__init__.py:2321
 msgid "OCR Engine:"
 msgstr "Công cụ OCR:"
 
+#. Translators: Label for TTS Voice selection (Assigning to self to toggle visibility)
 #. Translators: Label for TTS Voice selection
-#: addon\globalPlugins\visionAssistant\__init__.py:1621
+#: addon\globalPlugins\visionAssistant\__init__.py:2329
+#: addon\globalPlugins\visionAssistant\__init__.py:2970
 msgid "TTS Voice:"
-msgstr "Giọng đọc TTS:"
+msgstr "Giọng nói TTS:"
 
-#. --- CAPTCHA Group ---
-#. Translators: Title of the settings group for CAPTCHA options
-#: addon\globalPlugins\visionAssistant\__init__.py:343 addon\globalPlugins\visionAssistant\__init__.py:1631
-msgid "CAPTCHA"
-msgstr "CAPTCHA"
-
-#. Translators: Label for CAPTCHA capture method selection
-#: addon\globalPlugins\visionAssistant\__init__.py:1636
+#. Translators: Label for CAPTCHA capture method selection.
+#: addon\globalPlugins\visionAssistant\__init__.py:2342
 msgid "Capture Method:"
-msgstr "Phương thức chụp:"
+msgstr "Phương pháp chụp:"
 
-#. Translators: A choice for capture method. Captures only the specific object under the NVDA navigator cursor.
-#: addon\globalPlugins\visionAssistant\__init__.py:1638
+#. Translators: A choice for capture method. Captures only the specific object under the cursor.
+#: addon\globalPlugins\visionAssistant\__init__.py:2344
 msgid "Navigator Object"
-msgstr "Đối tượng điều hướng"
+msgstr "Đối tượng Navigator"
 
 #. Translators: A choice for capture method. Captures the entire visible screen area.
-#: addon\globalPlugins\visionAssistant\__init__.py:1640
+#: addon\globalPlugins\visionAssistant\__init__.py:2346
 msgid "Full Screen"
 msgstr "Toàn màn hình"
 
-#. --- Custom Prompts Group ---
-#. Translators: Title of the settings group for custom prompts
-#: addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:136 addon\globalPlugins\visionAssistant\prompt_manager_dialog.py:223
-msgid "Custom Prompts"
-msgstr "Lệnh tùy chỉnh"
+#. --- Prompts Group ---
+#. Translators: Title of the settings group for prompt management.
+#: addon\globalPlugins\visionAssistant\__init__.py:2355
+msgid "Prompts"
+msgstr "Prompt"
 
-#. Translators: Helper text explaining the format for custom prompts
-#: addon\globalPlugins\visionAssistant\__init__.py:1110
-msgid "Format: Name:Content"
-msgstr "Định dạng: Tên:Nội dung"
+#. Translators: Description for the prompt manager button.
+#: addon\globalPlugins\visionAssistant\__init__.py:2360
+msgid "Manage default and custom prompts."
+msgstr "Quản lý các prompt mặc định và tùy chỉnh."
+
+#. Translators: Button label to open prompt manager dialog.
+#: addon\globalPlugins\visionAssistant\__init__.py:2362
+msgid "Manage Prompts..."
+msgstr "Quản lý Prompt..."
+
+#. Translators: Summary text for prompt counts in settings.
+#: addon\globalPlugins\visionAssistant\__init__.py:2403
+#, python-brace-format
+msgid "Default prompts: {defaultCount}, Custom prompts: {customCount}"
+msgstr "Prompt mặc định: {defaultCount}, Prompt tùy chỉnh: {customCount}"
+
+#. Translators: Progress message shown while fetching AI models from the server
+#: addon\globalPlugins\visionAssistant\__init__.py:2502
+msgid "Fetching models..."
+msgstr "Đang tải mô hình..."
+
+#. Translators: Default model routing option for advanced mode
+#: addon\globalPlugins\visionAssistant\__init__.py:2518
+#: addon\globalPlugins\visionAssistant\__init__.py:2558
+msgid "Default (Auto)"
+msgstr "Mặc định (Tự động)"
+
+#. Translators: Success message after AI models are successfully updated
+#: addon\globalPlugins\visionAssistant\__init__.py:2546
+msgid "Models updated"
+msgstr "Đã cập nhật mô hình"
+
+#. Translators: Error message shown when models cannot be fetched from the API
+#: addon\globalPlugins\visionAssistant\__init__.py:2549
+msgid "Failed to fetch models"
+msgstr "Tải mô hình thất bại"
 
 #. Translators: Title of the PDF options dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:1721
+#: addon\globalPlugins\visionAssistant\__init__.py:2721
 msgid "Options"
 msgstr "Tùy chọn"
 
 #. Translators: Label showing total pages found
-#: addon\globalPlugins\visionAssistant\__init__.py:1724
+#: addon\globalPlugins\visionAssistant\__init__.py:2724
 #, python-brace-format
 msgid "Total Pages (All Files): {count}"
-msgstr "Tổng số trang (Tất cả tệp): {count}"
+msgstr "Tổng số trang (Tất cả các tệp): {count}"
 
 #. Translators: Box title for page range selection
-#: addon\globalPlugins\visionAssistant\__init__.py:1727
+#: addon\globalPlugins\visionAssistant\__init__.py:2727
 msgid "Range"
 msgstr "Phạm vi"
 
 #. Translators: Label for start page
-#: addon\globalPlugins\visionAssistant\__init__.py:1730
+#: addon\globalPlugins\visionAssistant\__init__.py:2730
 msgid "From:"
-msgstr "Từ trang:"
+msgstr "Từ:"
 
 #. Translators: Label for end page
-#: addon\globalPlugins\visionAssistant\__init__.py:1734
+#: addon\globalPlugins\visionAssistant\__init__.py:2734
 msgid "To:"
-msgstr "Đến trang:"
-
-#. Translators: Box title for translation options
-#: addon\globalPlugins\visionAssistant\__init__.py:227 addon\globalPlugins\visionAssistant\__init__.py:233 addon\globalPlugins\visionAssistant\__init__.py:1741
-msgid "Translation"
-msgstr "Dịch thuật"
+msgstr "Đến:"
 
 #. Translators: Checkbox to enable translation
-#: addon\globalPlugins\visionAssistant\__init__.py:1743
+#: addon\globalPlugins\visionAssistant\__init__.py:2743
 msgid "Translate Output"
-msgstr "Dịch kết quả đầu ra"
+msgstr "Dịch đầu ra"
 
 #. Translators: Button to start processing
-#: addon\globalPlugins\visionAssistant\__init__.py:1756
+#: addon\globalPlugins\visionAssistant\__init__.py:2756
 msgid "Start"
 msgstr "Bắt đầu"
 
 #. Translators: Button to cancel
-#: addon\globalPlugins\visionAssistant\__init__.py:1759
+#: addon\globalPlugins\visionAssistant\__init__.py:2759
 msgid "Cancel"
 msgstr "Hủy"
 
 #. Translators: Title of the chat dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:1784
+#: addon\globalPlugins\visionAssistant\__init__.py:2784
 msgid "Ask about Document"
 msgstr "Hỏi về tài liệu"
 
 #. Translators: Label showing the analyzed file name
-#: addon\globalPlugins\visionAssistant\__init__.py:1793
+#: addon\globalPlugins\visionAssistant\__init__.py:2793
 #, python-brace-format
 msgid "File: {name}"
 msgstr "Tệp: {name}"
 
 #. Translators: Status message while uploading
-#: addon\globalPlugins\visionAssistant\__init__.py:1798
-msgid "Uploading to Gemini...\n"
-msgstr "Đang tải lên Gemini...\n"
+#: addon\globalPlugins\visionAssistant\__init__.py:2798
+msgid "Uploading to AI...\n"
+msgstr "Đang tải lên AI...\n"
 
 #. Translators: Label for the chat input field
-#: addon\globalPlugins\visionAssistant\__init__.py:1802
+#: addon\globalPlugins\visionAssistant\__init__.py:2802
 msgid "Your Question:"
-msgstr "Nhập câu hỏi:"
-
-#: addon\globalPlugins\visionAssistant\__init__.py:1105 addon\globalPlugins\visionAssistant\__init__.py:1827 addon\globalPlugins\visionAssistant\__init__.py:3216
-msgid "Upload failed."
-msgstr "Tải lên không thành công."
+msgstr "Câu hỏi của bạn:"
 
 #. Translators: Message when ready to chat
-#: addon\globalPlugins\visionAssistant\__init__.py:1833
+#: addon\globalPlugins\visionAssistant\__init__.py:2843
 msgid "Ready! Ask your questions.\n"
-msgstr "Đã sẵn sàng! Hãy đặt câu hỏi .\n"
+msgstr "Đã sẵn sàng! Hãy đặt câu hỏi của bạn.\n"
 
 #. Translators: Initial status when the add-on is doing nothing
 #. Translators: Status message when the add-on is doing nothing
-#: addon\globalPlugins\visionAssistant\__init__.py:1853 addon\globalPlugins\visionAssistant\__init__.py:2132 addon\globalPlugins\visionAssistant\__init__.py:2219 addon\globalPlugins\visionAssistant\__init__.py:2223 addon\globalPlugins\visionAssistant\__init__.py:2287 addon\globalPlugins\visionAssistant\__init__.py:2484 addon\globalPlugins\visionAssistant\__init__.py:3078 addon\globalPlugins\visionAssistant\__init__.py:3194 addon\globalPlugins\visionAssistant\__init__.py:3199 addon\globalPlugins\visionAssistant\__init__.py:3215 addon\globalPlugins\visionAssistant\__init__.py:3228 addon\globalPlugins\visionAssistant\__init__.py:3237 addon\globalPlugins\visionAssistant\__init__.py:3325 addon\globalPlugins\visionAssistant\__init__.py:3329 addon\globalPlugins\visionAssistant\__init__.py:3393 addon\globalPlugins\visionAssistant\__init__.py:3407 addon\globalPlugins\visionAssistant\__init__.py:3411 addon\globalPlugins\visionAssistant\__init__.py:3416 addon\globalPlugins\visionAssistant\__init__.py:3502 addon\globalPlugins\visionAssistant\__init__.py:3515 addon\globalPlugins\visionAssistant\__init__.py:3519 addon\globalPlugins\visionAssistant\__init__.py:3555 addon\globalPlugins\visionAssistant\__init__.py:3565
+#. Translators: Initial status when the add-on is doing nothing
+#: addon\globalPlugins\visionAssistant\__init__.py:2861
+#: addon\globalPlugins\visionAssistant\__init__.py:2877
+#: addon\globalPlugins\visionAssistant\__init__.py:3229
+#: addon\globalPlugins\visionAssistant\__init__.py:3322
+#: addon\globalPlugins\visionAssistant\__init__.py:3327
+#: addon\globalPlugins\visionAssistant\__init__.py:3392
+#: addon\globalPlugins\visionAssistant\__init__.py:3590
+#: addon\globalPlugins\visionAssistant\__init__.py:3885
+#: addon\globalPlugins\visionAssistant\__init__.py:4194
+#: addon\globalPlugins\visionAssistant\__init__.py:4198
+#: addon\globalPlugins\visionAssistant\__init__.py:4316
+#: addon\globalPlugins\visionAssistant\__init__.py:4344
+#: addon\globalPlugins\visionAssistant\__init__.py:4362
+#: addon\globalPlugins\visionAssistant\__init__.py:4372
+#: addon\globalPlugins\visionAssistant\__init__.py:4487
+#: addon\globalPlugins\visionAssistant\__init__.py:4490
+#: addon\globalPlugins\visionAssistant\__init__.py:4493
+#: addon\globalPlugins\visionAssistant\__init__.py:4658
+#: addon\globalPlugins\visionAssistant\__init__.py:4673
+#: addon\globalPlugins\visionAssistant\__init__.py:4677
+#: addon\globalPlugins\visionAssistant\__init__.py:4681
+#: addon\globalPlugins\visionAssistant\__init__.py:4781
+#: addon\globalPlugins\visionAssistant\__init__.py:4794
+#: addon\globalPlugins\visionAssistant\__init__.py:4797
+#: addon\globalPlugins\visionAssistant\__init__.py:4835
+#: addon\globalPlugins\visionAssistant\__init__.py:4838
+#: addon\globalPlugins\visionAssistant\__init__.py:4846
 msgid "Idle"
-msgstr "Sẵn sàng"
+msgstr "Nhàn rỗi"
 
 #. Translators: Spoken prefix for AI response
-#: addon\globalPlugins\visionAssistant\__init__.py:1860
+#: addon\globalPlugins\visionAssistant\__init__.py:2889
 msgid "AI: "
 msgstr "AI: "
 
 #. Translators: Initial status message
-#: addon\globalPlugins\visionAssistant\__init__.py:1883
+#: addon\globalPlugins\visionAssistant\__init__.py:2914
 msgid "Initializing..."
-msgstr "Đang phân tích..."
+msgstr "Đang khởi tạo..."
 
 #. Translators: Button to go to previous page
-#: addon\globalPlugins\visionAssistant\__init__.py:1889
+#: addon\globalPlugins\visionAssistant\__init__.py:2920
 msgid "Previous (Ctrl+PageUp)"
-msgstr "Trang trước (Ctrl+PageUp)"
+msgstr "Trước (Ctrl+PageUp)"
 
 #. Translators: Button to go to next page
-#: addon\globalPlugins\visionAssistant\__init__.py:1893
+#: addon\globalPlugins\visionAssistant\__init__.py:2924
 msgid "Next (Ctrl+PageDown)"
-msgstr "Trang sau (Ctrl+PageDown)"
+msgstr "Tiếp (Ctrl+PageDown)"
 
 #. Translators: Label for Go To Page
-#: addon\globalPlugins\visionAssistant\__init__.py:1897
+#: addon\globalPlugins\visionAssistant\__init__.py:2928
 msgid "Go to:"
-msgstr "Đi đến trang:"
+msgstr "Đến trang:"
 
 #. Translators: Button to Ask questions about the document
-#: addon\globalPlugins\visionAssistant\__init__.py:1905
+#: addon\globalPlugins\visionAssistant\__init__.py:2940
 msgid "Ask AI (Alt+A)"
 msgstr "Hỏi AI (Alt+A)"
 
 #. Translators: Button to force re-scan
-#: addon\globalPlugins\visionAssistant\__init__.py:1910
-msgid "Re-scan with Gemini (Alt+R)"
-msgstr "Quét lại với Gemini (Alt+R)"
+#: addon\globalPlugins\visionAssistant\__init__.py:2945
+msgid "Re-scan with AI (Alt+R)"
+msgstr "Quét lại bằng AI (Alt+R)"
 
 #. Translators: Button to generate audio
-#: addon\globalPlugins\visionAssistant\__init__.py:1915
+#: addon\globalPlugins\visionAssistant\__init__.py:2950
 msgid "Generate Audio (Alt+G)"
 msgstr "Tạo âm thanh (Alt+G)"
 
 #. Translators: Button to save text
-#: addon\globalPlugins\visionAssistant\__init__.py:1925
+#: addon\globalPlugins\visionAssistant\__init__.py:2961
 msgid "Save (Alt+S)"
 msgstr "Lưu (Alt+S)"
 
 #. Translators: Spoken message when the current page is ready
-#: addon\globalPlugins\visionAssistant\__init__.py:1964
+#: addon\globalPlugins\visionAssistant\__init__.py:3023
 #, python-brace-format
 msgid "Page {num} ready"
 msgstr "Trang {num} đã sẵn sàng"
 
 #. Translators: Placeholder text when OCR fails
-#: addon\globalPlugins\visionAssistant\__init__.py:1986
-msgid "[OCR failed. Try Gemini Re-scan.]"
-msgstr "[OCR thất bại. Hãy thử quét lại bằng Gemini.]"
+#: addon\globalPlugins\visionAssistant\__init__.py:3049
+msgid "[OCR failed. Try a different AI model or provider.]"
+msgstr "[OCR thất bại. Hãy thử một mô hình hoặc nhà cung cấp AI khác.]"
 
 #. Translators: Error message for page processing failure
-#: addon\globalPlugins\visionAssistant\__init__.py:1995
+#: addon\globalPlugins\visionAssistant\__init__.py:3060
 msgid "Error processing page."
 msgstr "Lỗi khi xử lý trang."
 
 #. Translators: Status label format
-#: addon\globalPlugins\visionAssistant\__init__.py:2000
+#: addon\globalPlugins\visionAssistant\__init__.py:3065
 #, python-brace-format
 msgid "Page {current} of {total}"
 msgstr "Trang {current} trên {total}"
 
 #. Translators: Status when page is loading
-#: addon\globalPlugins\visionAssistant\__init__.py:2007
+#: addon\globalPlugins\visionAssistant\__init__.py:3072
 msgid "Processing in background..."
 msgstr "Đang xử lý trong nền..."
 
 #. Translators: Spoken message when switching pages
-#: addon\globalPlugins\visionAssistant\__init__.py:2018 addon\globalPlugins\visionAssistant\__init__.py:2037
+#. Translators: Heading for each page in the formatted content view.
+#: addon\globalPlugins\visionAssistant\__init__.py:3083
+#: addon\globalPlugins\visionAssistant\__init__.py:3102
 #, python-brace-format
 msgid "Page {num}"
 msgstr "Trang {num}"
 
 #. Translators: Title of the formatted result window
-#: addon\globalPlugins\visionAssistant\__init__.py:2050
+#: addon\globalPlugins\visionAssistant\__init__.py:3115
 msgid "Formatted Content"
-msgstr "Nội dung đã định dạng"
-
-#: addon\globalPlugins\visionAssistant\__init__.py:2056 addon\globalPlugins\visionAssistant\__init__.py:2141 addon\globalPlugins\visionAssistant\__init__.py:2228
-msgid "Please configure Gemini API Key."
-msgstr "Vui lòng cấu hình khóa API Gemini."
+msgstr "Nội dung được định dạng"
 
 #. Translators: Status reported when an error occurs
-#: addon\globalPlugins\visionAssistant\__init__.py:2056 addon\globalPlugins\visionAssistant\__init__.py:2141 addon\globalPlugins\visionAssistant\__init__.py:2228 addon\globalPlugins\visionAssistant\__init__.py:2596 addon\globalPlugins\visionAssistant\__init__.py:2603 addon\globalPlugins\visionAssistant\__init__.py:2672
+#: addon\globalPlugins\visionAssistant\__init__.py:3124
+#: addon\globalPlugins\visionAssistant\__init__.py:3234
+#: addon\globalPlugins\visionAssistant\__init__.py:3241
+#: addon\globalPlugins\visionAssistant\__init__.py:3333
+#: addon\globalPlugins\visionAssistant\__init__.py:3681
+#: addon\globalPlugins\visionAssistant\__init__.py:3688
+#: addon\globalPlugins\visionAssistant\__init__.py:3757
 msgid "Error"
 msgstr "Lỗi"
 
 #. Translators: Menu option for current page
-#: addon\globalPlugins\visionAssistant\__init__.py:2060
+#: addon\globalPlugins\visionAssistant\__init__.py:3128
 msgid "Current Page"
 msgstr "Trang hiện tại"
 
 #. Translators: Menu option for all pages
-#: addon\globalPlugins\visionAssistant\__init__.py:2062
+#: addon\globalPlugins\visionAssistant\__init__.py:3130
 msgid "All Pages (In Range)"
 msgstr "Tất cả các trang (Trong phạm vi)"
 
 #. Translators: Message during manual scan
-#: addon\globalPlugins\visionAssistant\__init__.py:2072
-msgid "Scanning with Gemini..."
-msgstr "Đang quét với Gemini..."
+#: addon\globalPlugins\visionAssistant\__init__.py:3140
+msgid "Scanning with AI..."
+msgstr "Đang quét bằng AI..."
+
+#. Translators: Error shown when a specific page scan fails.
+#: addon\globalPlugins\visionAssistant\__init__.py:3156
+#: addon\globalPlugins\visionAssistant\__init__.py:3216
+#, python-brace-format
+msgid "[Scan failed: {err}]"
+msgstr "[Quét thất bại: {err}]"
+
+#. Translators: Message shown when OCR returns no text for a page.
+#: addon\globalPlugins\visionAssistant\__init__.py:3161
+msgid "[No text detected]"
+msgstr "[Không phát hiện thấy văn bản]"
 
 #. Translators: Message when scan is complete
-#: addon\globalPlugins\visionAssistant\__init__.py:2088
+#: addon\globalPlugins\visionAssistant\__init__.py:3166
 msgid "Scan complete"
 msgstr "Quét hoàn tất"
 
+#. Translators: Generic system error message inside the document viewer.
+#: addon\globalPlugins\visionAssistant\__init__.py:3169
+#, python-brace-format
+msgid "[Error: {msg}]"
+msgstr "[Lỗi: {msg}]"
+
 #. Translators: Message when batch scan starts
-#: addon\globalPlugins\visionAssistant\__init__.py:2096
+#: addon\globalPlugins\visionAssistant\__init__.py:3181
 msgid "Batch Processing Started"
 msgstr "Đã bắt đầu xử lý hàng loạt"
 
 #. Translators: Error message if PDF creation fails
-#: addon\globalPlugins\visionAssistant\__init__.py:2107
+#: addon\globalPlugins\visionAssistant\__init__.py:3195
 msgid "Error creating temporary PDF."
 msgstr "Lỗi khi tạo tệp PDF tạm thời."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:2115
-msgid "Unknown error"
-msgstr "Lỗi không xác định"
-
-#: addon\globalPlugins\visionAssistant\__init__.py:2116
-#, python-brace-format
-msgid "Scan failed: {err}"
-msgstr "Quét thất bại: {err}"
-
-#. Translators: Message when batch scan is complete
-#: addon\globalPlugins\visionAssistant\__init__.py:2129
+#. Translators: Message when a single page scan or batch is finished.
+#: addon\globalPlugins\visionAssistant\__init__.py:3209
 msgid "Batch Scan Complete"
-msgstr "Hoàn tất quét hàng loạt"
+msgstr "Quét hàng loạt hoàn tất"
+
+#: addon\globalPlugins\visionAssistant\__init__.py:3209
+msgid "Scan Complete"
+msgstr "Quét hoàn tất"
+
+#. Translators: Message when the entire batch processing fails.
+#: addon\globalPlugins\visionAssistant\__init__.py:3214
+msgid "Batch Scan Failed"
+msgstr "Quét hàng loạt thất bại"
+
+#. Translators: Spoken message for background batch processing.
+#: addon\globalPlugins\visionAssistant\__init__.py:3226
+#, python-brace-format
+msgid "AI is scanning {n} pages in background."
+msgstr "AI đang quét {n} trang trong nền."
+
+#. Translators: Error message when trying to use TTS with an unsupported provider
+#: addon\globalPlugins\visionAssistant\__init__.py:3234
+msgid "TTS is not supported by the current provider or configuration."
+msgstr "TTS không được hỗ trợ bởi nhà cung cấp hoặc cấu hình hiện tại."
 
 #. Translators: Menu option for TTS current page
-#: addon\globalPlugins\visionAssistant\__init__.py:2145
+#: addon\globalPlugins\visionAssistant\__init__.py:3246
 msgid "Generate for Current Page"
-msgstr "Tạo âm thanh cho trang hiện tại"
+msgstr "Tạo cho trang hiện tại"
 
 #. Translators: Menu option for TTS all pages
-#: addon\globalPlugins\visionAssistant\__init__.py:2147
+#: addon\globalPlugins\visionAssistant\__init__.py:3248
 msgid "Generate for All Pages (In Range)"
-msgstr "Tạo âm thanh cho tất cả các trang (Trong phạm vi)"
+msgstr "Tạo cho tất cả các trang (Trong phạm vi)"
 
 #. Translators: Error message when text field is empty
-#: addon\globalPlugins\visionAssistant\__init__.py:2157
+#: addon\globalPlugins\visionAssistant\__init__.py:3258
 msgid "No text to read."
 msgstr "Không có văn bản để đọc."
 
 #. Translators: Message while gathering text
-#: addon\globalPlugins\visionAssistant\__init__.py:2167
+#: addon\globalPlugins\visionAssistant\__init__.py:3268
 msgid "Gathering text for audio..."
-msgstr "Đang thu thập văn bản để tạo âm thanh..."
+msgstr "Đang thu thập văn bản cho âm thanh..."
 
 #. Translators: File dialog title for saving audio
-#: addon\globalPlugins\visionAssistant\__init__.py:2177
+#: addon\globalPlugins\visionAssistant\__init__.py:3278
 msgid "Save Audio"
-msgstr "Lưu tệp âm thanh"
+msgstr "Lưu âm thanh"
 
 #. Translators: Message while generating audio
-#: addon\globalPlugins\visionAssistant\__init__.py:2184
+#: addon\globalPlugins\visionAssistant\__init__.py:3285
 msgid "Generating Audio..."
 msgstr "Đang tạo âm thanh..."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:2200
+#: addon\globalPlugins\visionAssistant\__init__.py:3291
+msgid "Unknown Error"
+msgstr "Lỗi không xác định"
+
+#. Translators: Error message when the MP3 encoder (LAME) is missing.
+#: addon\globalPlugins\visionAssistant\__init__.py:3308
 msgid "lame.exe not found in lib folder."
-msgstr "không tìm thấy  lame.exe trong thư mục lib."
+msgstr "Không tìm thấy lame.exe trong thư mục lib."
 
 #. Translators: Spoken message when audio is saved
-#: addon\globalPlugins\visionAssistant\__init__.py:2218
+#: addon\globalPlugins\visionAssistant\__init__.py:3321
 msgid "Audio Saved"
 msgstr "Đã lưu âm thanh"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:2221
+#. Translators: Success message after generating TTS audio.
+#: addon\globalPlugins\visionAssistant\__init__.py:3325
 msgid "Audio file generated and saved successfully."
-msgstr "Tệp âm thanh đã được tạo và lưu thành công."
+msgstr "Đã tạo và lưu tệp âm thanh thành công."
+
+#. Translators: Warning message when the Gemini key is missing for specific features.
+#: addon\globalPlugins\visionAssistant\__init__.py:3333
+msgid "Please configure Gemini API Key."
+msgstr "Vui lòng cấu hình Khóa API Gemini."
 
 #. Translators: File dialog title for saving
-#: addon\globalPlugins\visionAssistant\__init__.py:2243
+#: addon\globalPlugins\visionAssistant\__init__.py:3348
 msgid "Save"
 msgstr "Lưu"
 
 #. Translators: Message showing save progress
-#: addon\globalPlugins\visionAssistant\__init__.py:2254
+#: addon\globalPlugins\visionAssistant\__init__.py:3359
 #, python-brace-format
 msgid "Saving Page {num}..."
-msgstr "Đang lưu trang {num}..."
+msgstr "Đang lưu Trang {num}..."
 
 #. Translators: Status label when save is complete
-#: addon\globalPlugins\visionAssistant\__init__.py:2267
+#: addon\globalPlugins\visionAssistant\__init__.py:3372
 msgid "Saved"
 msgstr "Đã lưu"
 
 #. Translators: Message box content for successful save
-#: addon\globalPlugins\visionAssistant\__init__.py:2269
+#: addon\globalPlugins\visionAssistant\__init__.py:3374
 msgid "File saved successfully."
-msgstr "Tệp đã được lưu thành công."
+msgstr "Đã lưu tệp thành công."
 
 #. Translators: Menu item for Document Reader
-#: addon\globalPlugins\visionAssistant\__init__.py:2304
+#: addon\globalPlugins\visionAssistant\__init__.py:3409
 msgid "&Document Reader..."
-msgstr "Trình đọc &tài liệu..."
+msgstr "Trình đọc tài liệu (&D)..."
 
 #. Translators: Menu item for Audio Transcription
-#: addon\globalPlugins\visionAssistant\__init__.py:2308
+#: addon\globalPlugins\visionAssistant\__init__.py:3413
 msgid "Transcribe &Audio File..."
-msgstr "Chuyển đổi tệp &âm thanh..."
+msgstr "Chuyển biên tệp âm thanh (&A)..."
 
 #. Translators: Menu item for Video Analysis
-#: addon\globalPlugins\visionAssistant\__init__.py:2312
+#: addon\globalPlugins\visionAssistant\__init__.py:3417
 msgid "Analyze &Video URL..."
-msgstr "Phân tích đường dẫn &Video..."
+msgstr "Phân tích URL &Video..."
 
 #. Translators: Menu item to open settings
-#: addon\globalPlugins\visionAssistant\__init__.py:2318
+#: addon\globalPlugins\visionAssistant\__init__.py:3423
 msgid "&Settings..."
-msgstr "&Cài đặt..."
+msgstr "Cài đặt (&S)..."
 
 #. Translators: Menu item to check for updates
-#: addon\globalPlugins\visionAssistant\__init__.py:2322
+#: addon\globalPlugins\visionAssistant\__init__.py:3427
 msgid "Check for &Update"
-msgstr "Kiểm tra cập &nhật"
+msgstr "Kiểm tra cập nhật (&U)"
 
 #. Translators: Menu item to open documentation
-#: addon\globalPlugins\visionAssistant\__init__.py:2326
+#: addon\globalPlugins\visionAssistant\__init__.py:3431
 msgid "Docu&mentation"
-msgstr "&Tài liệu hướng dẫn"
+msgstr "Tài liệu hướng dẫn (&M)"
 
 #. Translators: Menu item for donations
-#: addon\globalPlugins\visionAssistant\__init__.py:2330
+#: addon\globalPlugins\visionAssistant\__init__.py:3435
 msgid "D&onate"
-msgstr "Ủng &hộ"
+msgstr "Quyên góp (&O)"
 
-#: addon\globalPlugins\visionAssistant\__init__.py:2334
+#. Translators: Menu item to open the Telegram channel
+#: addon\globalPlugins\visionAssistant\__init__.py:3439
+msgid "Telegram &Channel"
+msgstr "Kênh Telegram (&C)"
+
+#. Translators: The name of the addon's sub-menu in the NVDA Tools menu.
+#: addon\globalPlugins\visionAssistant\__init__.py:3444
 msgid "Vision Assistant"
 msgstr "Vision Assistant"
 
 #. Translators: Standard title for opening a file
-#: addon\globalPlugins\visionAssistant\__init__.py:2348 addon\globalPlugins\visionAssistant\__init__.py:2490 addon\globalPlugins\visionAssistant\__init__.py:2957
+#: addon\globalPlugins\visionAssistant\__init__.py:3459
+#: addon\globalPlugins\visionAssistant\__init__.py:3596
+#: addon\globalPlugins\visionAssistant\__init__.py:4047
 msgid "Open"
 msgstr "Mở"
 
 #. Translators: File dialog filter for supported files
-#: addon\globalPlugins\visionAssistant\__init__.py:2356
+#: addon\globalPlugins\visionAssistant\__init__.py:3467
 msgid "Supported Files"
 msgstr "Các tệp được hỗ trợ"
 
 #. Translators: Error when PyMuPDF is missing
-#: addon\globalPlugins\visionAssistant\__init__.py:2363 addon\globalPlugins\visionAssistant\__init__.py:3140
+#: addon\globalPlugins\visionAssistant\__init__.py:3474
+#: addon\globalPlugins\visionAssistant\__init__.py:4265
 msgid "PyMuPDF library is missing."
 msgstr "Thiếu thư viện PyMuPDF."
 
 #. Translators: Error when no pages found
-#: addon\globalPlugins\visionAssistant\__init__.py:2369 addon\globalPlugins\visionAssistant\__init__.py:3146
+#: addon\globalPlugins\visionAssistant\__init__.py:3480
+#: addon\globalPlugins\visionAssistant\__init__.py:4271
 msgid "No readable pages found."
-msgstr "Không tìm thấy trang nào có thể đọc được."
+msgstr "Không tìm thấy trang nào có thể đọc."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2403
+#: addon\globalPlugins\visionAssistant\__init__.py:3518
 msgid "Activates the Command Layer for quick access to all features."
-msgstr "Kích hoạt Lớp lệnh để truy cập nhanh mọi tính năng."
+msgstr "Kích hoạt Lớp lệnh để truy cập nhanh vào tất cả các tính năng."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2461 addon\globalPlugins\visionAssistant\__init__.py:2772
+#: addon\globalPlugins\visionAssistant\__init__.py:3566
+#: addon\globalPlugins\visionAssistant\__init__.py:3857
 msgid "Translates the selected text or navigator object."
-msgstr "Dịch văn bản đã chọn hoặc đối tượng điều hướng."
+msgstr "Dịch văn bản đã chọn hoặc đối tượng navigator."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2462 addon\globalPlugins\visionAssistant\__init__.py:3607
+#: addon\globalPlugins\visionAssistant\__init__.py:3567
+#: addon\globalPlugins\visionAssistant\__init__.py:4913
 msgid "Translates the text currently in the clipboard."
-msgstr "Dịch văn bản trong bộ nhớ tạm."
+msgstr "Dịch văn bản hiện có trong clipboard."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2463 addon\globalPlugins\visionAssistant\__init__.py:2901
+#: addon\globalPlugins\visionAssistant\__init__.py:3568
+#: addon\globalPlugins\visionAssistant\__init__.py:3983
 msgid "Opens a menu to Explain, Summarize, or Fix the selected text."
-msgstr "Mở trình đơn để Giải thích, Tóm tắt hoặc Sửa văn bản đã chọn."
+msgstr "Mở menu để Giải thích, Tóm tắt hoặc Sửa lỗi văn bản đã chọn."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2464 addon\globalPlugins\visionAssistant\__init__.py:3289
+#: addon\globalPlugins\visionAssistant\__init__.py:3569
+#: addon\globalPlugins\visionAssistant\__init__.py:4449
 msgid "Performs OCR and description on the entire screen."
-msgstr "Nhận diện văn bản và mô tả toàn bộ màn hình."
+msgstr "Thực hiện OCR và mô tả toàn bộ màn hình."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2465 addon\globalPlugins\visionAssistant\__init__.py:3295
+#: addon\globalPlugins\visionAssistant\__init__.py:3570
+#: addon\globalPlugins\visionAssistant\__init__.py:4455
 msgid "Describes the current object (Navigator Object)."
-msgstr "Mô tả đối tượng hiện tại (Đối tượng điều hướng)."
+msgstr "Mô tả đối tượng hiện tại (Đối tượng Navigator)."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2466 addon\globalPlugins\visionAssistant\__init__.py:3240
+#: addon\globalPlugins\visionAssistant\__init__.py:3571
+#: addon\globalPlugins\visionAssistant\__init__.py:4378
 msgid ""
 "Opens the Document Reader for detailed page-by-page analysis (PDF/Images)."
 msgstr "Mở Trình đọc tài liệu để phân tích chi tiết từng trang (PDF/Hình ảnh)."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2467 addon\globalPlugins\visionAssistant\__init__.py:3127
+#: addon\globalPlugins\visionAssistant\__init__.py:3572
+#: addon\globalPlugins\visionAssistant\__init__.py:4252
 msgid "Recognizes text from a selected image or PDF file."
-msgstr "Nhận diện văn bản từ hình ảnh hoặc tệp PDF đã chọn."
+msgstr "Nhận dạng văn bản từ một hình ảnh hoặc tệp PDF đã chọn."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2468 addon\globalPlugins\visionAssistant\__init__.py:3375
+#: addon\globalPlugins\visionAssistant\__init__.py:3573
+#: addon\globalPlugins\visionAssistant\__init__.py:4635
 msgid "Transcribes a selected audio file."
-msgstr "Chuyển âm thanh thành văn bản từ tệp đã chọn."
+msgstr "Chuyển biên một tệp âm thanh đã chọn."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2469 addon\globalPlugins\visionAssistant\__init__.py:3419
+#: addon\globalPlugins\visionAssistant\__init__.py:3574
+#: addon\globalPlugins\visionAssistant\__init__.py:4684
 msgid "Analyzes a YouTube, Instagram, Twitter or TikTok video URL."
-msgstr "Phân tích URL video YouTube, Instagram, Twitter hoặc TikTok."
+msgstr "Phân tích URL video trên YouTube, Instagram, Twitter hoặc TikTok."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2470 addon\globalPlugins\visionAssistant\__init__.py:3522
+#: addon\globalPlugins\visionAssistant\__init__.py:3575
+#: addon\globalPlugins\visionAssistant\__init__.py:4800
 msgid "Attempts to solve a CAPTCHA on the screen or navigator object."
-msgstr "Cố gắng giải CAPTCHA trên màn hình hoặc đối tượng điều hướng."
+msgstr "Thử giải quyết CAPTCHA trên màn hình hoặc đối tượng navigator."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2471 addon\globalPlugins\visionAssistant\__init__.py:2679
+#: addon\globalPlugins\visionAssistant\__init__.py:3576
+#: addon\globalPlugins\visionAssistant\__init__.py:3764
 msgid "Records voice, transcribes it using AI, and types the result."
-msgstr "Ghi âm, chuyển thành văn bản bằng AI và tự động nhập kết quả."
+msgstr "Ghi âm giọng nói, chuyển biên bằng AI và gõ kết quả."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2472 addon\globalPlugins\visionAssistant\__init__.py:2480
+#: addon\globalPlugins\visionAssistant\__init__.py:3577
+#: addon\globalPlugins\visionAssistant\__init__.py:3586
 msgid "Announces the current status of the add-on."
 msgstr "Thông báo trạng thái hiện tại của add-on."
 
 #. Translators: Script description for Input Gestures dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2473 addon\globalPlugins\visionAssistant\__init__.py:3576
+#: addon\globalPlugins\visionAssistant\__init__.py:3578
+#: addon\globalPlugins\visionAssistant\__init__.py:4857
 msgid "Checks for updates manually."
-msgstr "Kiểm tra cập nhật thủ công."
+msgstr "Kiểm tra cập nhật theo cách thủ công."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:2474
+#. Translators: Script description for Input Gestures dialog
+#: addon\globalPlugins\visionAssistant\__init__.py:3579
+#: addon\globalPlugins\visionAssistant\__init__.py:4928
+msgid ""
+"Shows the last AI response in a chat dialog for review or follow-up "
+"questions."
+msgstr ""
+"Hiển thị phản hồi cuối cùng của AI trong hộp thoại trò chuyện để xem lại "
+"hoặc đặt câu hỏi tiếp theo."
+
+#: addon\globalPlugins\visionAssistant\__init__.py:3580
 msgid "Shows a list of available commands in the layer."
-msgstr "Hiện danh sách các lệnh có sẵn trong Lớp lệnh."
+msgstr "Hiển thị danh sách các lệnh có sẵn trong lớp."
 
 #. Translators: Title of the help dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2477
+#: addon\globalPlugins\visionAssistant\__init__.py:3583
 #, python-brace-format
 msgid "{name} Help"
 msgstr "Trợ giúp {name}"
 
 #. Translators: Message of a dialog which may pop up while trying to upload a file
-#: addon\globalPlugins\visionAssistant\__init__.py:2562
-#, python-brace-format
-msgid "Upload Connection Error: {reason}"
-msgstr "Lỗi kết nối khi tải lên: {reason}"
-
-#. Translators: Message of a dialog which may pop up while trying to upload a file
-#: addon\globalPlugins\visionAssistant\__init__.py:2568
-#, python-brace-format
-msgid "Upload Server Error {code}: {reason}"
-msgstr "Lỗi máy chủ khi tải lên {code}: {reason}"
-
-#. Translators: Message of a dialog which may pop up while trying to upload a file
-#: addon\globalPlugins\visionAssistant\__init__.py:2574
+#: addon\globalPlugins\visionAssistant\__init__.py:3659
 #, python-brace-format
 msgid "File Upload Error: {error}"
-msgstr "Lỗi tải tệp: {error}"
+msgstr "Lỗi tải lên tệp: {error}"
+
+#. Translators: Error message when there's no content to send
+#: addon\globalPlugins\visionAssistant\__init__.py:3680
+#: addon\globalPlugins\visionAssistant\__init__.py:3687
+msgid "Nothing to send."
+msgstr "Không có gì để gửi."
 
 #. Translators: Error message when AI refuses to answer due to safety guidelines
-#: addon\globalPlugins\visionAssistant\__init__.py:2648
+#: addon\globalPlugins\visionAssistant\__init__.py:3733
 msgid "Error: Response blocked by AI safety filters."
-msgstr "Lỗi: Phản hồi bị chặn bởi bộ lọc an toàn của AI."
+msgstr "Lỗi: Phản hồi bị chặn bởi các bộ lọc an toàn của AI."
 
 #. Translators: Message reported when dictation starts
-#: addon\globalPlugins\visionAssistant\__init__.py:2689
+#: addon\globalPlugins\visionAssistant\__init__.py:3774
 msgid "Listening..."
 msgstr "Đang nghe..."
 
 #. Translators: Message in an error dialog which can pop up while trying dictation.
-#: addon\globalPlugins\visionAssistant\__init__.py:2693
+#: addon\globalPlugins\visionAssistant\__init__.py:3778
 #, python-brace-format
 msgid "Audio Hardware Error: {error}"
 msgstr "Lỗi phần cứng âm thanh: {error}"
 
 #. Translators: Message reported when processing dictation
-#: addon\globalPlugins\visionAssistant\__init__.py:2703
+#: addon\globalPlugins\visionAssistant\__init__.py:3788
 msgid "Typing..."
-msgstr "Đang nhập..."
+msgstr "Đang gõ..."
 
 #. Translators: Message in an error dialog which can pop up while trying dictation.
-#: addon\globalPlugins\visionAssistant\__init__.py:2708
+#: addon\globalPlugins\visionAssistant\__init__.py:3793
 #, python-brace-format
 msgid "Save Recording Error: {error}"
 msgstr "Lỗi lưu bản ghi: {error}"
 
 #. Translators: Message reported when the AI detects silence or empty speech
-#: addon\globalPlugins\visionAssistant\__init__.py:2723 addon\globalPlugins\visionAssistant\__init__.py:2746
+#: addon\globalPlugins\visionAssistant\__init__.py:3808
+#: addon\globalPlugins\visionAssistant\__init__.py:3831
 msgid "No speech detected."
-msgstr "Không phát hiện tiếng nói."
+msgstr "Không phát hiện thấy giọng nói."
 
 #. Translators: Message reported while trying dictation.
-#: addon\globalPlugins\visionAssistant\__init__.py:2753
+#: addon\globalPlugins\visionAssistant\__init__.py:3838
 msgid "No speech recognized or Error."
-msgstr "Không thể nhận diện tiếng nói hoặc có lỗi."
+msgstr "Không nhận dạng được giọng nói hoặc có lỗi."
 
 #. Translators: Message reported when dictation is complete
-#: addon\globalPlugins\visionAssistant\__init__.py:2768
+#: addon\globalPlugins\visionAssistant\__init__.py:3853
 #, python-brace-format
 msgid "Typed: {text}"
-msgstr "Đã nhập: {text}"
+msgstr "Đã gõ: {text}"
 
 #. Translators: Message reported when calling translation command
-#: addon\globalPlugins\visionAssistant\__init__.py:2779
+#: addon\globalPlugins\visionAssistant\__init__.py:3864
 msgid "No text found."
 msgstr "Không tìm thấy văn bản."
 
 #. Translators: Message reported when calling translation command
-#: addon\globalPlugins\visionAssistant\__init__.py:2784
+#: addon\globalPlugins\visionAssistant\__init__.py:3869
 msgid "Translating..."
 msgstr "Đang dịch..."
 
 #. Translators: Message reported when calling translation command
-#: addon\globalPlugins\visionAssistant\__init__.py:2818
+#: addon\globalPlugins\visionAssistant\__init__.py:3894
 #, python-brace-format
 msgid "Translated: {text}"
 msgstr "Đã dịch: {text}"
 
-#. Translators: A choice in the menu of the text refinement command
-#: addon\globalPlugins\visionAssistant\__init__.py:204
-msgid "Summarize"
-msgstr "Tóm tắt"
-
-#. Translators: A choice in the menu of the text refinement command
-#: addon\globalPlugins\visionAssistant\__init__.py:210
-msgid "Fix Grammar"
-msgstr "Sửa lỗi ngữ pháp"
-
-#. Translators: A choice in the menu of the text refinement command
-#: addon\globalPlugins\visionAssistant\__init__.py:216
-msgid "Fix Grammar & Translate"
-msgstr "Sửa lỗi ngữ pháp & Dịch"
-
-#. Translators: A choice in the menu of the text refinement command
-#: addon\globalPlugins\visionAssistant\__init__.py:222
-msgid "Explain"
-msgstr "Giải thích"
-
-#. Translators: Prefix for custom prompts in the Refine menu
-#: addon\globalPlugins\visionAssistant\__init__.py:614
-msgid "Custom: "
-msgstr "Tùy chỉnh: "
+#. Translators: Dialog title for Translation results
+#: addon\globalPlugins\visionAssistant\__init__.py:3918
+#, python-brace-format
+msgid "{name} - Translation"
+msgstr "{name} - Dịch thuật"
 
 #. Translators: Title of the Refine dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:2928
+#: addon\globalPlugins\visionAssistant\__init__.py:4012
 msgid "Choose action:"
 msgstr "Chọn hành động:"
 
-#. Translators: main message of the Refine dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:203 addon\globalPlugins\visionAssistant\__init__.py:209 addon\globalPlugins\visionAssistant\__init__.py:215 addon\globalPlugins\visionAssistant\__init__.py:221 addon\globalPlugins\visionAssistant\__init__.py:2930
-msgid "Refine"
-msgstr "Tinh chỉnh"
-
 #. Translators: Message while processing request of the refine text command
-#: addon\globalPlugins\visionAssistant\__init__.py:2965
+#: addon\globalPlugins\visionAssistant\__init__.py:4057
 msgid "Processing..."
 msgstr "Đang xử lý..."
 
 #. Translators: Message reported when executing the refine command
-#: addon\globalPlugins\visionAssistant\__init__.py:3023
+#: addon\globalPlugins\visionAssistant\__init__.py:4114
 msgid "Uploading file..."
-msgstr "Đang tải tệp lên..."
+msgstr "Đang tải lên tệp..."
 
 #. Translators: Message reported when executing the refine command
 #. Translators: Message reported when calling the audio transcription command
 #. Translators: Message reported when AI is analyzing the video
-#: addon\globalPlugins\visionAssistant\__init__.py:3073 addon\globalPlugins\visionAssistant\__init__.py:3397 addon\globalPlugins\visionAssistant\__init__.py:3499
+#: addon\globalPlugins\visionAssistant\__init__.py:4187
+#: addon\globalPlugins\visionAssistant\__init__.py:4666
+#: addon\globalPlugins\visionAssistant\__init__.py:4778
 msgid "Analyzing..."
 msgstr "Đang phân tích..."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:3115
+#. Translators: Title of Refine Result dialog
+#: addon\globalPlugins\visionAssistant\__init__.py:4240
 #, python-brace-format
 msgid "{name} - Refine Result"
 msgstr "{name} - Kết quả tinh chỉnh"
 
-#. Translators: Message reported when calling the OCR file recognition command
-#: addon\globalPlugins\visionAssistant\__init__.py:3167
-msgid "Uploading & Extracting..."
-msgstr "Đang tải lên & Trích xuất..."
+#. Translators: Message reported when extracting text from a file
+#: addon\globalPlugins\visionAssistant\__init__.py:4297
+msgid "Extracting Text..."
+msgstr "Đang trích xuất văn bản..."
 
 #. Translators: Error message if PDF creation fails
-#: addon\globalPlugins\visionAssistant\__init__.py:3207
+#: addon\globalPlugins\visionAssistant\__init__.py:4304
+#: addon\globalPlugins\visionAssistant\__init__.py:4355
 msgid "Error creating PDF."
-msgstr "Lỗi khi tạo tệp PDF."
+msgstr "Lỗi tạo PDF."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:3277
+#. Translators: Error shown when OCR finds no text in the selected files
+#: addon\globalPlugins\visionAssistant\__init__.py:4347
+msgid "No text detected or error occurred."
+msgstr "Không phát hiện thấy văn bản hoặc đã xảy ra lỗi."
+
+#. Translators: Dialog title for a Chat dialog
+#: addon\globalPlugins\visionAssistant\__init__.py:4437
+#: addon\globalPlugins\visionAssistant\__init__.py:4623
 #, python-brace-format
 msgid "{name} - Chat"
-msgstr "{name} - Chat"
+msgstr "{name} - Trò chuyện"
 
 #. Translators: Message reported when calling an image analysis command
-#: addon\globalPlugins\visionAssistant\__init__.py:3305
+#: addon\globalPlugins\visionAssistant\__init__.py:4465
 msgid "Scanning..."
 msgstr "Đang quét..."
 
 #. Translators: Message reported when calling an image analysis command
 #. Translators: Message reported when calling the CAPTCHA solving command
-#: addon\globalPlugins\visionAssistant\__init__.py:3310 addon\globalPlugins\visionAssistant\__init__.py:3542
+#: addon\globalPlugins\visionAssistant\__init__.py:4470
+#: addon\globalPlugins\visionAssistant\__init__.py:4820
 msgid "Capture failed."
-msgstr "Không thể chụp màn hình."
+msgstr "Chụp thất bại."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:3363
+#. Translators: Dialog title for Image Analysis
+#: addon\globalPlugins\visionAssistant\__init__.py:4559
 #, python-brace-format
 msgid "{name} - Image Analysis"
 msgstr "{name} - Phân tích hình ảnh"
 
 #. Translators: Message reported when calling the audio transcription command
-#: addon\globalPlugins\visionAssistant\__init__.py:3387
+#: addon\globalPlugins\visionAssistant\__init__.py:4647
 msgid "Uploading..."
 msgstr "Đang tải lên..."
 
-#. Translators: Generic error message when audio processing fails
-#: addon\globalPlugins\visionAssistant\__init__.py:3414
-msgid "Error processing audio."
-msgstr "Lỗi khi xử lý âm thanh."
+#. Translators: Error message when video analysis is attempted with a non-Gemini provider.
+#: addon\globalPlugins\visionAssistant\__init__.py:4692
+msgid "Video analysis is only supported by Gemini providers."
+msgstr "Tính năng phân tích video chỉ được hỗ trợ bởi các nhà cung cấp Gemini."
 
 #. Translators: Title for the video URL entry dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:3426
+#: addon\globalPlugins\visionAssistant\__init__.py:4697
 msgid "YouTube / Instagram / Twitter / TikTok Analysis"
 msgstr "Phân tích YouTube / Instagram / Twitter / TikTok"
 
 #. Translators: Label for the text entry in video dialog
-#: addon\globalPlugins\visionAssistant\__init__.py:3428
+#: addon\globalPlugins\visionAssistant\__init__.py:4699
 msgid "Enter Video URL (YouTube/Instagram/Twitter/TikTok):"
-msgstr "Nhập liên kết video (YouTube/Instagram/Twitter/TikTok):"
+msgstr "Nhập URL video (YouTube/Instagram/Twitter/TikTok):"
 
 #. Translators: Error message when the URL is invalid
-#: addon\globalPlugins\visionAssistant\__init__.py:3443 addon\globalPlugins\visionAssistant\__init__.py:3446
+#: addon\globalPlugins\visionAssistant\__init__.py:4719
+#: addon\globalPlugins\visionAssistant\__init__.py:4722
 msgid "Error: Invalid URL."
-msgstr "Lỗi: Liên kết không hợp lệ."
+msgstr "Lỗi: URL không hợp lệ."
 
 #. Translators: Error message when the platform is not supported
-#: addon\globalPlugins\visionAssistant\__init__.py:3456
+#: addon\globalPlugins\visionAssistant\__init__.py:4732
 msgid ""
 "Error: Unsupported platform. Only YouTube, Instagram, Twitter, and TikTok "
 "are supported."
 msgstr ""
-"Lỗi: Nền tảng không hỗ trợ. Chỉ hỗ trợ YouTube, Instagram, Twitter và TikTok."
+"Lỗi: Nền tảng không được hỗ trợ. Chỉ hỗ trợ YouTube, Instagram, Twitter và "
+"TikTok."
 
 #. Translators: Message reported when processing video link
-#: addon\globalPlugins\visionAssistant\__init__.py:3460
+#: addon\globalPlugins\visionAssistant\__init__.py:4736
 msgid "Processing Video..."
-msgstr "Đang xử lý Video..."
+msgstr "Đang xử lý video..."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:3471
+#. Translators: Error message when link extraction fails for Instagram.
+#: addon\globalPlugins\visionAssistant\__init__.py:4748
 msgid "Error: Could not extract Instagram video."
 msgstr "Lỗi: Không thể trích xuất video Instagram."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:3474
+#. Translators: Error message when link extraction fails for Twitter/X.
+#: addon\globalPlugins\visionAssistant\__init__.py:4752
 msgid "Error: Could not extract Twitter video."
 msgstr "Lỗi: Không thể trích xuất video Twitter."
 
-#: addon\globalPlugins\visionAssistant\__init__.py:3477
+#. Translators: Error message when link extraction fails for TikTok.
+#: addon\globalPlugins\visionAssistant\__init__.py:4756
 msgid "Error: Could not extract TikTok video."
 msgstr "Lỗi: Không thể trích xuất video TikTok."
 
 #. Translators: Message reported when downloading video
-#: addon\globalPlugins\visionAssistant\__init__.py:3484
+#: addon\globalPlugins\visionAssistant\__init__.py:4763
 msgid "Downloading Video..."
-msgstr "Đang tải Video..."
+msgstr "Đang tải xuống video..."
 
 #. Translators: Error message when video download fails
-#: addon\globalPlugins\visionAssistant\__init__.py:3489
+#: addon\globalPlugins\visionAssistant\__init__.py:4768
 msgid "Error: Download failed."
 msgstr "Lỗi: Tải xuống thất bại."
 
 #. Translators: Message reported when uploading video to AI
-#: addon\globalPlugins\visionAssistant\__init__.py:3493
+#: addon\globalPlugins\visionAssistant\__init__.py:4772
 msgid "Uploading to AI..."
 msgstr "Đang tải lên AI..."
 
 #. Translators: Message reported when analyzing YouTube video
-#: addon\globalPlugins\visionAssistant\__init__.py:3511
+#: addon\globalPlugins\visionAssistant\__init__.py:4790
 msgid "Analyzing YouTube..."
 msgstr "Đang phân tích YouTube..."
 
 #. Translators: Message reported when calling the CAPTCHA solving command
-#: addon\globalPlugins\visionAssistant\__init__.py:3537
+#: addon\globalPlugins\visionAssistant\__init__.py:4815
 msgid "Solving..."
 msgstr "Đang giải..."
 
 #. Translators: Message reported when AI cannot find any CAPTCHA in the image
-#: addon\globalPlugins\visionAssistant\__init__.py:3558
+#: addon\globalPlugins\visionAssistant\__init__.py:4841
 msgid "No CAPTCHA detected."
 msgstr "Không phát hiện thấy CAPTCHA."
 
 #. Translators: Message reported when calling the CAPTCHA solving command
-#: addon\globalPlugins\visionAssistant\__init__.py:3563
-msgid "Failed."
-msgstr "Thất bại."
-
-#. Translators: Message reported when calling the CAPTCHA solving command
-#: addon\globalPlugins\visionAssistant\__init__.py:3572
+#: addon\globalPlugins\visionAssistant\__init__.py:4853
 #, python-brace-format
 msgid "Captcha: {text}"
 msgstr "Captcha: {text}"
 
 #. Translators: Message reported when calling the update command
-#: addon\globalPlugins\visionAssistant\__init__.py:3580
+#: addon\globalPlugins\visionAssistant\__init__.py:4861
 msgid "Checking for updates..."
 msgstr "Đang kiểm tra cập nhật..."
 
 #. Translators: Message when calling the command to translate from clipboard
-#: addon\globalPlugins\visionAssistant\__init__.py:3613
+#: addon\globalPlugins\visionAssistant\__init__.py:4919
 msgid "Translating Clipboard..."
-msgstr "Đang dịch bộ nhớ tạm..."
+msgstr "Đang dịch Clipboard..."
 
 #. Translators: Message when calling the command to translate from clipboard
-#: addon\globalPlugins\visionAssistant\__init__.py:3618
+#: addon\globalPlugins\visionAssistant\__init__.py:4924
 msgid "Clipboard empty."
-msgstr "Bộ nhớ tạm trống."
+msgstr "Clipboard trống."
+
+#. Translators: Message reported when the user tries to show the last result but none is stored.
+#: addon\globalPlugins\visionAssistant\__init__.py:4933
+msgid "No previous result to show."
+msgstr "Không có kết quả trước đó để hiển thị."
 
 #. Translators: Message shown when settings dialog is already open
-#: addon\globalPlugins\visionAssistant\__init__.py:3626
+#: addon\globalPlugins\visionAssistant\__init__.py:4947
+#: addon\globalPlugins\visionAssistant\__init__.py:4957
 msgid "Settings dialog is already open."
-msgstr "Hộp thoại cài đặt hiện đang mở."
+msgstr "Hộp thoại cài đặt đã được mở."
 
 #. Translators: Message when opening documentation
-#: addon\globalPlugins\visionAssistant\__init__.py:3630
+#: addon\globalPlugins\visionAssistant\__init__.py:4963
 msgid "Opening documentation..."
 msgstr "Đang mở tài liệu hướng dẫn..."
 
 #. Translators: Error when help file is missing
-#: addon\globalPlugins\visionAssistant\__init__.py:3640
+#: addon\globalPlugins\visionAssistant\__init__.py:4973
 msgid "Documentation file not found."
 msgstr "Không tìm thấy tệp tài liệu hướng dẫn."
 
@@ -1248,111 +2076,133 @@ msgid ""
 "- Audio Transcription (A)\n"
 "- Smart Dictation (S)\n"
 "- Announce Status (L)\n"
-"- Check Update (U)"
+"- Check Update (U)\n"
+"- Recall Last Result (Space),\n"
+"- Commands Help (H),\n"
 msgstr ""
-"Trợ lý AI nâng cao cho NVDA sử dụng các mô hình Gemini.\n"
+"Một trợ lý AI nâng cao dành cho NVDA sử dụng các mô hình Gemini.\n"
 "Lớp lệnh: Nhấn NVDA+Shift+V, sau đó:\n"
-"- Dịch thuật thông minh (T) / Dịch bộ nhớ tạm (Shift+T)\n"
+"- Dịch thông minh (T) / Clipboard (Shift+T)\n"
 "- Tinh chỉnh văn bản (R)\n"
 "- Mô tả đối tượng (V) / Toàn màn hình (O)\n"
-"- Phân tích Video trực tuyến (Shift+V)\n"
-"- Hỏi đáp tài liệu (D)\n"
-"- Nhận diện văn bản OCR (F)\n"
-"- Giải mã CAPTCHA (C)\n"
-"- Chuyển tệp âm thanh thành văn bản (A)\n"
-"- Soạn thảo giọng nói thông minh (S)\n"
+"- Phân tích video trực tuyến (Shift+V)\n"
+"- Trình đọc tài liệu (D)\n"
+"- OCR tệp (F)\n"
+"- Giải CAPTCHA (C)\n"
+"- Chuyển biên âm thanh (A)\n"
+"- Đọc chính tả thông minh (S)\n"
 "- Thông báo trạng thái (L)\n"
-"- Kiểm tra cập nhật (U)"
+"- Kiểm tra cập nhật (U)\n"
+"- Gọi lại kết quả cuối cùng (Space),\n"
+"- Trợ giúp lệnh (H),\n"
 
 #. Brief changelog for this version
 #. Translators: what's new content for the add-on version to be shown in the add-on store
-#: buildVars.py:29
+#: buildVars.py:32
 msgid ""
-"## Changes for 4.0.1\n"
-"*   **Advanced Document Reader:** A powerful new viewer for PDF and images "
-"with page range selection, background processing, and seamless `Ctrl+PageUp/"
-"Down` navigation.\n"
-"*   **New Tools Submenu:** Added a dedicated \"Vision Assistant\" submenu "
-"under NVDA's Tools menu for quicker access to core features, settings, and "
-"documentation.\n"
-"*   **Flexible Customization:** You can now choose your preferred OCR engine "
-"and TTS voice directly from the settings panel.\n"
-"*   **Multiple API Key Support:** Added support for multiple Gemini API "
-"keys. You can enter one key per line or separate them with commas in the "
-"settings.\n"
-"*   **Alternative OCR Engine:** Introduced a new OCR engine to ensure "
-"reliable text recognition even when hitting Gemini API quota limits.\n"
-"*   **Smart API Key Rotation:** Automatically switches to and remembers the "
-"fastest working API key to bypass quota limits.\n"
-"*   **Document to MP3/WAV:** Integrated capability to generate and save high-"
-"quality audio files in both MP3 (128kbps) and WAV formats directly within "
-"the reader.\n"
-"*   **Instagram Stories Support:** Added the ability to describe and analyze "
-"Instagram Stories using their URLs.\n"
-"*   **TikTok Support:** Introduced support for TikTok videos, allowing for "
-"full visual description and audio transcription of clips.\n"
-"*   **Redesigned Update Dialog:** Features a new accessible interface with a "
-"scrollable text box to clearly read version changes before installing.\n"
-"*   **Unified Status & UX:** Standardized file dialogs across the add-on and "
-"enhanced the 'L' command to report real-time progress."
+"## Changes for 5.0\n"
+"* **Multi-Provider Architecture**: Added full support for **OpenAI**, "
+"**Groq**, and **Mistral** alongside Google Gemini. Users can now choose "
+"their preferred AI backend.\n"
+"* **Advanced Model Routing**: Users of native providers (Gemini, OpenAI, "
+"etc.) can now select specific models from a dropdown list for different "
+"tasks (OCR, STT, TTS).\n"
+"* **Advanced Endpoint Configuration**: Custom provider users can manually "
+"input specific URLs and model names for granular control over local or third-"
+"party servers.\n"
+"* **Smart Feature Visibility**: The settings menu and Document Reader UI now "
+"automatically hide unsupported features (like TTS) based on the selected "
+"provider.\n"
+"* **Dynamic Model Fetching**: The addon now fetches the available model list "
+"directly from the provider's API, ensuring compatibility with new models as "
+"soon as they are released.\n"
+"* **Hybrid OCR & Translation**: Optimized the logic to use Google Translate "
+"for speed when using Chrome OCR, and AI-powered translation when using "
+"Gemini/Groq/OpenAI engines.\n"
+"* **Universal \"Re-scan with AI\"**: The Document Reader's re-scan feature "
+"is no longer limited to Gemini. It now utilizes whatever AI provider is "
+"currently active to re-process pages."
 msgstr ""
-"## Những thay đổi cho phiên bản 4.0\n"
-"* **Trình đọc tài liệu nâng cao:** Trình xem PDF và hình ảnh mạnh mẽ mới, hỗ "
-"trợ chọn phạm vi trang, xử lý trong nền và điều hướng mượt mà bằng phím "
-"`Ctrl+PageUp/Down`.\n"
-"* **Trình đơn phụ mới:** Đã thêm trình đơn \"Vision Assistant\" vào menu "
-"Công cụ của NVDA để truy cập nhanh các tính năng, cài đặt và tài liệu.\n"
-"* **Tùy biến linh hoạt:** Bạn có thể chọn công cụ OCR và giọng đọc TTS ưa "
-"thích ngay trong bảng cài đặt.\n"
-"* **Hỗ trợ nhiều khóa API:** Cho phép nhập nhiều khóa API Gemini (mỗi dòng "
-"một khóa hoặc cách nhau bằng dấu phẩy) để đảm bảo hoạt động liên tục.\n"
-"* **Công cụ OCR thay thế:** Bổ sung công cụ OCR mới để đảm bảo nhận diện văn "
-"bản ổn định khi API Gemini đạt giới hạn hạn mức.\n"
-"* **Tự động luân chuyển khóa API:** Hệ thống tự động chuyển và ghi nhớ khóa "
-"API hoạt động nhanh nhất để vượt qua giới hạn hạn mức.\n"
-"* **Chuyển tài liệu thành âm thanh:** Tích hợp khả năng tạo và lưu tệp âm "
-"thanh chất lượng cao (WAV) từ các trang tài liệu trực tiếp trong trình đọc.\n"
-"* **Hỗ trợ story trên Instagram:** Đã thêm khả năng mô tả và phân tích Story "
-"trên Instagram bằng URL của chúng.\\n\n"
-"* **Hỗ trợ TikTok:** Giới thiệu hỗ trợ cho video TikTok, cho phép mô tả đầy "
-"đủ bằng hình ảnh và phiên âm âm thanh của clip.\\n\n"
-"* **Cải tiến hộp thoại cập nhật:** Giao diện mới hỗ trợ tiếp cận tốt hơn với "
-"khung văn bản có thể cuộn để đọc nội dung thay đổi rõ ràng hơn.\n"
-"* **Hợp nhất trạng thái & trải nghiệm:** Chuẩn hóa các hộp thoại chọn tệp và "
-"cải tiến lệnh 'L' để báo cáo tiến độ thời gian thực của các tác vụ chạy nền."
+"## Những thay đổi trong phiên bản 5.0\n"
+"* **Kiến trúc đa nhà cung cấp**: Bổ sung hỗ trợ đầy đủ cho **OpenAI**, "
+"**Groq**, và **Mistral** bên cạnh Google Gemini. Người dùng hiện có thể chọn "
+"backend AI ưa thích của mình.\n"
+"* **Định tuyến mô hình nâng cao**: Người dùng các nhà cung cấp gốc (Gemini, OpenAI, "
+"v.v.) hiện có thể chọn các mô hình cụ thể từ danh sách thả xuống cho các tác vụ khác nhau (OCR, STT, TTS).\n"
+"* **Cấu hình Endpoint nâng cao**: Người dùng nhà cung cấp tùy chỉnh có thể nhập thủ công "
+"các URL và tên mô hình cụ thể để kiểm soát chi tiết các máy chủ cục bộ hoặc bên thứ ba.\n"
+"* **Hiển thị tính năng thông minh**: Menu cài đặt và giao diện Trình đọc tài liệu giờ đây "
+"tự động ẩn các tính năng không được hỗ trợ (như TTS) dựa trên nhà cung cấp đã chọn.\n"
+"* **Tìm nạp mô hình động**: Add-on hiện tìm nạp danh sách mô hình có sẵn "
+"trực tiếp từ API của nhà cung cấp, đảm bảo khả năng tương thích với các mô hình mới ngay khi "
+"chúng được phát hành.\n"
+"* **Kết hợp OCR & Dịch thuật**: Tối ưu hóa logic để sử dụng Google Dịch "
+"nhằm tăng tốc độ khi dùng Chrome OCR, và dịch thuật bằng AI khi dùng "
+"các công cụ Gemini/Groq/OpenAI.\n"
+"* **\"Quét lại bằng AI\" toàn cầu**: Tính năng quét lại của Trình đọc tài liệu "
+"không còn bị giới hạn ở Gemini. Giờ đây, tính năng này sử dụng bất kỳ nhà cung cấp AI nào "
+"đang hoạt động để xử lý lại các trang."
 
-#~ msgid "[Legacy]"
-#~ msgstr "[Bản cũ]"
+#~ msgid "Document Chat Bootstrap Reply"
+#~ msgstr "Phản hồi khởi động trò chuyện tài liệu"
 
-#~ msgid "Gemini API Key:"
-#~ msgstr "Khóa API Gemini:"
+#~ msgid "Vision Follow-up Context"
+#~ msgstr "Ngữ cảnh tiếp theo của thị giác"
 
-#~ msgid "API Key missing."
-#~ msgstr "Thiếu khóa API."
+#~ msgid "Vision Follow-up Answer Rule"
+#~ msgstr "Quy tắc trả lời tiếp theo của thị giác"
 
-#~ msgid "Error 429: Quota Exceeded (Try later)"
-#~ msgstr "Lỗi 429: Hết hạn mức (Vui lòng thử lại sau)"
+#~ msgid "Refine Files-Only Fallback"
+#~ msgstr "Dự phòng tinh chỉnh chỉ dành cho tệp"
 
-#, python-brace-format
-#~ msgid "Server Error {code}: {reason}"
-#~ msgstr "Lỗi máy chủ {code}: {reason}"
+#~ msgid "Uploading to Gemini...\n"
+#~ msgstr "Đang tải lên Gemini...\n"
+
+#~ msgid "[OCR failed. Try Gemini Re-scan.]"
+#~ msgstr "[OCR thất bại. Hãy thử quét lại bằng Gemini.]"
 
 #, python-brace-format
-#~ msgid "Connection Error: {reason}"
-#~ msgstr "Lỗi kết nối: {reason}"
+#~ msgid "Upload Connection Error: {reason}"
+#~ msgstr "Lỗi kết nối tải lên: {reason}"
 
 #, python-brace-format
-#~ msgid "Error: {error}"
-#~ msgstr "Lỗi: {error}"
+#~ msgid "Upload Server Error {code}: {reason}"
+#~ msgstr "Lỗi máy chủ tải lên {code}: {reason}"
 
-#~ msgid "Allows asking questions about a selected document (PDF/Text/Image)."
-#~ msgstr "Đặt câu hỏi về tài liệu đã chọn (PDF/Văn bản/Hình ảnh)."
+#~ msgid "Error processing audio."
+#~ msgstr "Lỗi xử lý âm thanh."
 
-#~ msgid "Uploading & Analyzing..."
-#~ msgstr "Đang tải lên & Phân tích..."
+#~ msgid "Failed."
+#~ msgstr "Thất bại."
 
-#~ msgid "Announces the last received translation."
-#~ msgstr "Đọc bản dịch nhận được gần nhất."
-
-#~ msgid "No history."
-#~ msgstr "Không có lịch sử."
+#~ msgid ""
+#~ "## Changes for 4.6\n"
+#~ "* **Interactive Result Recall:** Added the **Space** key to the command "
+#~ "layer, allowing users to instantly reopen the last AI response in a chat "
+#~ "window for follow-up questions, even when \"Direct Output\" mode is "
+#~ "active.\n"
+#~ "* **Telegram Community Hub:** Added an \"Official Telegram Channel\" link "
+#~ "to the NVDA Tools menu, providing a quick way to stay updated with the "
+#~ "latest news, features, and releases.\n"
+#~ "* **Enhanced Response Stability:** Optimized the core logic for "
+#~ "Translation, OCR, and Vision features to ensure more reliable performance "
+#~ "and a smoother experience when using direct speech output.\n"
+#~ "* **Improved Interface Guidance:** Updated the settings descriptions and "
+#~ "documentation to better explain the new recall system and how it works "
+#~ "alongside the direct output settings."
+#~ msgstr ""
+#~ "## Những thay đổi trong phiên bản 4.6\n"
+#~ "* **Gọi lại kết quả tương tác:** Đã thêm phím **Space** vào lớp lệnh, cho "
+#~ "phép người dùng mở lại ngay lập tức phản hồi cuối cùng của AI trong cửa "
+#~ "sổ trò chuyện để đặt câu hỏi tiếp theo, ngay cả khi chế độ \"Đầu ra trực "
+#~ "tiếp\" đang hoạt động.\n"
+#~ "* **Cộng đồng Telegram:** Đã thêm liên kết \"Kênh Telegram chính thức\" "
+#~ "vào menu Công cụ của NVDA, cung cấp một cách nhanh chóng để cập nhật "
+#~ "những tin tức, tính năng và bản phát hành mới nhất.\n"
+#~ "* **Tăng cường độ ổn định của phản hồi:** Tối ưu hóa logic cốt lõi cho "
+#~ "các tính năng Dịch thuật, OCR và Thị giác để đảm bảo hiệu suất đáng tin "
+#~ "cậy hơn và trải nghiệm mượt mà hơn khi sử dụng đầu ra giọng nói trực "
+#~ "tiếp.\n"
+#~ "* **Cải thiện hướng dẫn giao diện:** Đã cập nhật các mô tả cài đặt và tài "
+#~ "liệu hướng dẫn để giải thích rõ hơn về hệ thống gọi lại mới và cách thức "
+#~ "hoạt động của nó cùng với các cài đặt đầu ra trực tiếp."
