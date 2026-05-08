@@ -15,13 +15,15 @@ FALLBACK_PROVIDER_CONFIG_KEYS = {
     "audio_transcription": "fallback_audio_provider",
     "tts": "fallback_tts_provider",
     "video_analysis": "fallback_video_provider",
+    "operator": "fallback_operator_provider",
 }
-FALLBACK_FEATURE_PRIORITY = ("tts", "video_analysis", "file_upload", "audio_transcription", "vision")
+FALLBACK_FEATURE_PRIORITY = ("tts", "video_analysis", "file_upload", "audio_transcription", "operator", "vision")
 FALLBACK_FEATURE_ORDER = {
     "tts": ("gemini", "openai", "custom"),
     "video_analysis": ("gemini", "custom"),
     "file_upload": ("gemini", "custom"),
     "audio_transcription": ("openai", "gemini", "groq", "mistral", "custom"),
+    "operator": ("gemini", "openai", "mistral", "groq", "custom"),
     "vision": ("gemini", "openai", "mistral", "groq", "custom"),
 }
 NON_ADAPTER_MODULES = {"base", "registry"}
@@ -187,6 +189,13 @@ def resolve_provider_for_features(
     custom_upload_support=False,
     adapters=None,
 ):
+    configured_fallback = fallback_provider_for_features(
+        features,
+        fallback_config=fallback_config,
+        adapters=adapters,
+    )
+    if configured_fallback != FALLBACK_PROVIDER_AUTO:
+        preferred_provider = None
     return choose_provider_for_features(
         preferred_provider=preferred_provider,
         features=tuple(features),

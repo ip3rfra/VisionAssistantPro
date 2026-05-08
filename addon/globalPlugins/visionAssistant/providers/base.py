@@ -12,6 +12,7 @@ class ProviderCapabilities:
     model_listing: bool = False
     json_mode: bool = False
     video_analysis: bool = False
+    operator: bool = False
 
 
 @dataclass(frozen=True)
@@ -216,8 +217,11 @@ def ai_part_to_attachment(part):
     }
 
 
-def request_required_features(ai_request):
+def request_required_features(ai_request, task="chat"):
     features = ["chat"]
+    if task == "operator":
+        features.append("operator")
+        return tuple(features)
     if request_has_mime_prefix(ai_request, "audio/"):
         features.append("audio_transcription")
     if request_has_mime_prefix(ai_request, "image/"):

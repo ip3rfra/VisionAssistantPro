@@ -20,6 +20,7 @@ CAPABILITIES = ProviderCapabilities(
     tts=True,
     model_listing=True,
     json_mode=True,
+    operator=True,
 )
 
 

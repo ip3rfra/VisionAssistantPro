@@ -289,6 +289,30 @@ class ProviderAdapterTests(unittest.TestCase):
 
         self.assertEqual(base.request_required_features(request), ("chat", "file_upload"))
 
+    def test_operator_requests_use_explicit_operator_feature(self):
+        request = base.normalize_ai_request(
+            "Click the save button",
+            attachments=[{"mime_type": "image/png", "data": "img-data"}],
+        )
+
+        self.assertEqual(base.request_required_features(request, task="operator"), ("chat", "operator"))
+        self.assertEqual(base.request_required_features(request), ("chat", "vision"))
+
+    def test_registry_resolves_operator_fallback_independently_from_vision(self):
+        registry = importlib.import_module("visionAssistant.providers.registry")
+
+        provider = registry.resolve_provider_for_features(
+            preferred_provider="groq",
+            features=("operator",),
+            configured_provider_ids={"gemini", "openai"},
+            fallback_config={
+                "fallback_operator_provider": "openai",
+                "fallback_vision_provider": "gemini",
+            },
+        )
+
+        self.assertEqual(provider, "openai")
+
     def test_registry_auto_fallback_uses_task_order_and_configured_providers(self):
         registry = importlib.import_module("visionAssistant.providers.registry")
 
@@ -501,20 +525,36 @@ class ProviderAdapterTests(unittest.TestCase):
             "fallback_audio_provider",
             "fallback_tts_provider",
             "fallback_video_provider",
+            "fallback_operator_provider",
         ):
             self.assertIn(f'"{key}": "string(default=\'auto\')"', source)
-            self.assertIn(f'config.conf["VisionAssistant"]["{key}"]', source)
+            self.assertIn(f'"provider_config_key": "{key}"', source)
 
-        self.assertIn('groupLabel = _("Fallback Providers")', source)
-        self.assertIn('label=_("Image analysis:")', source)
-        self.assertIn('label=_("Files and documents:")', source)
-        self.assertIn('label=_("Audio transcription:")', source)
-        self.assertIn('label=_("Text-to-speech:")', source)
-        self.assertIn('label=_("Video analysis:")', source)
+        self.assertIn('groupLabel = _("Task Routing")', source)
+        self.assertNotIn('groupLabel = _("Fallback Providers")', source)
+        self.assertNotIn('Advanced Model Routing (Task-specific)', source)
+        self.assertIn('"label": _("Image analysis:")', source)
+        self.assertIn('"label": _("Files and documents:")', source)
+        self.assertIn('"label": _("Audio transcription:")', source)
+        self.assertIn('"label": _("Text-to-speech:")', source)
+        self.assertIn('"label": _("Video analysis:")', source)
+        self.assertIn('"label": _("AI Operator:")', source)
+        self.assertIn("self._task_routing_rows", source)
+        self.assertIn('config.conf["VisionAssistant"][row["provider_config_key"]]', source)
         self.assertIn("provider_feature_statuses(", source)
         self.assertIn("def validateFallbackProviderChoices", source)
-        self.assertIn("Fallback provider unavailable", source)
+        self.assertIn("Task routing provider unavailable", source)
         self.assertIn("self.validateFallbackProviderChoices()", source)
+
+    def test_runtime_routes_provider_and_model_from_task_table(self):
+        source = (PACKAGE_DIR / "__init__.py").read_text(encoding="utf-8")
+
+        self.assertIn("TASK_ROUTING_ROWS", source)
+        self.assertIn("request_required_features(ai_request, task=task)", source)
+        self.assertIn("def _task_model_config_key", source)
+        self.assertIn("def _refresh_task_routing_model_choice", source)
+        self.assertIn("def _selected_task_provider", source)
+        self.assertNotIn("self.advRoutingCheck", source)
 
     def test_runtime_announces_provider_fallback(self):
         source = (PACKAGE_DIR / "__init__.py").read_text(encoding="utf-8")

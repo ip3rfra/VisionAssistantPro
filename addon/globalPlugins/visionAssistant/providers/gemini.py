@@ -20,6 +20,7 @@ CAPABILITIES = ProviderCapabilities(
     model_listing=True,
     json_mode=True,
     video_analysis=True,
+    operator=True,
 )
 
 SAFETY_SETTINGS = [

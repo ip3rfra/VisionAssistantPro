@@ -115,8 +115,65 @@ PROVIDER_LABEL_OVERRIDES = {
 }
 PROVIDER_CHOICES = provider_choices(PROVIDER_LABEL_OVERRIDES)
 PROVIDER_LABEL_BY_ID = {provider_id: label for label, provider_id in PROVIDER_CHOICES}
-# Translators: Automatic fallback provider selection option.
+# Translators: Automatic task routing provider selection option.
 FALLBACK_PROVIDER_CHOICES = tuple([(_("Automatic"), FALLBACK_PROVIDER_AUTO), *PROVIDER_CHOICES])
+
+TASK_ROUTING_ROWS = (
+    {
+        "task_id": "vision",
+        # Translators: Label for task routing used by image analysis tasks.
+        "label": _("Image analysis:"),
+        "feature": "vision",
+        "provider_config_key": "fallback_vision_provider",
+        "model_task": "ocr",
+    },
+    {
+        "task_id": "file_upload",
+        # Translators: Label for task routing used by document and generic file tasks.
+        "label": _("Files and documents:"),
+        "feature": "file_upload",
+        "provider_config_key": "fallback_file_upload_provider",
+        "model_task": None,
+    },
+    {
+        "task_id": "audio_transcription",
+        # Translators: Label for task routing used by audio transcription tasks.
+        "label": _("Audio transcription:"),
+        "feature": "audio_transcription",
+        "provider_config_key": "fallback_audio_provider",
+        "model_task": "stt",
+    },
+    {
+        "task_id": "tts",
+        # Translators: Label for task routing used by text-to-speech tasks.
+        "label": _("Text-to-speech:"),
+        "feature": "tts",
+        "provider_config_key": "fallback_tts_provider",
+        "model_task": "tts",
+    },
+    {
+        "task_id": "video_analysis",
+        # Translators: Label for task routing used by video analysis tasks.
+        "label": _("Video analysis:"),
+        "feature": "video_analysis",
+        "provider_config_key": "fallback_video_provider",
+        "model_task": None,
+    },
+    {
+        "task_id": "operator",
+        # Translators: Label for task routing used by AI Operator tasks.
+        "label": _("AI Operator:"),
+        "feature": "operator",
+        "provider_config_key": "fallback_operator_provider",
+        "model_task": "operator",
+    },
+)
+
+
+def _task_model_config_key(provider, model_task):
+    if not provider or not model_task:
+        return ""
+    return f"{provider}_{model_task}_model"
 
 
 # --- Constants & Config ---
@@ -289,7 +346,6 @@ confspec = {
     "custom_tts_voice": "string(default='')",
     "custom_operator_url": "string(default='')",
     "custom_operator_model": "string(default='')",
-    "advanced_model_routing": "boolean(default=False)",
     "gemini_ocr_model": "string(default='')",
     "gemini_stt_model": "string(default='')",
     "gemini_tts_model": "string(default='')",
@@ -311,6 +367,7 @@ confspec = {
     "fallback_audio_provider": "string(default='auto')",
     "fallback_tts_provider": "string(default='auto')",
     "fallback_video_provider": "string(default='auto')",
+    "fallback_operator_provider": "string(default='auto')",
     "model_name": "string(default='gemini-flash-lite-latest')",
     "openai_model_name": "string(default='')",
     "mistral_model_name": "string(default='')",
@@ -1372,21 +1429,20 @@ class GeminiHandler:
             model = config.conf["VisionAssistant"].get(f"{p}_model_name", "").strip()
         ai_request = normalize_ai_request(prompt, attachments=attachments, json_mode=json_mode)
         
-        if config.conf["VisionAssistant"].get("advanced_model_routing", False):
-            is_image = request_has_mime_prefix(ai_request, "image/")
-            is_audio = request_has_mime_prefix(ai_request, "audio/")
-            if task == "operator":
-                adv_key = "custom_operator_model" if p == "custom" else f"{p}_operator_model"
-                adv = config.conf["VisionAssistant"].get(adv_key, "").strip()
-                if adv: model = adv
-            elif is_audio or task == "stt":
-                adv_key = "custom_stt_model" if p == "custom" else f"{p}_stt_model"
-                adv = config.conf["VisionAssistant"].get(adv_key, "").strip()
-                if adv: model = adv
-            elif is_image or task in {"vision", "ocr"}:
-                adv_key = "custom_ocr_model" if p == "custom" else f"{p}_ocr_model"
-                adv = config.conf["VisionAssistant"].get(adv_key, "").strip()
-                if adv: model = adv
+        is_image = request_has_mime_prefix(ai_request, "image/")
+        is_audio = request_has_mime_prefix(ai_request, "audio/")
+        if task == "operator":
+            adv_key = "custom_operator_model" if p == "custom" else f"{p}_operator_model"
+            adv = config.conf["VisionAssistant"].get(adv_key, "").strip()
+            if adv: model = adv
+        elif is_audio or task == "stt":
+            adv_key = "custom_stt_model" if p == "custom" else f"{p}_stt_model"
+            adv = config.conf["VisionAssistant"].get(adv_key, "").strip()
+            if adv: model = adv
+        elif is_image or task in {"vision", "ocr"}:
+            adv_key = "custom_ocr_model" if p == "custom" else f"{p}_ocr_model"
+            adv = config.conf["VisionAssistant"].get(adv_key, "").strip()
+            if adv: model = adv
 
         base_endpoint = AIHandler.get_endpoint(task, model_override=model)
         connector = "&" if "?" in base_endpoint else "?"
@@ -1643,7 +1699,7 @@ class GeminiHandler:
     def generate_speech(text, voice_name):
         def _logic(key, txt, voice):
             adv_tts = config.conf["VisionAssistant"].get("gemini_tts_model", "").strip()
-            if config.conf["VisionAssistant"].get("advanced_model_routing", False) and adv_tts:
+            if adv_tts:
                 tts_model = adv_tts
             else:
                 main_model = config.conf["VisionAssistant"]["model_name"]
@@ -1781,6 +1837,8 @@ class AIHandler:
             "tts": _("text-to-speech"),
             # Translators: Feature name shown in provider fallback errors.
             "video_analysis": _("video analysis"),
+            # Translators: Feature name shown in provider fallback errors.
+            "operator": _("AI Operator"),
         }
         labels = [feature_names.get(feature, feature) for feature in features if feature != "chat"]
         if not labels and features:
@@ -1908,7 +1966,7 @@ class AIHandler:
                 if not model:
                     model = config.conf["VisionAssistant"]["custom_model_name"].strip()
             
-            if not model and config.conf["VisionAssistant"].get("advanced_model_routing", False):
+            if not model:
                 model = config.conf["VisionAssistant"].get(f"{p}_{task_type}_model", "").strip()
             
             if not model:
@@ -2016,7 +2074,7 @@ class AIHandler:
     def call(prompt, attachments=None, json_mode=False, task="chat"):
         p = config.conf["VisionAssistant"]["active_provider"]
         ai_request = normalize_ai_request(prompt, attachments=attachments, json_mode=json_mode)
-        required_features = request_required_features(ai_request)
+        required_features = request_required_features(ai_request, task=task)
         provider = AIHandler.resolve_provider_for_features(required_features, preferred_provider=p)
         if not provider:
             return "ERROR:" + AIHandler._unsupported_features_message(required_features)
@@ -2047,7 +2105,7 @@ class AIHandler:
             elif p == "mistral": model = "voxtral-mini-latest"
             if p == "custom":
                 model = config.conf["VisionAssistant"]["custom_stt_model"].strip() or config.conf["VisionAssistant"]["custom_model_name"].strip() or model
-            elif config.conf["VisionAssistant"].get("advanced_model_routing", False):
+            else:
                 adv_stt = config.conf["VisionAssistant"].get(f"{p}_stt_model", "").strip()
                 if adv_stt: model = adv_stt
             return AIHandler._transcribe_helper(
@@ -2070,9 +2128,8 @@ class AIHandler:
                 else:
                     m_key = f"{p}_model_name"
                     model = config.conf["VisionAssistant"].get(m_key, "")
-                    if config.conf["VisionAssistant"].get("advanced_model_routing", False):
-                        adv_model = config.conf["VisionAssistant"].get(f"{p}_{current_task}_model", "").strip()
-                        if adv_model: model = adv_model
+                    adv_model = config.conf["VisionAssistant"].get(f"{p}_{current_task}_model", "").strip()
+                    if adv_model: model = adv_model
 
                 if not model:
                     return "ERROR: Model name is empty."
@@ -2155,12 +2212,10 @@ class AIHandler:
         
         if p == "custom": 
             model = config.conf["VisionAssistant"]["custom_tts_model"].strip() or "tts-1"
-        elif config.conf["VisionAssistant"].get("advanced_model_routing", False):
+        else:
             adv_tts = config.conf["VisionAssistant"].get(f"{p}_tts_model", "").strip()
             if adv_tts: model = adv_tts
             elif p == "openai": model = "tts-1"
-        elif p == "openai": 
-            model = "tts-1"
             
         payload = build_speech_payload(model, text, voice_name)
         for key in keys:
@@ -2640,40 +2695,28 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.model.Bind(wx.EVT_TEXT, self.onModelFilter)
         cHelper.addItem(self.model)
 
-        # Advanced Model Routing Box
-        # Translators: Checkbox to toggle advanced model routing
-        self.advRoutingCheck = cHelper.addItem(wx.CheckBox(self.connectionBox, label=_("Advanced Model Routing (Task-specific)")))
-        self.advRoutingCheck.Value = config.conf["VisionAssistant"].get("advanced_model_routing", False)
-        self.advRoutingCheck.Bind(wx.EVT_CHECKBOX, self.onToggleAdvRouting)
+        # --- Task Routing Group ---
+        # Translators: Title of the settings group where each AI task chooses provider and model routing.
+        groupLabel = _("Task Routing")
+        taskRoutingBox = wx.StaticBox(self.connectionBox, label=groupLabel)
+        taskRoutingSizer = wx.StaticBoxSizer(taskRoutingBox, wx.VERTICAL)
+        taskRoutingGrid = wx.FlexGridSizer(rows=0, cols=3, vgap=5, hgap=8)
+        taskRoutingGrid.AddGrowableCol(1, 1)
+        taskRoutingGrid.AddGrowableCol(2, 1)
+        # Translators: Column header in the Task Routing settings table.
+        taskRoutingGrid.Add(wx.StaticText(taskRoutingBox, label=_("Task")), 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 2)
+        # Translators: Column header in the Task Routing settings table.
+        taskRoutingGrid.Add(wx.StaticText(taskRoutingBox, label=_("Provider")), 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 2)
+        # Translators: Column header in the Task Routing settings table.
+        taskRoutingGrid.Add(wx.StaticText(taskRoutingBox, label=_("Model")), 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 2)
 
-        self.advRoutingBox = wx.Panel(self.connectionBox)
-        advRSizer = wx.BoxSizer(wx.VERTICAL)
-        # Translators: Label for OCR model selection
-        self.lbl_advOcr = wx.StaticText(self.advRoutingBox, label=_("OCR / Vision Model:"))
-        advRSizer.Add(self.lbl_advOcr, 0, wx.ALL, 2)
-        self.advOcrModel = wx.Choice(self.advRoutingBox, choices=[])
-        advRSizer.Add(self.advOcrModel, 0, wx.EXPAND | wx.ALL, 2)
-        
-        # Translators: Label for STT model selection
-        self.lbl_advStt = wx.StaticText(self.advRoutingBox, label=_("Speech-to-Text (STT) Model:"))
-        advRSizer.Add(self.lbl_advStt, 0, wx.ALL, 2)
-        self.advSttModel = wx.Choice(self.advRoutingBox, choices=[])
-        advRSizer.Add(self.advSttModel, 0, wx.EXPAND | wx.ALL, 2)
-        
-        # Translators: Label for TTS model selection (Assigning to self to toggle visibility)
-        self.lbl_advTts = wx.StaticText(self.advRoutingBox, label=_("Text-to-Speech (TTS) Model:"))
-        advRSizer.Add(self.lbl_advTts, 0, wx.ALL, 2)
-        self.advTtsModel = wx.Choice(self.advRoutingBox, choices=[])
-        advRSizer.Add(self.advTtsModel, 0, wx.EXPAND | wx.ALL, 2)
-
-        # Translators: Label for a dropdown menu in the "Advanced Model Routing" section of settings to choose a specific model for AI Operator tasks.
-        self.lbl_advOperator = wx.StaticText(self.advRoutingBox, label=_("AI Operator Model:"))
-        advRSizer.Add(self.lbl_advOperator, 0, wx.ALL, 2)
-        self.advOperatorModel = wx.Choice(self.advRoutingBox, choices=[])
-        advRSizer.Add(self.advOperatorModel, 0, wx.EXPAND | wx.ALL, 2)
-        
-        self.advRoutingBox.SetSizer(advRSizer)
-        cHelper.addItem(self.advRoutingBox)
+        self._fallback_feature_by_control = {}
+        self._task_routing_rows = {}
+        self._task_routing_row_by_provider_control = {}
+        for routing_row in TASK_ROUTING_ROWS:
+            self._add_task_routing_row(taskRoutingBox, taskRoutingGrid, routing_row)
+        taskRoutingSizer.Add(taskRoutingGrid, 0, wx.EXPAND | wx.ALL, 5)
+        cHelper.addItem(taskRoutingSizer)
 
         # Translators: Label for Proxy URL input
         self.proxyUrl = cHelper.addLabeledControl(_("Proxy URL:"), wx.TextCtrl)
@@ -2693,57 +2736,6 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.skipChatDialog.Value = config.conf["VisionAssistant"]["skip_chat_dialog"]
         settingsSizer.Add(connectionSizer, 0, wx.EXPAND | wx.ALL, 5)
 
-        # --- Fallback Providers Group ---
-        # Translators: Title of the settings group for task-specific provider fallback.
-        groupLabel = _("Fallback Providers")
-        fallbackBox = wx.StaticBox(self, label=groupLabel)
-        fallbackSizer = wx.StaticBoxSizer(fallbackBox, wx.VERTICAL)
-        fallbackHelper = gui.guiHelper.BoxSizerHelper(fallbackBox, sizer=fallbackSizer)
-        self._fallback_feature_by_control = {}
-
-        # Translators: Label for provider fallback used by image analysis tasks.
-        self.fallbackVisionProvider = self._add_fallback_provider_choice(
-            fallbackBox,
-            fallbackHelper,
-            label=_("Image analysis:"),
-            feature="vision",
-            config_key="fallback_vision_provider",
-        )
-        # Translators: Label for provider fallback used by document and generic file tasks.
-        self.fallbackFileUploadProvider = self._add_fallback_provider_choice(
-            fallbackBox,
-            fallbackHelper,
-            label=_("Files and documents:"),
-            feature="file_upload",
-            config_key="fallback_file_upload_provider",
-        )
-        # Translators: Label for provider fallback used by audio transcription tasks.
-        self.fallbackAudioProvider = self._add_fallback_provider_choice(
-            fallbackBox,
-            fallbackHelper,
-            label=_("Audio transcription:"),
-            feature="audio_transcription",
-            config_key="fallback_audio_provider",
-        )
-        # Translators: Label for provider fallback used by text-to-speech tasks.
-        self.fallbackTtsProvider = self._add_fallback_provider_choice(
-            fallbackBox,
-            fallbackHelper,
-            label=_("Text-to-speech:"),
-            feature="tts",
-            config_key="fallback_tts_provider",
-        )
-        self.fallbackTtsProvider.Bind(wx.EVT_CHOICE, self.onFallbackTtsProviderChange)
-        # Translators: Label for provider fallback used by video analysis tasks.
-        self.fallbackVideoProvider = self._add_fallback_provider_choice(
-            fallbackBox,
-            fallbackHelper,
-            label=_("Video analysis:"),
-            feature="video_analysis",
-            config_key="fallback_video_provider",
-        )
-        settingsSizer.Add(fallbackSizer, 0, wx.EXPAND | wx.ALL, 5)
-        
         # --- AI Behavior Group ---
         # Translators: Title of the settings group for AI behavior
         groupLabel = _("AI Behavior")
@@ -2845,28 +2837,45 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.updateVoiceList(curr_p)
         self.updateCustomFieldsVisibility(curr_p)
 
+    def _add_task_routing_row(self, parent, grid, routing_row):
+        label = routing_row["label"]
+        feature = routing_row["feature"]
+        config_key = routing_row["provider_config_key"]
+        model_task = routing_row["model_task"]
+        grid.Add(wx.StaticText(parent, label=label), 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 2)
+        provider_ctrl = wx.Choice(parent)
+        provider_ctrl.Bind(wx.EVT_CHOICE, self.onTaskRoutingProviderChange)
+        grid.Add(provider_ctrl, 0, wx.EXPAND | wx.ALL, 2)
+        model_ctrl = wx.Choice(parent)
+        grid.Add(model_ctrl, 0, wx.EXPAND | wx.ALL, 2)
 
-    def _add_fallback_provider_choice(self, parent, helper, label, feature, config_key):
-        helper.addItem(wx.StaticText(parent, label=label))
-        ctrl = wx.Choice(parent)
-        helper.addItem(ctrl)
-        self._fallback_feature_by_control[ctrl] = feature
-        self._populate_fallback_choice(ctrl, feature, config.conf["VisionAssistant"][config_key])
-        return ctrl
+        row_state = {
+            "feature": feature,
+            "provider_config_key": config_key,
+            "model_task": model_task,
+            "provider_ctrl": provider_ctrl,
+            "model_ctrl": model_ctrl,
+        }
+        self._task_routing_rows[feature] = row_state
+        self._task_routing_row_by_provider_control[provider_ctrl] = row_state
+        self._fallback_feature_by_control[provider_ctrl] = feature
+        self._populate_fallback_choice(provider_ctrl, feature, config.conf["VisionAssistant"][config_key])
+        self._refresh_task_routing_model_choice(row_state)
+        return row_state
 
     def _fallback_choice_items_for_feature(self, feature):
         items = [FALLBACK_PROVIDER_CHOICES[0]]
         for status in self._provider_feature_statuses_for_ui(feature):
             if status.available:
-                # Translators: Provider fallback status for a provider that is configured and supports the task.
+                # Translators: Task routing status for a provider that is configured and supports the task.
                 status_label = _("available")
             elif status.supports:
-                # Translators: Provider fallback status for a provider that supports the task but is missing configuration.
+                # Translators: Task routing status for a provider that supports the task but is missing configuration.
                 status_label = _("not configured")
             else:
-                # Translators: Provider fallback status for a provider that cannot perform the task.
+                # Translators: Task routing status for a provider that cannot perform the task.
                 status_label = _("not supported")
-            # Translators: Provider fallback choice label. {provider} is a provider name; {status} is availability.
+            # Translators: Task routing provider choice label. {provider} is a provider name; {status} is availability.
             label = _("{provider} ({status})").format(
                 provider=AIHandler.provider_display_name(status.provider_id),
                 status=status_label,
@@ -2914,9 +2923,17 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
     def refreshFallbackProviderChoices(self):
         for ctrl, feature in getattr(self, "_fallback_feature_by_control", {}).items():
             self._populate_fallback_choice(ctrl, feature, self._get_fallback_choice(ctrl))
+        self.refreshTaskRoutingModelChoices()
 
     def onFallbackAvailabilityChange(self, event):
         self.refreshFallbackProviderChoices()
+        self.updateVoiceList(self._selected_provider_id())
+        self.updateCustomFieldsVisibility(self._selected_provider_id())
+
+    def onTaskRoutingProviderChange(self, event):
+        row = self._task_routing_row_by_provider_control.get(event.GetEventObject())
+        if row:
+            self._refresh_task_routing_model_choice(row)
         self.updateVoiceList(self._selected_provider_id())
         self.updateCustomFieldsVisibility(self._selected_provider_id())
 
@@ -2937,18 +2954,71 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         provider = ctrl.GetClientData(idx)
         return provider or FALLBACK_PROVIDER_AUTO
 
+    def _models_for_provider(self, provider):
+        all_models = []
+        saved_models_raw = config.conf["VisionAssistant"].get(f"{provider}_models_list", "")
+        if saved_models_raw:
+            for item in saved_models_raw.split(","):
+                if "|" in item:
+                    m_id, m_name = item.split("|", 1)
+                    all_models.append((m_id, m_name))
+        elif provider == "gemini":
+            for m_name, m_id in MODELS:
+                all_models.append((m_id, m_name))
+        return all_models
+
+    def _selected_task_provider(self, feature):
+        row = getattr(self, "_task_routing_rows", {}).get(feature)
+        if not row:
+            return self._selected_provider_id()
+        provider = self._get_fallback_choice(row["provider_ctrl"])
+        if provider != FALLBACK_PROVIDER_AUTO:
+            return provider
+        return AIHandler.resolve_provider_for_features((feature,), preferred_provider=self._selected_provider_id()) or self._selected_provider_id()
+
+    def _refresh_task_routing_model_choice(self, row):
+        model_ctrl = row["model_ctrl"]
+        model_task = row["model_task"]
+        model_ctrl.Clear()
+        # Translators: Option to use the provider's main model for a task in Task Routing.
+        default_main_label = _("Default (Main Model)")
+        model_ctrl.Append(default_main_label, "")
+        if not model_task:
+            model_ctrl.SetSelection(0)
+            model_ctrl.Disable()
+            return
+
+        provider = self._selected_task_provider(row["feature"])
+        for m_id, m_name in self._models_for_provider(provider):
+            model_ctrl.Append(m_name, m_id)
+
+        saved_id = config.conf["VisionAssistant"].get(_task_model_config_key(provider, model_task), "")
+        for idx in range(model_ctrl.GetCount()):
+            if model_ctrl.GetClientData(idx) == saved_id:
+                model_ctrl.SetSelection(idx)
+                break
+        else:
+            model_ctrl.SetSelection(0)
+        model_ctrl.Enable()
+
+    def refreshTaskRoutingModelChoices(self, provider=None):
+        for row in getattr(self, "_task_routing_rows", {}).values():
+            self._refresh_task_routing_model_choice(row)
+
     def _fallback_feature_label(self, feature):
         labels = {
-            # Translators: Short feature label used in fallback validation errors.
+            # Translators: Short feature label used in task routing validation errors.
             "vision": _("image analysis"),
-            # Translators: Short feature label used in fallback validation errors.
+            # Translators: Short feature label used in task routing validation errors.
             "file_upload": _("files and documents"),
-            # Translators: Short feature label used in fallback validation errors.
+            # Translators: Short feature label used in task routing validation errors.
             "audio_transcription": _("audio transcription"),
-            # Translators: Short feature label used in fallback validation errors.
+            # Translators: Short feature label used in task routing validation errors.
             "tts": _("text-to-speech"),
-            # Translators: Short feature label used in fallback validation errors.
+            # Translators: Short feature label used in task routing validation errors.
             "video_analysis": _("video analysis"),
+            # Translators: Short feature label used in task routing validation errors.
+            "operator": _("AI Operator"),
         }
         return labels.get(feature, feature)
 
@@ -2963,12 +3033,12 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             if status and status.available:
                 continue
             if status and not status.supports:
-                # Translators: Reason shown when a selected fallback provider cannot perform a task.
+                # Translators: Reason shown when a selected task routing provider cannot perform a task.
                 reason = _("not supported")
             else:
-                # Translators: Reason shown when a selected fallback provider has not been configured.
+                # Translators: Reason shown when a selected task routing provider has not been configured.
                 reason = _("not configured")
-            # Translators: Item in fallback validation error. {feature} is the task, {provider} is the provider name, {reason} is why it cannot be used.
+            # Translators: Item in task routing validation error. {feature} is the task, {provider} is the provider name, {reason} is why it cannot be used.
             invalid.append(
                 _("{feature}: {provider} ({reason})").format(
                     feature=self._fallback_feature_label(feature),
@@ -2978,22 +3048,19 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             )
         if not invalid:
             return True
-        # Translators: Error shown when saving settings with an explicit fallback provider that cannot be used.
-        show_error_dialog(_("Fallback provider unavailable: {items}").format(items="; ".join(invalid)))
+        # Translators: Error shown when saving settings with an explicit task routing provider that cannot be used.
+        show_error_dialog(_("Task routing provider unavailable: {items}").format(items="; ".join(invalid)))
         return False
 
     def _selected_tts_provider_for_voice_list(self, p_name):
-        if AIHandler.capabilities_for(p_name).tts:
-            return p_name
-        if hasattr(self, "fallbackTtsProvider"):
-            provider = self._get_fallback_choice(self.fallbackTtsProvider)
+        row = getattr(self, "_task_routing_rows", {}).get("tts")
+        if row:
+            provider = self._get_fallback_choice(row["provider_ctrl"])
             if provider != FALLBACK_PROVIDER_AUTO:
                 return provider
+        if AIHandler.capabilities_for(p_name).tts:
+            return p_name
         return AIHandler.resolve_provider_for_features(("tts",), preferred_provider=p_name) or p_name
-
-    def onFallbackTtsProviderChange(self, event):
-        self.updateVoiceList(self._selected_provider_id())
-        self.updateCustomFieldsVisibility(self._selected_provider_id())
 
     def updateVoiceList(self, p_name):
         self.voice_sel.Clear()
@@ -3061,23 +3128,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.apiKeyCtrl_visible.Show(self.showApiCheck.IsChecked())
         self.showApiCheck.Show(True)
 
-        self.advRoutingCheck.Show(not is_custom)
-
         tts_available = AIHandler.capabilities_for(self._selected_tts_provider_for_voice_list(provider)).tts
-        native_tts_supported = AIHandler.capabilities_for(provider).tts
-        
-        routing_enabled = not is_custom and self.advRoutingCheck.Value
-        self.advRoutingBox.Show(routing_enabled)
-        
-        if routing_enabled:
-            self.advOcrModel.Show(True)
-            self.lbl_advOcr.Show(True)
-            self.advSttModel.Show(True)
-            self.lbl_advStt.Show(True)
-            self.advTtsModel.Show(native_tts_supported)
-            self.lbl_advTts.Show(native_tts_supported)
-            self.advOperatorModel.Show(True)
-            self.lbl_advOperator.Show(True)
 
         self.voice_sel.Show(tts_available)
         self.lbl_voice.Show(tts_available)
@@ -3126,9 +3177,6 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         p = self.connectionBox.GetParent()
         if p: p.Layout()
 
-    def onToggleAdvRouting(self, event):
-        self.updateCustomFieldsVisibility(self._selected_provider_id())
-
     def onProviderChange(self, event):
         p_name = self._selected_provider_id()
         
@@ -3150,6 +3198,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
                 p.Layout()
 
     def onCustomTypeChange(self, event):
+        self.refreshFallbackProviderChoices()
         self.updateCustomFieldsVisibility("custom")
 
     def onFetchModels(self, event):
@@ -3180,20 +3229,6 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         if models_info:
             self.model.Freeze()
             self.model.Clear()
-            self.advOcrModel.Clear()
-            self.advSttModel.Clear()
-            self.advTtsModel.Clear()
-            self.advOperatorModel.Clear()
-            
-            # Translators: Option to follow the main model selected in the primary dropdown
-            default_main_label = _("Default (Main Model)")
-            # Translators: Option for the system to automatically choose the best model for this specific task
-            auto_task_label = _("Auto (Optimized)")
-            
-            self.advOcrModel.Append(default_main_label, "")
-            self.advSttModel.Append(default_main_label, "")
-            self.advOperatorModel.Append(default_main_label, "")
-            self.advTtsModel.Append(auto_task_label, "")
 
             self._current_model_ids = []
             storage_parts = []
@@ -3202,10 +3237,6 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
                 self.model.Append(m_name, m_id)
                 self._current_model_ids.append(m_id)
             for m_id, m_name in models_info:
-                self.advOcrModel.Append(m_name, m_id)
-                self.advSttModel.Append(m_name, m_id)
-                self.advTtsModel.Append(m_name, m_id)
-                self.advOperatorModel.Append(m_name, m_id)
                 storage_parts.append(f"{m_id}|{m_name}")
             
             config.conf["VisionAssistant"][f"{p_name}_models_list"] = ",".join(storage_parts)
@@ -3217,11 +3248,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
                 self.model.SetValue("")
             
             self.model.Thaw()
-            
-            self.advOcrModel.SetSelection(0)
-            self.advSttModel.SetSelection(0)
-            self.advTtsModel.SetSelection(0)
-            self.advOperatorModel.SetSelection(0)
+            self.refreshTaskRoutingModelChoices(p_name)
             
             self._all_models_backup = [(self.model.GetString(i), self.model.GetClientData(i)) for i in range(self.model.GetCount())]
             
@@ -3236,20 +3263,6 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
 
     def refreshModelList(self, p_name):
         self.model.Clear()
-        self.advOcrModel.Clear()
-        self.advSttModel.Clear()
-        self.advTtsModel.Clear()
-        self.advOperatorModel.Clear()
-        
-        # Translators: Option to follow the main model selected in the primary dropdown.
-        default_main_label = _("Default (Main Model)")
-        # Translators: Option for the system to automatically choose the best model for this task.
-        auto_task_label = _("Auto (Optimized)")
-        
-        self.advOcrModel.Append(default_main_label, "")
-        self.advSttModel.Append(default_main_label, "")
-        self.advOperatorModel.Append(default_main_label, "")
-        self.advTtsModel.Append(auto_task_label, "")
 
         self._current_model_ids = []
         saved_models_raw = config.conf["VisionAssistant"].get(f"{p_name}_models_list", "")
@@ -3268,10 +3281,6 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             self.model.Append(m_name, m_id)
             self._current_model_ids.append(m_id)
         for m_id, m_name in all_models:
-            self.advOcrModel.Append(m_name, m_id)
-            self.advSttModel.Append(m_name, m_id)
-            self.advTtsModel.Append(m_name, m_id)
-            self.advOperatorModel.Append(m_name, m_id)
             if m_id not in self._current_model_ids: self._current_model_ids.append(m_id)
         
         m_key = "model_name" if p_name == "gemini" else f"{p_name}_model_name"
@@ -3291,19 +3300,8 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             else:
                 self.model.ChangeValue("")
             
-        for attr, conf_key in [
-            (self.advOcrModel, f"{p_name}_ocr_model"),
-            (self.advSttModel, f"{p_name}_stt_model"),
-            (self.advTtsModel, f"{p_name}_tts_model"),
-            (self.advOperatorModel, f"{p_name}_operator_model")
-        ]:
-            saved_id = config.conf["VisionAssistant"].get(conf_key, "")
-            for i in range(attr.GetCount()):
-                if attr.GetClientData(i) == saved_id: 
-                    attr.SetSelection(i)
-                    break
-            else: attr.SetSelection(0)
         self._all_models_backup = [(self.model.GetString(i), self.model.GetClientData(i)) for i in range(self.model.GetCount())]
+        self.refreshTaskRoutingModelChoices(p_name)
         self.updateCustomFieldsVisibility(p_name)
 
 
@@ -3352,11 +3350,8 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
                 return
             p_name = self._selected_provider_id()
             config.conf["VisionAssistant"]["active_provider"] = p_name
-            config.conf["VisionAssistant"]["fallback_vision_provider"] = self._get_fallback_choice(self.fallbackVisionProvider)
-            config.conf["VisionAssistant"]["fallback_file_upload_provider"] = self._get_fallback_choice(self.fallbackFileUploadProvider)
-            config.conf["VisionAssistant"]["fallback_audio_provider"] = self._get_fallback_choice(self.fallbackAudioProvider)
-            config.conf["VisionAssistant"]["fallback_tts_provider"] = self._get_fallback_choice(self.fallbackTtsProvider)
-            config.conf["VisionAssistant"]["fallback_video_provider"] = self._get_fallback_choice(self.fallbackVideoProvider)
+            for row in self._task_routing_rows.values():
+                config.conf["VisionAssistant"][row["provider_config_key"]] = self._get_fallback_choice(row["provider_ctrl"])
             
             val = self.apiKeyCtrl_visible.Value if self.showApiCheck.IsChecked() else self.apiKeyCtrl_hidden.Value
             k_key = "api_key" if p_name == "gemini" else (f"{p_name}_api_key" if p_name != "custom" else "custom_api_key")
@@ -3379,16 +3374,13 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
                     model_val = self.model.GetClientData(sel_idx)
                     config.conf["VisionAssistant"][m_key] = model_val
                 
-            config.conf["VisionAssistant"]["advanced_model_routing"] = self.advRoutingCheck.Value
-            for attr, conf_key in [
-                (self.advOcrModel, f"{p_name}_ocr_model"),
-                (self.advSttModel, f"{p_name}_stt_model"),
-                (self.advTtsModel, f"{p_name}_tts_model"),
-                (self.advOperatorModel, f"{p_name}_operator_model")
-            ]:
-                idx = attr.GetSelection()
+            for row in self._task_routing_rows.values():
+                conf_key = _task_model_config_key(self._selected_task_provider(row["feature"]), row["model_task"])
+                if not conf_key:
+                    continue
+                idx = row["model_ctrl"].GetSelection()
                 if idx != wx.NOT_FOUND:
-                    config.conf["VisionAssistant"][conf_key] = attr.GetClientData(idx)
+                    config.conf["VisionAssistant"][conf_key] = row["model_ctrl"].GetClientData(idx) or ""
 
             if p_name == "custom":
                 config.conf["VisionAssistant"]["custom_api_url"] = self.customUrl.Value.strip()
