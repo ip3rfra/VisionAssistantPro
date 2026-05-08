@@ -13,13 +13,50 @@ import time
 import wave
 import gc
 import wx
-from urllib import request, error, parse
-from urllib.parse import quote, urlparse, urlencode
+from urllib import request, error
+from urllib.parse import urlparse, urlencode
 from http import cookiejar
 from functools import wraps
 import uuid
 from uuid import uuid4
 from concurrent.futures import ThreadPoolExecutor
+from .providers.base import (
+    ai_part_to_attachment,
+    first_part_with_mime_prefix,
+    normalize_ai_request,
+    request_has_mime_prefix,
+    request_required_features,
+)
+from .providers.gemini import (
+    build_generate_content_payload as build_gemini_generate_content_payload,
+    parse_models_response as parse_gemini_models_response,
+    send_generate_content_request,
+    should_force_zero_temperature as should_gemini_force_zero_temperature,
+)
+from .providers.mistral import (
+    build_ocr_payload as build_mistral_ocr_payload,
+    send_ocr_request as send_mistral_ocr_request,
+)
+from .providers.openai_api import (
+    build_chat_completions_payload,
+    build_speech_payload,
+    parse_models_response,
+    send_chat_completions_request,
+    send_speech_request,
+    send_transcription_request,
+)
+from .providers.registry import (
+    FALLBACK_PROVIDER_AUTO,
+    FALLBACK_PROVIDER_CONFIG_KEYS,
+    PROVIDER_FALLBACK_ORDER,
+    adapter_for as registry_adapter_for,
+    capabilities_for as registry_capabilities_for,
+    fallback_order_for_features as registry_fallback_order_for_features,
+    fallback_provider_for_features as registry_fallback_provider_for_features,
+    provider_choices,
+    provider_feature_statuses as registry_provider_feature_statuses,
+    resolve_provider_for_features as registry_resolve_provider_for_features,
+)
 
 lib_dir = os.path.join(os.path.dirname(__file__), "lib")
 if lib_dir not in sys.path:
@@ -63,6 +100,24 @@ _vision_assistant_instance = None
 
 ADDON_NAME = addonHandler.getCodeAddon().manifest["summary"]
 GITHUB_REPO = "mahmoodhozhabri/VisionAssistantPro"
+
+PROVIDER_LABEL_OVERRIDES = {
+    # Translators: Name of the Google Gemini AI provider.
+    "gemini": _("Google Gemini"),
+    # Translators: Name of the OpenAI provider.
+    "openai": _("OpenAI"),
+    # Translators: Name of the Mistral AI provider.
+    "mistral": _("Mistral AI"),
+    # Translators: Name of the Groq AI provider.
+    "groq": _("Groq"),
+    # Translators: Option for a user-defined custom AI provider.
+    "custom": _("Custom"),
+}
+PROVIDER_CHOICES = provider_choices(PROVIDER_LABEL_OVERRIDES)
+PROVIDER_LABEL_BY_ID = {provider_id: label for label, provider_id in PROVIDER_CHOICES}
+# Translators: Automatic fallback provider selection option.
+FALLBACK_PROVIDER_CHOICES = tuple([(_("Automatic"), FALLBACK_PROVIDER_AUTO), *PROVIDER_CHOICES])
+
 
 # --- Constants & Config ---
 
@@ -251,6 +306,11 @@ confspec = {
     "groq_stt_model": "string(default='')",
     "groq_tts_model": "string(default='')",
     "groq_operator_model": "string(default='')",
+    "fallback_vision_provider": "string(default='auto')",
+    "fallback_file_upload_provider": "string(default='auto')",
+    "fallback_audio_provider": "string(default='auto')",
+    "fallback_tts_provider": "string(default='auto')",
+    "fallback_video_provider": "string(default='auto')",
     "model_name": "string(default='gemini-flash-lite-latest')",
     "openai_model_name": "string(default='')",
     "mistral_model_name": "string(default='')",
@@ -277,6 +337,17 @@ confspec = {
     "ocr_engine": "string(default='chrome')",
     "tts_voice": "string(default='Puck')"
 }
+
+for provider_id in PROVIDER_FALLBACK_ORDER:
+    if provider_id in {"gemini", "custom"}:
+        continue
+    confspec.setdefault(f"{provider_id}_api_key", "string(default='')")
+    confspec.setdefault(f"{provider_id}_model_name", "string(default='')")
+    confspec.setdefault(f"{provider_id}_models_list", "string(default='')")
+    confspec.setdefault(f"{provider_id}_ocr_model", "string(default='')")
+    confspec.setdefault(f"{provider_id}_stt_model", "string(default='')")
+    confspec.setdefault(f"{provider_id}_tts_model", "string(default='')")
+    confspec.setdefault(f"{provider_id}_operator_model", "string(default='')")
 
 config.conf.spec["VisionAssistant"] = confspec
 
@@ -1177,7 +1248,7 @@ class SmartProgrammersOCREngine:
         boundary = uuid4().hex.encode('utf-8')
         body = []
         body.append(b'--' + boundary)
-        body.append(f'Content-Disposition: form-data; name="file"; filename="p.jpg"'.encode('utf-8'))
+        body.append(b'Content-Disposition: form-data; name="file"; filename="p.jpg"')
         body.append(b'Content-Type: image/jpeg')
         body.append(b'')
         body.append(image_bytes)
@@ -1292,67 +1363,64 @@ class GeminiHandler:
 
     @staticmethod
     def _logic(key, prompt, attachments, json_mode, task="chat"):
-        p_active = config.conf["VisionAssistant"]["active_provider"]
-        model = ""
-        if p_active == "custom":
-            model = config.conf["VisionAssistant"]["custom_model_name"].strip()
+        p = config.conf["VisionAssistant"]["active_provider"]
+        if p == "gemini":
+            model = config.conf["VisionAssistant"]["model_name"]
+        elif p == "custom":
+            model = config.conf["VisionAssistant"]["custom_model_name"].strip() or config.conf["VisionAssistant"]["model_name"]
+        else:
+            model = config.conf["VisionAssistant"].get(f"{p}_model_name", "").strip()
+        ai_request = normalize_ai_request(prompt, attachments=attachments, json_mode=json_mode)
         
-        base_endpoint = AIHandler.get_endpoint(task, model_override=model if model else None)
+        if config.conf["VisionAssistant"].get("advanced_model_routing", False):
+            is_image = request_has_mime_prefix(ai_request, "image/")
+            is_audio = request_has_mime_prefix(ai_request, "audio/")
+            if task == "operator":
+                adv_key = "custom_operator_model" if p == "custom" else f"{p}_operator_model"
+                adv = config.conf["VisionAssistant"].get(adv_key, "").strip()
+                if adv: model = adv
+            elif is_audio or task == "stt":
+                adv_key = "custom_stt_model" if p == "custom" else f"{p}_stt_model"
+                adv = config.conf["VisionAssistant"].get(adv_key, "").strip()
+                if adv: model = adv
+            elif is_image or task in {"vision", "ocr"}:
+                adv_key = "custom_ocr_model" if p == "custom" else f"{p}_ocr_model"
+                adv = config.conf["VisionAssistant"].get(adv_key, "").strip()
+                if adv: model = adv
+
+        base_endpoint = AIHandler.get_endpoint(task, model_override=model)
         connector = "&" if "?" in base_endpoint else "?"
         url = f"{base_endpoint}{connector}key={key}"
         
         temp = config.conf["VisionAssistant"].get("ai_temperature", 0.7)
-        if isinstance(prompt, list):
-            contents = prompt
-        else:
-            parts = []
-            if attachments:
-                for att in attachments:
-                    if 'file_uri' in att:
-                        parts.append({"file_data": {"mime_type": att['mime_type'], "file_uri": att['file_uri']}})
-                    elif 'data' in att:
-                        parts.append({"inline_data": {"mime_type": att['mime_type'], "data": att['data']}})
-            if prompt: parts.append({"text": prompt})
-            contents = [{"parts": parts}]
-            
-        p_str = str(prompt).lower() if isinstance(prompt, str) else ""
-        if any(x in p_str for x in ["extract", "translate", "ocr", "transcribe"]): temp = 0.0
 
-        payload = {
-            "contents": contents,
-            "generationConfig": {"temperature": temp},
-            "safetySettings": [
-                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
-            ]
-        }
-        if json_mode: payload["generationConfig"]["response_mime_type"] = "application/json"
-            
-        headers = {"Content-Type": "application/json"}
-        req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers=headers)
-        
-        with GeminiHandler._get_opener().open(req, timeout=120) as r:
-            res = json.loads(r.read().decode())
-            candidates = res.get('candidates')
-            if not candidates:
-                if 'promptFeedback' in res and 'blockReason' in res['promptFeedback']:
-                    # Translators: Error prefix shown when the AI response is blocked by safety filters.
-                    return "ERROR:" + _("Blocked by AI Safety Filters: ") + res['promptFeedback']['blockReason']
-                # Translators: Generic error message when Gemini returns an empty response.
-                return "ERROR:" + _("AI failed to provide a response. This might be due to safety filters or a temporary server issue.")
-            
-            first_candidate = candidates[0]
-            content = first_candidate.get('content', {})
-            parts = content.get('parts', [])
-            if not parts:
-                if first_candidate.get('finishReason') == "SAFETY":
-                    # Translators: Error shown when the AI response is blocked during generation.
-                    return "ERROR:" + _("The response was blocked mid-generation by safety filters.")
-                # Translators: Error shown when the response structure is unexpected or empty.
-                return "ERROR:" + _("AI returned an empty response structure.")
-            return parts[0].get('text', '')
+        if should_gemini_force_zero_temperature(ai_request):
+            temp = 0.0
+
+        payload = build_gemini_generate_content_payload(ai_request, temperature=temp)
+
+        res = send_generate_content_request(GeminiHandler._get_opener(), url, key, payload, timeout=120)
+        candidates = res.get('candidates')
+        if not candidates:
+            if 'promptFeedback' in res and 'blockReason' in res['promptFeedback']:
+                # Translators: Error prefix shown when the AI response is blocked by safety filters.
+                return "ERROR:" + _("Blocked by AI Safety Filters: ") + res['promptFeedback']['blockReason']
+            # Translators: Generic error message when Gemini returns an empty response.
+            return "ERROR:" + _("AI failed to provide a response. This might be due to safety filters or a temporary server issue.")
+
+        first_candidate = candidates[0]
+        content = first_candidate.get('content', {})
+        parts = content.get('parts', [])
+
+        if not parts:
+            finish_reason = first_candidate.get('finishReason')
+            if finish_reason == "SAFETY":
+                # Translators: Error shown when the AI response is blocked during generation.
+                return "ERROR:" + _("The response was blocked mid-generation by safety filters.")
+            # Translators: Error shown when the response structure is unexpected or empty.
+            return "ERROR:" + _("AI returned an empty response structure.")
+
+        return parts[0].get('text', '')
 
     @staticmethod
     def _call_with_rotation(func_logic, *args):
@@ -1423,8 +1491,6 @@ class GeminiHandler:
         upload_support = True
         if p_active == "custom":
             upload_support = config.conf["VisionAssistant"].get("custom_upload_support", False)
-        
-        model = AIHandler.get_endpoint("ocr").split('/')[-1].split(':')[0]
         
         if not upload_support:
             try:
@@ -1614,16 +1680,147 @@ class GeminiHandler:
 
 class AIHandler:
     @staticmethod
+    def fallback_config():
+        return {
+            conf_key: config.conf["VisionAssistant"][conf_key]
+            for conf_key in FALLBACK_PROVIDER_CONFIG_KEYS.values()
+        }
+
+    @staticmethod
+    def custom_capability_settings():
+        return {
+            "custom_api_type": config.conf["VisionAssistant"].get("custom_api_type", "openai"),
+            "custom_upload_support": config.conf["VisionAssistant"].get("custom_upload_support", False),
+        }
+
+    @staticmethod
+    def capabilities_for(provider=None):
+        p = provider or config.conf["VisionAssistant"]["active_provider"]
+        settings = AIHandler.custom_capability_settings()
+        return registry_capabilities_for(
+            p,
+            custom_api_type=settings["custom_api_type"],
+            custom_upload_support=settings["custom_upload_support"],
+        )
+
+    @staticmethod
+    def configured_providers(features=None):
+        return {
+            provider
+            for provider in PROVIDER_FALLBACK_ORDER
+            if AIHandler.is_provider_configured(provider, features=features)
+        }
+
+    @staticmethod
+    def provider_display_name(provider):
+        return PROVIDER_LABEL_BY_ID.get(provider, provider)
+
+    @staticmethod
+    def fallback_provider_for_features(features):
+        return registry_fallback_provider_for_features(features, fallback_config=AIHandler.fallback_config())
+
+    @staticmethod
+    def is_provider_configured(provider, features=None):
+        features = set(features or ())
+        if provider == "custom":
+            return bool(config.conf["VisionAssistant"].get("custom_api_url", "").strip())
+        return bool(AIHandler.get_keys(provider))
+
+    @staticmethod
+    def fallback_order_for_features(features):
+        return registry_fallback_order_for_features(features, fallback_config=AIHandler.fallback_config())
+
+    @staticmethod
+    def resolve_provider_for_features(features, preferred_provider=None):
+        p = preferred_provider or config.conf["VisionAssistant"]["active_provider"]
+        settings = AIHandler.custom_capability_settings()
+        return registry_resolve_provider_for_features(
+            preferred_provider=p,
+            features=tuple(features),
+            configured_provider_ids=AIHandler.configured_providers(features),
+            fallback_config=AIHandler.fallback_config(),
+            custom_api_type=settings["custom_api_type"],
+            custom_upload_support=settings["custom_upload_support"],
+        )
+
+    @staticmethod
+    def provider_feature_statuses(feature):
+        settings = AIHandler.custom_capability_settings()
+        return registry_provider_feature_statuses(
+            feature,
+            configured_provider_ids=AIHandler.configured_providers((feature,)),
+            custom_api_type=settings["custom_api_type"],
+            custom_upload_support=settings["custom_upload_support"],
+        )
+
+    @staticmethod
+    def _call_with_active_provider(provider, operation, features=None):
+        current_provider = config.conf["VisionAssistant"]["active_provider"]
+        if provider == current_provider:
+            return operation()
+        AIHandler._announce_provider_fallback(current_provider, provider, features or ())
+        config.conf["VisionAssistant"]["active_provider"] = provider
+        try:
+            return operation()
+        finally:
+            config.conf["VisionAssistant"]["active_provider"] = current_provider
+
+    @staticmethod
+    def _feature_labels(features):
+        features = tuple(features or ())
+        feature_names = {
+            # Translators: Feature name shown in provider fallback errors.
+            "chat": _("chat"),
+            # Translators: Feature name shown in provider fallback errors.
+            "vision": _("image analysis"),
+            # Translators: Feature name shown in provider fallback errors.
+            "file_upload": _("file upload"),
+            # Translators: Feature name shown in provider fallback errors.
+            "audio_transcription": _("audio transcription"),
+            # Translators: Feature name shown in provider fallback errors.
+            "tts": _("text-to-speech"),
+            # Translators: Feature name shown in provider fallback errors.
+            "video_analysis": _("video analysis"),
+        }
+        labels = [feature_names.get(feature, feature) for feature in features if feature != "chat"]
+        if not labels and features:
+            labels = [feature_names.get(features[0], features[0])]
+        if not labels:
+            labels = [feature_names["chat"]]
+        return labels
+
+    @staticmethod
+    def _announce_provider_fallback(source_provider, target_provider, features):
+        if not target_provider or source_provider == target_provider:
+            return
+        labels = AIHandler._feature_labels(tuple(features or ()))
+        # Translators: Message reported when Vision Assistant uses another configured AI provider for a feature.
+        message = _("Using {provider} for {features}.").format(
+            provider=AIHandler.provider_display_name(target_provider),
+            features=", ".join(labels),
+        )
+        log.info(
+            "Using provider fallback %s -> %s for %s",
+            source_provider,
+            target_provider,
+            ", ".join(str(feature) for feature in features or ()),
+        )
+        try:
+            wx.CallAfter(ui.message, message)
+            if _vision_assistant_instance:
+                wx.CallAfter(setattr, _vision_assistant_instance, "current_status", message)
+        except Exception:
+            log.debug("Could not announce provider fallback", exc_info=True)
+
+    @staticmethod
+    def _unsupported_features_message(features):
+        labels = AIHandler._feature_labels(features)
+        # Translators: Error shown when no configured provider supports a required feature. {features} is a comma-separated list.
+        return _("No configured provider supports: {features}.").format(features=", ".join(labels))
+
+    @staticmethod
     def is_tts_supported(provider=None):
-        p = provider if provider else config.conf["VisionAssistant"]["active_provider"]
-        
-        if p in ["gemini", "openai"]:
-            return True
-        
-        if p == "custom":
-            return True
-            
-        return False
+        return AIHandler.resolve_provider_for_features(("tts",), preferred_provider=provider) is not None
 
     @staticmethod
     def filter_models(provider, models_info, task="main"):
@@ -1658,19 +1855,20 @@ class AIHandler:
         if p == "gemini": return True
         if p == "custom":
             return config.conf["VisionAssistant"]["custom_api_type"] == "gemini"
-        return False
+        adapter = registry_adapter_for(p)
+        return bool(adapter and getattr(adapter.module, "API_STYLE", "") == "gemini")
 
     @staticmethod
     def get_base_url(provider):
         if provider == "custom":
             return config.conf["VisionAssistant"].get("custom_api_url", "").strip().rstrip('/')
-        
+
         proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
-        
+
         if proxy_url:
             if not (proxy_url.startswith("http://") or proxy_url.startswith("https://")):
                 proxy_url = "http://" + proxy_url
-            
+
             try:
                 parsed = urlparse(proxy_url)
                 if parsed.hostname in ["127.0.0.1", "localhost"] or parsed.username:
@@ -1679,18 +1877,14 @@ class AIHandler:
                     netloc = parsed.hostname
                     if parsed.port: netloc += f":{parsed.port}"
                     proxy_url = f"{parsed.scheme}://{netloc}"
-            except:
+            except Exception:
                 pass
 
-        if provider == "gemini":
-            return proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
-        elif provider == "openai":
-            return proxy_url.rstrip('/') if proxy_url else "https://api.openai.com"
-        elif provider == "mistral":
-            return proxy_url.rstrip('/') if proxy_url else "https://api.mistral.ai"
-        elif provider == "groq":
-            return proxy_url.rstrip('/') if proxy_url else "https://api.groq.com/openai"
-        return ""
+        adapter = registry_adapter_for(provider)
+        base_url = getattr(adapter.module, "BASE_URL", "") if adapter else ""
+        if proxy_url:
+            return proxy_url.rstrip('/')
+        return base_url.rstrip('/')
 
     @staticmethod
     def get_endpoint(task_type, model_override=None):
@@ -1726,9 +1920,10 @@ class AIHandler:
             else: model = "gemini-3.1-flash-tts-preview"
 
         if not base:
-            base_map = {"mistral": "https://api.mistral.ai", "openai": "https://api.openai.com", "groq": "https://api.groq.com/openai", "gemini": "https://generativelanguage.googleapis.com"}
-            base = base_map.get(p, "")
-            
+            adapter = registry_adapter_for(p)
+            if adapter:
+                base = getattr(adapter.module, "BASE_URL", "")
+
         if p == "custom" and adv:
             target_map = {"models": "custom_models_url", "vision": "custom_ocr_url", "ocr": "custom_ocr_url", "stt": "custom_stt_url", "tts": "custom_tts_url", "operator": "custom_operator_url"}
             target_key = target_map.get(task_type)
@@ -1745,7 +1940,7 @@ class AIHandler:
             if task_type == "upload":
                 return f"{clean_base}/upload{v_tag}/files"
             return f"{clean_base}{v_tag}/models/{model}:generateContent"
-            
+
         v1_base = base if "/v1" in base.lower() else f"{base}/v1"
         if task_type == "models": return f"{v1_base}/models"
         if task_type in ["chat", "vision", "ocr", "operator"]: return f"{v1_base}/chat/completions"
@@ -1791,26 +1986,27 @@ class AIHandler:
             
             if not is_gemini_logic and key:
                 req.add_header("Authorization", f"Bearer {key}")
-                
-            with proxy_opener.open(req, timeout=15) as r:
-                res_body = r.read().decode('utf-8')
-                data = json.loads(res_body)
-                models_info = []
 
-                if "data" in data and isinstance(data["data"], list):
-                    for m in data["data"]:
-                        m_id = m.get("id")
-                        if m_id: models_info.append((m_id, m_id))
-                elif "models" in data and isinstance(data["models"], list):
+            with proxy_opener.open(req, timeout=15) as r:
+                data = json.loads(r.read().decode('utf-8'))
+
+                if is_gemini_logic and isinstance(data, dict):
+                    models_info = parse_gemini_models_response(data)
+                elif isinstance(data, dict) and "data" in data and isinstance(data["data"], list):
+                    models_info = parse_models_response(data)
+                elif isinstance(data, dict) and "models" in data and isinstance(data["models"], list):
+                    models_info = []
                     for m in data["models"]:
                         full_name = m.get("name", "")
                         m_id = full_name.split("/")[-1] if "/" in full_name else full_name
                         if m_id: models_info.append((m_id, m.get("displayName", m_id)))
                 elif isinstance(data, list):
+                    models_info = []
                     for m in data:
                         m_id = m.get("id") or m.get("name")
                         if m_id: models_info.append((m_id, m_id))
-
+                else:
+                    models_info = []
                 return AIHandler.filter_models(p, models_info, task=task)
         except Exception as e:
             log.error(f"Fetch models failed for {p}: {e}")
@@ -1819,6 +2015,18 @@ class AIHandler:
     @staticmethod
     def call(prompt, attachments=None, json_mode=False, task="chat"):
         p = config.conf["VisionAssistant"]["active_provider"]
+        ai_request = normalize_ai_request(prompt, attachments=attachments, json_mode=json_mode)
+        required_features = request_required_features(ai_request)
+        provider = AIHandler.resolve_provider_for_features(required_features, preferred_provider=p)
+        if not provider:
+            return "ERROR:" + AIHandler._unsupported_features_message(required_features)
+        if provider != p:
+            return AIHandler._call_with_active_provider(
+                provider,
+                lambda: AIHandler.call(prompt, attachments=attachments, json_mode=json_mode, task=task),
+                features=required_features,
+            )
+
         if AIHandler.is_gemini():
             return GeminiHandler._call_with_rotation(GeminiHandler._logic, prompt, attachments, json_mode, task)
         
@@ -1828,11 +2036,11 @@ class AIHandler:
             return "ERROR:" + _("No API Keys configured.")
         if not keys: keys = [""]
 
-        is_audio = any(a.get('mime_type', '').startswith('audio/') for a in attachments) if attachments else False
-        is_image = any(a.get('mime_type', '').startswith('image/') for a in attachments) if attachments else False
+        is_audio = request_has_mime_prefix(ai_request, "audio/")
+        is_image = request_has_mime_prefix(ai_request, "image/")
         
         if is_audio and not AIHandler.is_gemini():
-            audio_att = next(a for a in attachments if a.get('mime_type', '').startswith('audio/'))
+            audio_part = first_part_with_mime_prefix(ai_request, "audio/")
             url = AIHandler.get_endpoint("stt")
             model = "whisper-1"
             if p == "groq": model = "whisper-large-v3-turbo"
@@ -1842,7 +2050,12 @@ class AIHandler:
             elif config.conf["VisionAssistant"].get("advanced_model_routing", False):
                 adv_stt = config.conf["VisionAssistant"].get(f"{p}_stt_model", "").strip()
                 if adv_stt: model = adv_stt
-            return AIHandler._transcribe_helper(keys[0], audio_att, url, model)
+            return AIHandler._transcribe_helper(
+                keys[0],
+                ai_part_to_attachment(audio_part),
+                url,
+                model,
+            )
 
         for key in keys:
             try:
@@ -1852,6 +2065,7 @@ class AIHandler:
                 if p == "custom":
                     model = config.conf["VisionAssistant"]["custom_model_name"].strip()
                     if current_task in ["vision", "ocr"]: model = config.conf["VisionAssistant"]["custom_ocr_model"].strip()
+                    elif current_task == "operator": model = config.conf["VisionAssistant"]["custom_operator_model"].strip()
                     if not model: model = config.conf["VisionAssistant"]["custom_model_name"].strip()
                 else:
                     m_key = f"{p}_model_name"
@@ -1863,30 +2077,25 @@ class AIHandler:
                 if not model:
                     return "ERROR: Model name is empty."
 
-                if isinstance(prompt, str):
-                    if attachments:
-                        contents = []
-                        if prompt: contents.append({"type": "text", "text": prompt})
-                        for att in attachments:
-                            if "data" in att and att.get('mime_type', '').startswith('image/'):
-                                contents.append({"type": "image_url", "image_url": {"url": f"data:{att['mime_type']};base64,{att['data']}"}})
-                        messages = [{"role": "user", "content": contents}]
-                    else:
-                        messages = [{"role": "user", "content": prompt}]
-                else:
-                    messages = prompt
-
                 temp = config.conf["VisionAssistant"].get("ai_temperature", 0.7)
-                payload = {"model": model, "messages": messages, "temperature": temp}
-                if json_mode: payload["response_format"] = {"type": "json_object"}
-                
-                headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
-                if key and key.strip(): headers["Authorization"] = f"Bearer {key}"
-                
-                req = request.Request(url, data=json.dumps(payload).encode('utf-8'), headers=headers)
-                with get_proxy_opener().open(req, timeout=180) as r:
-                    res = json.loads(r.read().decode('utf-8'))
-                    return res["choices"][0]["message"]["content"]
+                payload = build_chat_completions_payload(
+                    model=model,
+                    ai_request=ai_request,
+                    temperature=temp,
+                    json_mode=json_mode,
+                )
+                return send_chat_completions_request(get_proxy_opener(), url, key, payload)
+            except error.HTTPError as e:
+                err_body = ""
+                try:
+                    err_body = e.read().decode('utf-8')
+                    err_json = json.loads(err_body)
+                    if "error" in err_json:
+                        if isinstance(err_json["error"], dict) and "message" in err_json["error"]: err_body = err_json["error"]["message"]
+                        elif isinstance(err_json["error"], str): err_body = err_json["error"]
+                except Exception: pass
+                if (e.code == 429 or e.code >= 500) and key != keys[-1]: continue
+                return f"ERROR: {e.code}{' - ' + err_body if err_body else ''}"
             except Exception as e:
                 if key == keys[-1]: return f"ERROR: {str(e)}"
                 continue
@@ -1898,14 +2107,10 @@ class AIHandler:
             keys = AIHandler.get_keys("mistral")
             if not keys: return "ERROR:" + _("No API Keys configured.")
             url = AIHandler.get_endpoint("ocr")
-            is_pdf = "pdf" in mime_type.lower()
-            payload = {"model": "mistral-ocr-latest", "document": {"type": "document_url" if is_pdf else "image_url", ("document_url" if is_pdf else "image_url"): f"data:{mime_type};base64,{img_or_pdf_base64}"}}
+            payload = build_mistral_ocr_payload(img_or_pdf_base64, mime_type)
             for key in keys:
                 try:
-                    req = request.Request(url, data=json.dumps(payload).encode(), headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json", "User-Agent": "Mozilla/5.0"})
-                    with get_proxy_opener().open(req, timeout=120) as r:
-                        res = json.loads(r.read().decode())
-                        return "\n\n".join([pg.get("markdown", "") for pg in res.get("pages", [])])
+                    return send_mistral_ocr_request(get_proxy_opener(), url, key, payload)
                 except error.HTTPError as e:
                     if (e.code == 429 or e.code >= 500) and key != keys[-1]: continue
                     return f"ERROR: {e.code}"
@@ -1918,12 +2123,7 @@ class AIHandler:
     def _transcribe_helper(key, audio_att, url, model_name):
         try:
             boundary = f"Boundary-{uuid.uuid4()}"
-            body = []
-            body.append(f"--{boundary}".encode()); body.append(b'Content-Disposition: form-data; name="file"; filename="audio.wav"'); body.append(f"Content-Type: {audio_att['mime_type']}".encode()); body.append(b''); body.append(base64.b64decode(audio_att['data'])); body.append(f"--{boundary}".encode()); body.append(b'Content-Disposition: form-data; name="model"'); body.append(b''); body.append(model_name.encode()); body.append(f"--{boundary}--".encode()); body.append(b'')
-            headers = {"Content-Type": f"multipart/form-data; boundary={boundary}", "User-Agent": "Mozilla/5.0"}
-            if key and key.strip(): headers["Authorization"] = f"Bearer {key}"
-            req = request.Request(url, data=b'\r\n'.join(body), headers=headers)
-            with get_proxy_opener().open(req, timeout=60) as r: return json.loads(r.read().decode())["text"]
+            return send_transcription_request(get_proxy_opener(), url, key, audio_att, model_name, boundary)
         except Exception as e: 
             log.error(f"Transcription helper failed: {e}")
             # Translators: Error message when speech-to-text fails.
@@ -1931,10 +2131,17 @@ class AIHandler:
 
     @staticmethod
     def generate_speech(text, voice_name, model_override=None):
-        if not AIHandler.is_tts_supported():
-            # Translators: Error message when TTS is not supported by the provider
-            return "ERROR:" + _("TTS is not supported by this provider."), False
-            
+        provider = AIHandler.resolve_provider_for_features(("tts",))
+        if not provider:
+            return "ERROR:" + AIHandler._unsupported_features_message(("tts",)), False
+        return AIHandler._call_with_active_provider(
+            provider,
+            lambda: AIHandler._generate_speech_current_provider(text, voice_name, model_override),
+            features=("tts",),
+        )
+
+    @staticmethod
+    def _generate_speech_current_provider(text, voice_name, model_override=None):
         p = config.conf["VisionAssistant"]["active_provider"]
         if AIHandler.is_gemini(): return GeminiHandler.generate_speech(text, voice_name), True
         keys = AIHandler.get_keys(p)
@@ -1955,13 +2162,10 @@ class AIHandler:
         elif p == "openai": 
             model = "tts-1"
             
-        payload = {"model": model, "input": text, "voice": voice_name.lower(), "response_format": "mp3"}
+        payload = build_speech_payload(model, text, voice_name)
         for key in keys:
             try:
-                headers = {"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
-                if key and key.strip(): headers["Authorization"] = f"Bearer {key}"
-                req = request.Request(url, data=json.dumps(payload).encode(), headers=headers)
-                with get_proxy_opener().open(req, timeout=120) as r: return base64.b64encode(r.read()).decode('utf-8'), False
+                return send_speech_request(get_proxy_opener(), url, key, payload), False
             except Exception as e:
                 if key == keys[-1]: return f"ERROR: {str(e)}", False
                 continue
@@ -2297,18 +2501,8 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         connectionSizer = wx.StaticBoxSizer(self.connectionBox, wx.VERTICAL)
         cHelper = gui.guiHelper.BoxSizerHelper(self.connectionBox, sizer=connectionSizer)
         
-        providers = [
-            # Translators: Name of the Google Gemini AI provider
-            (_("Google Gemini"), "gemini"),
-            # Translators: Name of the OpenAI provider
-            (_("OpenAI"), "openai"),
-            # Translators: Name of the Mistral AI provider
-            (_("Mistral AI"), "mistral"),
-            # Translators: Name of the Groq AI provider
-            (_("Groq"), "groq"),
-            # Translators: Option for a user-defined custom AI provider
-            (_("Custom"), "custom")
-        ]
+        providers = PROVIDER_CHOICES
+        self._provider_ids = [provider_id for _, provider_id in providers]
         # Translators: Label for AI Provider selection
         self.provider_sel = cHelper.addLabeledControl(_("Provider:"), wx.Choice, choices=[x[0] for x in providers])
         curr_p = config.conf["VisionAssistant"]["active_provider"]
@@ -2318,8 +2512,8 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.provider_sel.Bind(wx.EVT_CHOICE, self.onProviderChange)
 
         # Translators: Label for API Key input
-        apiLabel = wx.StaticText(self.connectionBox, label=_("API Key (Separate multiple keys with comma or newline):"))
-        cHelper.addItem(apiLabel)
+        self.apiLabel = wx.StaticText(self.connectionBox, label=_("API Key (Separate multiple keys with comma or newline):"))
+        cHelper.addItem(self.apiLabel)
         
         curr_key = config.conf["VisionAssistant"]["api_key" if curr_p == "gemini" else (f"{curr_p}_api_key" if curr_p != "custom" else "custom_api_key")]
         self.apiKeyCtrl_hidden = wx.TextCtrl(self.connectionBox, value=curr_key, style=wx.TE_PASSWORD)
@@ -2342,12 +2536,13 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.customSizer.Add(wx.StaticText(self.customBox, label=_("API URL:")), 0, wx.ALL, 2)
         self.customUrl = wx.TextCtrl(self.customBox, value=config.conf["VisionAssistant"]["custom_api_url"])
         self.customSizer.Add(self.customUrl, 0, wx.EXPAND | wx.ALL, 2)
-                # Translators: Label for Custom API Type selection
+        # Translators: Label for Custom API Type selection
         self.customSizer.Add(wx.StaticText(self.customBox, label=_("API Type:")), 0, wx.ALL, 2)
         # Translators: AI API compatibility types
         self.customType = wx.Choice(self.customBox, choices=[_("OpenAI Compatible"), _("Gemini Compatible")])
         self.customType.Bind(wx.EVT_CHOICE, self.onCustomTypeChange)
         self.customType.SetSelection(0 if config.conf["VisionAssistant"]["custom_api_type"] == "openai" else 1)
+        self.customType.Bind(wx.EVT_CHOICE, self.onFallbackAvailabilityChange)
         self.customSizer.Add(self.customType, 0, wx.EXPAND | wx.ALL, 2)
 
         # Translators: Label for Custom Model Name input
@@ -2359,6 +2554,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         # Translators: Checkbox to indicate if custom provider supports file upload
         self.customUploadSupport = wx.CheckBox(self.customBox, label=_("Supports File Upload"))
         self.customUploadSupport.Value = config.conf["VisionAssistant"]["custom_upload_support"]
+        self.customUploadSupport.Bind(wx.EVT_CHECKBOX, self.onFallbackAvailabilityChange)
         self.customSizer.Add(self.customUploadSupport, 0, wx.ALL, 5)
 
         # Advanced Endpoints Section
@@ -2496,6 +2692,57 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.skipChatDialog = cHelper.addItem(wx.CheckBox(self.connectionBox, label=_("Direct Output (No Chat Window)")))
         self.skipChatDialog.Value = config.conf["VisionAssistant"]["skip_chat_dialog"]
         settingsSizer.Add(connectionSizer, 0, wx.EXPAND | wx.ALL, 5)
+
+        # --- Fallback Providers Group ---
+        # Translators: Title of the settings group for task-specific provider fallback.
+        groupLabel = _("Fallback Providers")
+        fallbackBox = wx.StaticBox(self, label=groupLabel)
+        fallbackSizer = wx.StaticBoxSizer(fallbackBox, wx.VERTICAL)
+        fallbackHelper = gui.guiHelper.BoxSizerHelper(fallbackBox, sizer=fallbackSizer)
+        self._fallback_feature_by_control = {}
+
+        # Translators: Label for provider fallback used by image analysis tasks.
+        self.fallbackVisionProvider = self._add_fallback_provider_choice(
+            fallbackBox,
+            fallbackHelper,
+            label=_("Image analysis:"),
+            feature="vision",
+            config_key="fallback_vision_provider",
+        )
+        # Translators: Label for provider fallback used by document and generic file tasks.
+        self.fallbackFileUploadProvider = self._add_fallback_provider_choice(
+            fallbackBox,
+            fallbackHelper,
+            label=_("Files and documents:"),
+            feature="file_upload",
+            config_key="fallback_file_upload_provider",
+        )
+        # Translators: Label for provider fallback used by audio transcription tasks.
+        self.fallbackAudioProvider = self._add_fallback_provider_choice(
+            fallbackBox,
+            fallbackHelper,
+            label=_("Audio transcription:"),
+            feature="audio_transcription",
+            config_key="fallback_audio_provider",
+        )
+        # Translators: Label for provider fallback used by text-to-speech tasks.
+        self.fallbackTtsProvider = self._add_fallback_provider_choice(
+            fallbackBox,
+            fallbackHelper,
+            label=_("Text-to-speech:"),
+            feature="tts",
+            config_key="fallback_tts_provider",
+        )
+        self.fallbackTtsProvider.Bind(wx.EVT_CHOICE, self.onFallbackTtsProviderChange)
+        # Translators: Label for provider fallback used by video analysis tasks.
+        self.fallbackVideoProvider = self._add_fallback_provider_choice(
+            fallbackBox,
+            fallbackHelper,
+            label=_("Video analysis:"),
+            feature="video_analysis",
+            config_key="fallback_video_provider",
+        )
+        settingsSizer.Add(fallbackSizer, 0, wx.EXPAND | wx.ALL, 5)
         
         # --- AI Behavior Group ---
         # Translators: Title of the settings group for AI behavior
@@ -2599,9 +2846,164 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.updateCustomFieldsVisibility(curr_p)
 
 
+    def _add_fallback_provider_choice(self, parent, helper, label, feature, config_key):
+        helper.addItem(wx.StaticText(parent, label=label))
+        ctrl = wx.Choice(parent)
+        helper.addItem(ctrl)
+        self._fallback_feature_by_control[ctrl] = feature
+        self._populate_fallback_choice(ctrl, feature, config.conf["VisionAssistant"][config_key])
+        return ctrl
+
+    def _fallback_choice_items_for_feature(self, feature):
+        items = [FALLBACK_PROVIDER_CHOICES[0]]
+        for status in self._provider_feature_statuses_for_ui(feature):
+            if status.available:
+                # Translators: Provider fallback status for a provider that is configured and supports the task.
+                status_label = _("available")
+            elif status.supports:
+                # Translators: Provider fallback status for a provider that supports the task but is missing configuration.
+                status_label = _("not configured")
+            else:
+                # Translators: Provider fallback status for a provider that cannot perform the task.
+                status_label = _("not supported")
+            # Translators: Provider fallback choice label. {provider} is a provider name; {status} is availability.
+            label = _("{provider} ({status})").format(
+                provider=AIHandler.provider_display_name(status.provider_id),
+                status=status_label,
+            )
+            items.append((label, status.provider_id))
+        return items
+
+    def _provider_feature_statuses_for_ui(self, feature):
+        custom_api_type = "openai"
+        custom_upload_support = False
+        if hasattr(self, "customType"):
+            custom_api_type = "openai" if self.customType.GetSelection() == 0 else "gemini"
+        if hasattr(self, "customUploadSupport"):
+            custom_upload_support = self.customUploadSupport.Value
+        return registry_provider_feature_statuses(
+            feature,
+            configured_provider_ids=self._configured_provider_ids_for_ui(feature),
+            custom_api_type=custom_api_type,
+            custom_upload_support=custom_upload_support,
+        )
+
+    def _configured_provider_ids_for_ui(self, feature):
+        return {
+            provider
+            for provider in PROVIDER_FALLBACK_ORDER
+            if self._is_provider_configured_for_ui(provider, feature)
+        }
+
+    def _is_provider_configured_for_ui(self, provider, feature):
+        features = (feature,) if feature else ()
+        selected_provider = self._selected_provider_id() if hasattr(self, "provider_sel") else ""
+        if provider == "custom" and provider == selected_provider and hasattr(self, "customUrl"):
+            return bool(self.customUrl.Value.strip())
+        if provider == selected_provider:
+            value = self.apiKeyCtrl_visible.Value if self.showApiCheck.IsChecked() else self.apiKeyCtrl_hidden.Value
+            return bool(value.strip())
+        return AIHandler.is_provider_configured(provider, features=features)
+
+    def _populate_fallback_choice(self, ctrl, feature, selected_provider):
+        ctrl.Clear()
+        for label, provider_id in self._fallback_choice_items_for_feature(feature):
+            ctrl.Append(label, provider_id)
+        self._set_fallback_choice(ctrl, selected_provider)
+
+    def refreshFallbackProviderChoices(self):
+        for ctrl, feature in getattr(self, "_fallback_feature_by_control", {}).items():
+            self._populate_fallback_choice(ctrl, feature, self._get_fallback_choice(ctrl))
+
+    def onFallbackAvailabilityChange(self, event):
+        self.refreshFallbackProviderChoices()
+        self.updateVoiceList(self._selected_provider_id())
+        self.updateCustomFieldsVisibility(self._selected_provider_id())
+
+    def _set_fallback_choice(self, ctrl, provider):
+        for idx in range(ctrl.GetCount()):
+            if ctrl.GetClientData(idx) == provider:
+                ctrl.SetSelection(idx)
+                return
+        for idx in range(ctrl.GetCount()):
+            if ctrl.GetClientData(idx) == FALLBACK_PROVIDER_AUTO:
+                ctrl.SetSelection(idx)
+                return
+
+    def _get_fallback_choice(self, ctrl):
+        idx = ctrl.GetSelection()
+        if idx == wx.NOT_FOUND:
+            return FALLBACK_PROVIDER_AUTO
+        provider = ctrl.GetClientData(idx)
+        return provider or FALLBACK_PROVIDER_AUTO
+
+    def _fallback_feature_label(self, feature):
+        labels = {
+            # Translators: Short feature label used in fallback validation errors.
+            "vision": _("image analysis"),
+            # Translators: Short feature label used in fallback validation errors.
+            "file_upload": _("files and documents"),
+            # Translators: Short feature label used in fallback validation errors.
+            "audio_transcription": _("audio transcription"),
+            # Translators: Short feature label used in fallback validation errors.
+            "tts": _("text-to-speech"),
+            # Translators: Short feature label used in fallback validation errors.
+            "video_analysis": _("video analysis"),
+        }
+        return labels.get(feature, feature)
+
+    def validateFallbackProviderChoices(self):
+        invalid = []
+        for ctrl, feature in getattr(self, "_fallback_feature_by_control", {}).items():
+            provider = self._get_fallback_choice(ctrl)
+            if provider == FALLBACK_PROVIDER_AUTO:
+                continue
+            statuses = self._provider_feature_statuses_for_ui(feature)
+            status = next((item for item in statuses if item.provider_id == provider), None)
+            if status and status.available:
+                continue
+            if status and not status.supports:
+                # Translators: Reason shown when a selected fallback provider cannot perform a task.
+                reason = _("not supported")
+            else:
+                # Translators: Reason shown when a selected fallback provider has not been configured.
+                reason = _("not configured")
+            # Translators: Item in fallback validation error. {feature} is the task, {provider} is the provider name, {reason} is why it cannot be used.
+            invalid.append(
+                _("{feature}: {provider} ({reason})").format(
+                    feature=self._fallback_feature_label(feature),
+                    provider=AIHandler.provider_display_name(provider),
+                    reason=reason,
+                )
+            )
+        if not invalid:
+            return True
+        # Translators: Error shown when saving settings with an explicit fallback provider that cannot be used.
+        show_error_dialog(_("Fallback provider unavailable: {items}").format(items="; ".join(invalid)))
+        return False
+
+    def _selected_tts_provider_for_voice_list(self, p_name):
+        if AIHandler.capabilities_for(p_name).tts:
+            return p_name
+        if hasattr(self, "fallbackTtsProvider"):
+            provider = self._get_fallback_choice(self.fallbackTtsProvider)
+            if provider != FALLBACK_PROVIDER_AUTO:
+                return provider
+        return AIHandler.resolve_provider_for_features(("tts",), preferred_provider=p_name) or p_name
+
+    def onFallbackTtsProviderChange(self, event):
+        self.updateVoiceList(self._selected_provider_id())
+        self.updateCustomFieldsVisibility(self._selected_provider_id())
+
     def updateVoiceList(self, p_name):
         self.voice_sel.Clear()
-        if p_name in ["openai", "custom"]:
+        tts_provider = self._selected_tts_provider_for_voice_list(p_name)
+        if not AIHandler.capabilities_for(tts_provider).tts:
+            return
+        if tts_provider == "openai" or (
+            tts_provider == "custom"
+            and config.conf["VisionAssistant"].get("custom_api_type") == "openai"
+        ):
             voices = OPENAI_VOICES
         else:
             voices = GEMINI_VOICES
@@ -2653,22 +3055,32 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
     def updateCustomFieldsVisibility(self, provider):
         is_custom = (provider == "custom")
         self.customBox.Show(is_custom)
-        self.advRoutingCheck.Show(True)
+
+        self.apiLabel.Show(True)
+        self.apiKeyCtrl_hidden.Show(not self.showApiCheck.IsChecked())
+        self.apiKeyCtrl_visible.Show(self.showApiCheck.IsChecked())
+        self.showApiCheck.Show(True)
+
+        self.advRoutingCheck.Show(not is_custom)
+
+        tts_available = AIHandler.capabilities_for(self._selected_tts_provider_for_voice_list(provider)).tts
+        native_tts_supported = AIHandler.capabilities_for(provider).tts
         
-        tts_supported = AIHandler.is_tts_supported(provider)
-        routing_enabled = self.advRoutingCheck.Value
+        routing_enabled = not is_custom and self.advRoutingCheck.Value
         self.advRoutingBox.Show(routing_enabled)
         
         if routing_enabled:
             self.advOcrModel.Show(True)
+            self.lbl_advOcr.Show(True)
             self.advSttModel.Show(True)
-            self.advTtsModel.Show(tts_supported)
-            self.lbl_advTts.Show(tts_supported)
+            self.lbl_advStt.Show(True)
+            self.advTtsModel.Show(native_tts_supported)
+            self.lbl_advTts.Show(native_tts_supported)
             self.advOperatorModel.Show(True)
             self.lbl_advOperator.Show(True)
 
-        self.voice_sel.Show(tts_supported)
-        self.lbl_voice.Show(tts_supported)
+        self.voice_sel.Show(tts_available)
+        self.lbl_voice.Show(tts_available)
         self.btn_fetch.Show(True)
         
         has_fetched_models = self.model.GetCount() > 0
@@ -2715,13 +3127,10 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         if p: p.Layout()
 
     def onToggleAdvRouting(self, event):
-        self.advRoutingBox.Show(self.advRoutingCheck.Value)
-        p = self.connectionBox.GetParent()
-        if p: p.Layout()
+        self.updateCustomFieldsVisibility(self._selected_provider_id())
 
     def onProviderChange(self, event):
-        p_idx = self.provider_sel.GetSelection()
-        p_name = ["gemini", "openai", "mistral", "groq", "custom"][p_idx]
+        p_name = self._selected_provider_id()
         
         key_name = "api_key" if p_name == "gemini" else (f"{p_name}_api_key" if p_name != "custom" else "custom_api_key")
         val = config.conf["VisionAssistant"].get(key_name, "")
@@ -2744,8 +3153,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         self.updateCustomFieldsVisibility("custom")
 
     def onFetchModels(self, event):
-        p_idx = self.provider_sel.GetSelection()
-        p_name = ["gemini", "openai", "mistral", "groq", "custom"][p_idx]
+        p_name = self._selected_provider_id()
         
         val = self.apiKeyCtrl_visible.Value if self.showApiCheck.IsChecked() else self.apiKeyCtrl_hidden.Value
         k_key = "api_key" if p_name == "gemini" else (f"{p_name}_api_key" if p_name != "custom" else "custom_api_key")
@@ -2824,6 +3232,8 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             # Translators: Error message shown when the add-on cannot retrieve the list of models from the server.
             ui.message(_("Failed to fetch models"))
 
+        self._all_models_backup = [(self.model.GetString(i), self.model.GetClientData(i)) for i in range(self.model.GetCount())]
+
     def refreshModelList(self, p_name):
         self.model.Clear()
         self.advOcrModel.Clear()
@@ -2851,8 +3261,8 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
                     m_id, m_name = item.split("|", 1)
                     all_models.append((m_id, m_name))
         elif p_name == "gemini":
-            for m_name, m_id in MODELS: all_models.append((m_id, m_name))
-
+            for m_name, m_id in MODELS:
+                all_models.append((m_id, m_name))
         main_models = AIHandler.filter_models(p_name, all_models, task="main")
         for m_id, m_name in main_models:
             self.model.Append(m_name, m_id)
@@ -2898,10 +3308,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
 
 
     def onToggleAdvanced(self, event):
-        p_idx = self.provider_sel.GetSelection()
-        if p_idx != wx.NOT_FOUND:
-            p_name = ["gemini", "openai", "mistral", "groq", "custom"][p_idx]
-            self.updateCustomFieldsVisibility(p_name)
+        self.updateCustomFieldsVisibility(self._selected_provider_id())
 
     def onToggleApiVisibility(self, event):
         if self.showApiCheck.IsChecked():
@@ -2914,14 +3321,19 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
             self.apiKeyCtrl_hidden.Show()
         self.connectionBox.GetParent().Layout()
 
+    def _selected_provider_id(self):
+        p_idx = self.provider_sel.GetSelection()
+        if p_idx == wx.NOT_FOUND or p_idx >= len(self._provider_ids):
+            return config.conf["VisionAssistant"].get("active_provider", "gemini")
+        return self._provider_ids[p_idx]
+
     def onModelPickerChange(self, event):
         cb = event.GetEventObject()
         sel = cb.GetSelection()
         if sel != wx.NOT_FOUND:
             model_id = cb.GetClientData(sel)
             if model_id:
-                p_idx = self.provider_sel.GetSelection()
-                p_name = ["gemini", "openai", "mistral", "groq", "custom"][p_idx]
+                p_name = self._selected_provider_id()
                 self._temp_models[p_name] = model_id
                 if p_name == "custom":
                     self.customModelName.SetValue(model_id)
@@ -2930,17 +3342,21 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         sel = self.voice_sel.GetSelection()
         if sel != wx.NOT_FOUND:
             voice_id = self.voice_sel.GetClientData(sel)
-            p_idx = self.provider_sel.GetSelection()
-            if p_idx != wx.NOT_FOUND:
-                p_name = ["gemini", "openai", "mistral", "groq", "custom"][p_idx]
-                if p_name == "custom":
-                    self.customTtsVoice.SetValue(voice_id)
+            p_name = self._selected_provider_id()
+            if p_name == "custom":
+                self.customTtsVoice.SetValue(voice_id)
 
     def onSave(self):
         try:
-            p_idx = self.provider_sel.GetSelection()
-            p_name = ["gemini", "openai", "mistral", "groq", "custom"][p_idx]
+            if not self.validateFallbackProviderChoices():
+                return
+            p_name = self._selected_provider_id()
             config.conf["VisionAssistant"]["active_provider"] = p_name
+            config.conf["VisionAssistant"]["fallback_vision_provider"] = self._get_fallback_choice(self.fallbackVisionProvider)
+            config.conf["VisionAssistant"]["fallback_file_upload_provider"] = self._get_fallback_choice(self.fallbackFileUploadProvider)
+            config.conf["VisionAssistant"]["fallback_audio_provider"] = self._get_fallback_choice(self.fallbackAudioProvider)
+            config.conf["VisionAssistant"]["fallback_tts_provider"] = self._get_fallback_choice(self.fallbackTtsProvider)
+            config.conf["VisionAssistant"]["fallback_video_provider"] = self._get_fallback_choice(self.fallbackVideoProvider)
             
             val = self.apiKeyCtrl_visible.Value if self.showApiCheck.IsChecked() else self.apiKeyCtrl_hidden.Value
             k_key = "api_key" if p_name == "gemini" else (f"{p_name}_api_key" if p_name != "custom" else "custom_api_key")
@@ -3028,8 +3444,7 @@ class SettingsPanel(gui.settingsDialogs.SettingsPanel):
         sel = cb.GetSelection()
         if sel != wx.NOT_FOUND:
             model_id = cb.GetClientData(sel)
-            p_idx = self.provider_sel.GetSelection()
-            if p_idx == 4 and model_id:
+            if self._selected_provider_id() == "custom" and model_id:
                 self.customModelName.SetValue(model_id)
             return
 
@@ -3593,8 +4008,8 @@ class DocumentViewerDialog(wx.Dialog):
 
     def on_tts(self, event):
         if not AIHandler.is_tts_supported():
-            # Translators: Error message when trying to use TTS with an unsupported provider
-            wx.MessageBox(_("TTS is not supported by the current provider or configuration."), _("Error"), wx.ICON_ERROR)
+            message = AIHandler._unsupported_features_message(("tts",))
+            wx.MessageBox(message, _("Error"), wx.ICON_ERROR)
             return
 
         p = config.conf["VisionAssistant"]["active_provider"]
@@ -3708,7 +4123,7 @@ class DocumentViewerDialog(wx.Dialog):
             ChatDialog.instance.Raise()
             ChatDialog.instance.SetFocus()
             return
-        file_path, _ = self.v_doc.get_page_info(self.current_page)
+        file_path, _page_index = self.v_doc.get_page_info(self.current_page)
         if file_path: 
             dlg = ChatDialog(self, file_path)
             dlg.Show()
@@ -3920,8 +4335,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             
             gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(SettingsPanel)
             
-            if LauncherDialog.instance:
-                LauncherDialog.instance.Destroy()
+            launcher_dialog = globals().get("LauncherDialog")
+            if launcher_dialog and getattr(launcher_dialog, "instance", None):
+                launcher_dialog.instance.Destroy()
         except: pass
         
         if hasattr(self, 'update_timer') and self.update_timer and self.update_timer.IsRunning():
@@ -3996,7 +4412,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 data = f.read()
             body = []
             body.append(f"--{boundary}".encode())
-            body.append(f'Content-Disposition: form-data; name="purpose"'.encode())
+            body.append(b'Content-Disposition: form-data; name="purpose"')
             body.append(b'')
             body.append(b'ocr')
             body.append(f"--{boundary}".encode())
@@ -4049,78 +4465,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self.report_status(msg)
             show_error_dialog(msg)
             return None
-
-
-        def _logic(key, p_or_c, atts, j_mode):
-            model = config.conf["VisionAssistant"]["model_name"]
-            proxy_url = config.conf["VisionAssistant"]["proxy_url"].strip()
-            base_url = proxy_url.rstrip('/') if proxy_url else "https://generativelanguage.googleapis.com"
-            url = f"{base_url}/v1beta/models/{model}:generateContent"
-            headers = {"Content-Type": "application/json; charset=UTF-8", "x-goog-api-key": key}
-            
-            contents = []
-            if isinstance(p_or_c, list):
-                contents = p_or_c
-            else:
-                parts = []
-                for att in atts:
-                    if 'file_uri' in att:
-                        parts.append({"file_data": {"mime_type": att['mime_type'], "file_uri": att['file_uri']}})
-                    else:
-                        parts.append({"inline_data": {"mime_type": att['mime_type'], "data": att['data']}})
-                if p_or_c:
-                    parts.append({"text": p_or_c})
-                contents = [{"parts": parts}]
-                
-            data = {
-                "contents": contents,
-                "generationConfig": {"temperature": 0.0, "topK": 40},
-                "safetySettings": [
-                    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-                    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-                    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
-                ]
-            }
-            if j_mode: data["generationConfig"]["response_mime_type"] = "application/json"
-
-            req = request.Request(url, data=json.dumps(data).encode('utf-8'), headers=headers)
-            with get_proxy_opener().open(req, timeout=600) as response:
-                if response.status == 200:
-                    res = json.loads(response.read().decode('utf-8'))
-                    if not res.get('candidates'): return None
-                    candidate = res['candidates'][0]
-                    if candidate.get('finishReason') == 'SAFETY':
-                        # Translators: Error message when AI refuses to answer due to safety guidelines
-                        return "ERROR:" + _("Error: Response blocked by AI safety filters.")
-                    content = candidate.get('content', {})
-                    parts = content.get('parts', [])
-                    if parts and 'text' in parts[0]:
-                        return parts[0]['text'].strip()
-                    return None
-
-        forced_key = None
-        if attachments:
-            for att in attachments:
-                file_uri = att.get("file_uri") if isinstance(att, dict) else None
-                registered_key = GeminiHandler._get_registered_key(file_uri)
-                if registered_key:
-                    forced_key = registered_key
-                    break
-
-        if forced_key:
-            res = GeminiHandler._call_with_key(_logic, forced_key, prompt_or_contents, attachments, json_mode)
-        else:
-            res = GeminiHandler._call_with_rotation(_logic, prompt_or_contents, attachments, json_mode)
-        
-        if isinstance(res, str) and res.startswith("ERROR:"):
-            err_msg = res[6:]
-            # Translators: Status reported when an error occurs
-            self.report_status(_("Error"))
-            show_error_dialog(err_msg)
-            return None
-            
-        return res
 
     # Translators: Script description for Input Gestures dialog
     @scriptHandler.script(description=_("Records voice, transcribes it using AI, and types the result."))
@@ -5111,9 +5455,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         wx.CallLater(100, self._open_video_dialog)
 
     def _open_video_dialog(self):
-        if not AIHandler.is_gemini():
-            # Translators: Error message when video analysis is attempted with a non-Gemini provider.
-            msg = _("Video analysis is only supported by Gemini providers.")
+        video_provider = AIHandler.resolve_provider_for_features(("video_analysis",))
+        if not video_provider:
+            msg = AIHandler._unsupported_features_message(("video_analysis",))
             self.report_status(msg)
             return
 
@@ -5129,12 +5473,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if dlg.ShowModal() == wx.ID_OK:
                 url = dlg.GetValue()
                 if url.strip():
-                    threading.Thread(target=self._thread_video, args=(url,), daemon=True).start()
+                    threading.Thread(target=self._thread_video, args=(url, video_provider), daemon=True).start()
             dlg.Destroy()
         finally:
             gui.mainFrame.postPopup()
 
-    def _thread_video(self, url):
+    def _thread_video(self, url, provider=None):
+        if provider:
+            return AIHandler._call_with_active_provider(
+                provider,
+                lambda: self._thread_video(url),
+                features=("video_analysis",),
+            )
         try:
             parsed_url = urlparse(url)
             domain = parsed_url.netloc.lower()
@@ -5691,7 +6041,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                     action = "click"
                     act_m = re.search(r'"action":\s*"([^"]*)"', json_str)
                     if act_m: action = act_m.group(1)
-                    is_finished = '"finished":\s*true' in json_str.lower()
+                    is_finished = re.search(r'"finished":\s*true', json_str.lower()) is not None
                     explanation = clean_text
                     t_m = re.search(r'"text":\s*"([^"]*)"', json_str)
                     t_val = t_m.group(1) if t_m else ""
