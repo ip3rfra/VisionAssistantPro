@@ -416,18 +416,27 @@ class DocumentViewerDialog(wx.Dialog):
 		self.current_page = self.start_page
 		self.thread_pool = ThreadPoolExecutor(max_workers=5)
 		self.abort = False
-		self._is_scanning = False
 		self._retry_batches = []
 		self._progress_key = ocr_cache_key("document", list(virtual_doc.file_paths))
+
+		cached_pages = sum(
+			1
+			for page, text in self.page_cache.items()
+			if self.start_page <= page <= self.end_page and text and not _is_failed_ocr_page(text)
+		)
+		needs_processing = cached_pages < self.range_count
+		self._is_scanning = needs_processing
+
+		if plugin_state.plugin_instance:
+			plugin_state.plugin_instance._ocr_task_running["document"] = needs_processing
+			plugin_state.plugin_instance._ocr_abort["document"] = False
+			plugin_state.plugin_instance.doc_viewer_dlg = self
 
 		self.init_ui()
 		self.Centre()
 		self._update_retry_button()
-		if plugin_state.plugin_instance:
-			plugin_state.plugin_instance._ocr_task_running["document"] = True
-			plugin_state.plugin_instance._ocr_abort["document"] = False
-			plugin_state.plugin_instance.doc_viewer_dlg = self
-		threading.Thread(target=self.start_auto_processing, daemon=True).start()
+		if needs_processing:
+			threading.Thread(target=self.start_auto_processing, daemon=True).start()
 
 	def _get_failed_pages(self):
 		failed = []
@@ -642,6 +651,8 @@ class DocumentViewerDialog(wx.Dialog):
 		self.Destroy()
 
 	def _record_history(self):
+		if not nvda_config.conf["VisionAssistant"].get("save_document_history", True):
+			return
 		try:
 			from ..utils.storage import HistoryStore
 
@@ -869,29 +880,34 @@ class DocumentViewerDialog(wx.Dialog):
 			return _("Error processing page.")
 
 	def update_view(self, at_end=False):
-		rel_page = self.current_page - self.start_page + 1
-		self.lbl_status.SetLabel(
-			_(
-				# Translators: Status label format
-				"Page {current} of {total}"
-			).format(current=rel_page, total=self.range_count)
-		)
-		if self.current_page in self.page_cache:
-			content = self.page_cache[self.current_page]
-		else:
-			if self._is_ocr_active():
-				# Translators: Status when page is loading
-				content = _("Processing in background...")
+		try:
+			if not self or not getattr(self, "lbl_status", None):
+				return
+			rel_page = self.current_page - self.start_page + 1
+			self.lbl_status.SetLabel(
+				_(
+					# Translators: Status label format
+					"Page {current} of {total}"
+				).format(current=rel_page, total=self.range_count)
+			)
+			if self.current_page in self.page_cache:
+				content = self.page_cache[self.current_page]
 			else:
-				# Translators: Status when page failed to process and can be retried.
-				content = _("[Page not processed. Press Try Again to retry.]")
-		self.txt_content.SetValue(content)
-		position = len(content) if at_end else 0
-		self.txt_content.SetInsertionPoint(position)
-		self.txt_content.ShowPosition(position)
-		self.txt_content.SetFocus()
-		self.btn_prev.Enable(self.current_page > self.start_page)
-		self.btn_next.Enable(self.current_page < self.end_page)
+				if self._is_ocr_active():
+					# Translators: Status when page is loading
+					content = _("Processing in background...")
+				else:
+					# Translators: Status when page failed to process and can be retried.
+					content = _("[Page not processed. Press Try Again to retry.]")
+			self.txt_content.SetValue(content)
+			position = len(content) if at_end else 0
+			self.txt_content.SetInsertionPoint(position)
+			self.txt_content.ShowPosition(position)
+			self.txt_content.SetFocus()
+			self.btn_prev.Enable(self.current_page > self.start_page)
+			self.btn_next.Enable(self.current_page < self.end_page)
+		except (RuntimeError, Exception) as e:
+			log.debug(f"update_view ignored exception on destroyed window: {e}")
 
 	def load_page(self, page_num, at_end=False):
 		if page_num < self.start_page or page_num > self.end_page:
@@ -989,6 +1005,9 @@ class DocumentViewerDialog(wx.Dialog):
 		menu.Destroy()
 
 	def do_rescan_current(self, event):
+		self._is_scanning = True
+		if plugin_state.plugin_instance:
+			plugin_state.plugin_instance._ocr_task_running["document"] = True
 		if self.current_page in self.page_cache:
 			del self.page_cache[self.current_page]
 		self.update_view()
@@ -1033,14 +1052,35 @@ class DocumentViewerDialog(wx.Dialog):
 				self.page_cache[page_num] = _("[Error: {msg}]").format(msg=str(e))
 				wx.CallAfter(self.update_view)
 			finally:
+				self._is_scanning = False
 				if plugin_state.plugin_instance:
+					plugin_state.plugin_instance._ocr_task_running["document"] = False
 					plugin_state.plugin_instance.current_status = _("Idle")
 
 		self.thread_pool.submit(_run)
 
 	def do_rescan_all(self, event):
 		self._is_scanning = True
-		threading.Thread(target=self.gemini_scan_batch_thread, daemon=True).start()
+		if plugin_state.plugin_instance:
+			plugin_state.plugin_instance._ocr_task_running["document"] = True
+		for p in range(self.start_page, self.end_page + 1):
+			self.page_cache.pop(p, None)
+		self.update_view()
+		# Translators: Message during manual scan
+		msg = _("Scanning with AI...")
+		if plugin_state.plugin_instance:
+			plugin_state.plugin_instance.report_status(msg)
+		else:
+			ui.message(msg)
+		p = nvda_config.conf["VisionAssistant"]["active_provider"]
+		engine = nvda_config.conf["VisionAssistant"]["ocr_engine"]
+		if engine == "gemini" and AIHandler.is_gemini() and not self.is_text_doc:
+			threading.Thread(target=self.gemini_scan_batch_thread, daemon=True).start()
+		elif engine == "gemini" and p == "mistral" and not self.is_text_doc:
+			threading.Thread(target=self.mistral_scan_batch_thread, daemon=True).start()
+		else:
+			for i in range(self.start_page, self.end_page + 1):
+				self.thread_pool.submit(self.process_page_worker, i)
 
 	def gemini_scan_batch_thread(self):
 		engine = nvda_config.conf["VisionAssistant"]["ocr_engine"]
@@ -1077,6 +1117,8 @@ class DocumentViewerDialog(wx.Dialog):
 			self._is_scanning = False
 			if plugin_state.plugin_instance:
 				plugin_state.plugin_instance._ocr_task_running["document"] = False
+			wx.CallAfter(self._update_retry_button)
+			wx.CallAfter(self.update_view)
 
 	def _process_ocr_batch(self, i, batch_end):
 		if self.abort:
@@ -1178,10 +1220,11 @@ class DocumentViewerDialog(wx.Dialog):
 		batches = self._build_retry_batches()
 		if not batches:
 			return
-		self._update_retry_button()
 		self._is_scanning = True
 		if plugin_state.plugin_instance:
 			plugin_state.plugin_instance._ocr_task_running["document"] = True
+		self._update_retry_button()
+		self.update_view()
 		# Translators: Status message when the user retries pages that previously failed.
 		msg = _("Retrying failed pages...")
 		if plugin_state.plugin_instance:
@@ -1200,17 +1243,24 @@ class DocumentViewerDialog(wx.Dialog):
 			self._is_scanning = False
 			if plugin_state.plugin_instance:
 				plugin_state.plugin_instance._ocr_task_running["document"] = False
+			wx.CallAfter(self._update_retry_button)
+			wx.CallAfter(self.update_view)
 			if not self.abort:
 				self._on_extraction_complete()
-				wx.CallAfter(self._update_retry_button)
 				self._report_batch_completion_status()
 
 	def _update_retry_button(self):
-		has = bool(self._get_failed_pages())
-		if hasattr(self, "btn_retry") and self.btn_retry:
-			self.btn_retry.Show(has)
-			self.btn_retry.Enable(has)
-			self.Layout()
+		try:
+			if self._is_ocr_active():
+				has = False
+			else:
+				has = bool(self._get_failed_pages())
+			if hasattr(self, "btn_retry") and self.btn_retry:
+				self.btn_retry.Show(has)
+				self.btn_retry.Enable(has)
+				self.Layout()
+		except (RuntimeError, Exception):
+			pass
 
 	def _report_batch_completion_status(self):
 		failed_pages = self._get_failed_pages()
@@ -1318,6 +1368,8 @@ class DocumentViewerDialog(wx.Dialog):
 			self._is_scanning = False
 			if plugin_state.plugin_instance:
 				plugin_state.plugin_instance._ocr_task_running["document"] = False
+			wx.CallAfter(self._update_retry_button)
+			wx.CallAfter(self.update_view)
 
 	def on_engine_change(self, event):
 		nvda_config.conf["VisionAssistant"]["tts_engine"] = self.engine_sel.GetClientData(

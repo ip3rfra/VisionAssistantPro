@@ -83,10 +83,32 @@ def _apply_gemma_thinking_patch(payload, url_or_model):
 def _extract_text_from_parts(parts):
 	if not parts:
 		return ""
-	text_parts = [part.get("text", "") for part in parts if not part.get("thought")]
+	text_parts = []
+	for part in parts:
+		if not isinstance(part, dict) or part.get("thought"):
+			continue
+		txt = part.get("text", "")
+		if not txt and "audioTranscription" in part:
+			at = part["audioTranscription"]
+			txt = at.get("text", "") if isinstance(at, dict) else str(at)
+		elif not txt and "audio_transcription" in part:
+			at = part["audio_transcription"]
+			txt = at.get("text", "") if isinstance(at, dict) else str(at)
+		if txt:
+			text_parts.append(txt)
 	if text_parts:
 		return "".join(text_parts)
-	return parts[0].get("text", "")
+	first = parts[0]
+	if isinstance(first, dict):
+		txt = first.get("text", "")
+		if not txt and "audioTranscription" in first:
+			at = first["audioTranscription"]
+			txt = at.get("text", "") if isinstance(at, dict) else str(at)
+		elif not txt and "audio_transcription" in first:
+			at = first["audio_transcription"]
+			txt = at.get("text", "") if isinstance(at, dict) else str(at)
+		return txt
+	return ""
 
 
 class AIHandler:

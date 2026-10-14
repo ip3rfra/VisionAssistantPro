@@ -15,7 +15,6 @@ import urllib.parse
 import wx
 from urllib import request, error
 from urllib.parse import urlparse, urlencode
-from http import cookiejar
 import http.client
 
 import subprocess

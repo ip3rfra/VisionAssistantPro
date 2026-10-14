@@ -51,6 +51,24 @@ class GeminiKeysError(Exception):
 		super().__init__(message)
 
 
+def _token_urlsafe(nbytes=32):
+	try:
+		if hasattr(secrets, "token_urlsafe"):
+			return secrets.token_urlsafe(nbytes)
+	except Exception:
+		pass
+	return base64.urlsafe_b64encode(os.urandom(nbytes)).rstrip(b"=").decode("ascii")
+
+
+def _token_hex(nbytes=4):
+	try:
+		if hasattr(secrets, "token_hex"):
+			return secrets.token_hex(nbytes)
+	except Exception:
+		pass
+	return os.urandom(nbytes).hex()
+
+
 def _notify(callback, message):
 	if callback is None:
 		return
@@ -95,12 +113,33 @@ def _get_opener(target_url=None):
 def _format_api_error(status, detail):
 	message = ""
 	if isinstance(detail, dict):
-		value = detail.get("error", {})
-		if isinstance(value, dict):
-			value = value.get("message", "")
-		if not value:
-			value = detail.get("message", "")
-		message = str(value or "")
+		err_obj = detail.get("error", {})
+		if isinstance(err_obj, dict):
+			message = str(err_obj.get("message") or "")
+			details_list = err_obj.get("details", [])
+			if isinstance(details_list, list):
+				extra_parts = []
+				for item in details_list:
+					if isinstance(item, dict):
+						for v in item.get("violations", []):
+							if isinstance(v, dict) and v.get("description"):
+								desc = v["description"]
+								if desc not in message and desc not in extra_parts:
+									extra_parts.append(desc)
+						for link in item.get("links", []):
+							if isinstance(link, dict) and link.get("url"):
+								l_url = link["url"]
+								if l_url not in message and l_url not in extra_parts:
+									extra_parts.append(l_url)
+				if extra_parts:
+					extra_str = " ".join(extra_parts)
+					if message:
+						if "http" not in message and "http" in extra_str:
+							message = f"{message} {extra_str}"
+					else:
+						message = extra_str
+		if not message:
+			message = str(detail.get("message") or "")
 	elif detail:
 		message = str(detail)
 	# Translators: Error message shown when a Google API call fails, {status} is the HTTP status code and {detail} is Google's own message.
@@ -349,8 +388,8 @@ def sign_in(status_callback=None, cancel_check=None):
 	# Translators: Status message shown when the Google sign-in process starts and a browser window will open.
 	_notify(status_callback, _("Starting Google sign-in. A browser window will open."))
 
-	state = secrets.token_urlsafe(32)
-	code_verifier = secrets.token_urlsafe(64)
+	state = _token_urlsafe(32)
+	code_verifier = _token_urlsafe(64)
 	code_challenge = (
 		base64.urlsafe_b64encode(hashlib.sha256(code_verifier.encode("ascii")).digest())
 		.decode("ascii")
@@ -535,7 +574,7 @@ def stored_keys_list_by_project():
 
 
 def make_project_id():
-	return "gemini-" + secrets.token_hex(4)
+	return "gemini-" + _token_hex(4)
 
 
 def list_projects(token, cancel_check=None):
@@ -580,18 +619,6 @@ def get_key_string(token, key_name, quota_project=None, cancel_check=None):
 def fetch_keys_for_project(token, project_id, cancel_check=None):
 	try:
 		keys = list_keys(token, project_id, cancel_check=cancel_check)
-	except GeminiKeysError as e:
-		err_str = str(e).lower()
-		if "not been used" in err_str or "disabled" in err_str or getattr(e, "status", 0) == 403:
-			try:
-				enable_service(token, project_id, APIKEYS_SERVICE, cancel_check=cancel_check)
-				keys = list_keys(token, project_id, cancel_check=cancel_check)
-			except Exception as enable_err:
-				log.debug(f"Could not enable API Keys API for {project_id}: {enable_err}")
-				return []
-		else:
-			log.debug(f"Could not list keys for project {project_id}: {e}")
-			return []
 	except Exception as e:
 		log.debug(f"Could not list keys for project {project_id}: {e}")
 		return []

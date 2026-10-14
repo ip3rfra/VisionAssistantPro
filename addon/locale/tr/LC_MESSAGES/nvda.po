@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: VisionAssistantPro\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
 "POT-Creation-Date: 2026-10-02 15:54+0330\n"
-"PO-Revision-Date: 2026-10-04 14:40\n"
+"PO-Revision-Date: 2026-10-07 12:04\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -123,7 +123,7 @@ msgstr "Ses Gözlemcisi, talimat niteliğindeki metin girişlerini kabul etmez. 
 #: addon\globalPlugins\visionAssistant\vision_config.py:316
 #: addon\globalPlugins\visionAssistant\vision_config.py:326
 msgid "Auto-detect"
-msgstr "Автоопределение"
+msgstr "Otomatik Algıla"
 
 #. Translators: Proxy mode to force SOCKS5 tunneling.
 #: addon\globalPlugins\visionAssistant\vision_config.py:36
@@ -561,7 +561,7 @@ msgstr "Ses"
 #. Translators: Label for the audio file transcription prompt.
 #: addon\globalPlugins\visionAssistant\vision_config.py:810
 msgid "Audio Transcription"
-msgstr "Ses Transkripsiyonu"
+msgstr "Ses Deşifresi"
 
 #. Translators: Label for the audio translation prompt in Prompt Manager.
 #. Translators: Feature label for audio translation in Prompt Manager.
@@ -805,7 +805,7 @@ msgstr "Bir film ya da dizi izleme"
 #. Translators: Context option in the Ambient Observer start dialog for following a live stream or presentation.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1242
 msgid "Watching a live stream or presentation"
-msgstr "Canlı yayın veya sunum izleme"
+msgstr "Canlı yayın veya sunum izleniyor"
 
 #. Translators: Context option in the Ambient Observer start dialog for following an online meeting or call.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1248
@@ -850,7 +850,7 @@ msgstr "Makyajımı kontrol et"
 #. Translators: Context option for using the webcam to identify a colour or match clothes.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1295
 msgid "Checking a colour or matching clothes"
-msgstr "Renk kontrolü yapma veya kıyafetleri eşleştirmek"
+msgstr "Renk kontrolü yapma veya kıyafetleri eşleştirme"
 
 #. Translators: Context option for using the webcam to read a document, label, or package.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1301
@@ -947,7 +947,7 @@ msgstr "Pano içeriği"
 #. Translators: Description for the [currentURL] variable in Variables Guide.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1402
 msgid "Current document URL"
-msgstr "Geçerli belgenin Adresi"
+msgstr "Geçerli Belge URL'si"
 
 #. Translators: Description for the [text] variable in Variables Guide.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1404
@@ -1007,12 +1007,12 @@ msgstr "Çeviri ve Diller"
 #. Translators: Description for the {target_lang} variable in Variables Guide.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1426
 msgid "Current target language"
-msgstr "Mevcut hedef dil"
+msgstr "Geçerli hedef dil"
 
 #. Translators: Description for the {source_lang} variable in Variables Guide.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1428
 msgid "Current source language"
-msgstr "Mevcut kaynak dil"
+msgstr "Geçerli kaynak dil"
 
 #. Translators: Description for the {response_lang} variable in Variables Guide.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1430
@@ -1598,7 +1598,7 @@ msgstr "[Bağlantı kapatıldı: {reason}]"
 #. Translators: Message announced by NVDA when the live voice conversation starts.
 #: addon\globalPlugins\visionAssistant\ai\live_session.py:837
 msgid "Live conversation started. You can speak now."
-msgstr "Canlı sohbeti başladı Şimdi konuşabilirsiniz."
+msgstr "Canlı sohbet başladı Şimdi konuşabilirsiniz."
 
 #. Translators: Prefix for the user's transcribed speech line in the Live Assistant history.
 #: addon\globalPlugins\visionAssistant\ai\live_session.py:910
@@ -1664,7 +1664,7 @@ msgstr "Yanıt, güvenlik filtreleri tarafından üretimin ortasında engellendi
 #: addon\globalPlugins\visionAssistant\ai\providers\gemini.py:700
 #: addon\globalPlugins\visionAssistant\ai\providers\gemini.py:714
 msgid "AI failed to provide a response. This might be due to safety filters or a temporary server issue."
-msgstr "yapay zeka yanıt veremedi. Bunun nedeni güvenlik filtreleri veya geçici bir sunucu sorunu olabilir."
+msgstr "yZ yanıt veremedi. Bunun nedeni güvenlik filtreleri veya geçici bir sunucu sorunu olabilir."
 
 #. Translators: Error shown when the response structure is unexpected or empty.
 #: addon\globalPlugins\visionAssistant\ai\providers\gemini.py:724
@@ -1790,7 +1790,7 @@ msgstr "Tüm API anahtarları başarısız oldu veya günlük kota tükendi."
 #: addon\globalPlugins\visionAssistant\ai\providers\openai.py:181
 #: addon\globalPlugins\visionAssistant\features\operator_captcha.py:378
 msgid "AI Error"
-msgstr "yapay zeka Hatası"
+msgstr "yZ Hata"
 
 #. Translators: Error message when speech-to-text fails.
 #: addon\globalPlugins\visionAssistant\ai\providers\openai.py:233
@@ -1905,7 +1905,7 @@ msgstr "Düşünüyor..."
 msgid "\n"
 "Processing...\n"
 msgstr "\n"
-"İşleniyor.\n"
+"İşleniyor...\n"
 
 #. Translators: Status when the AI is thinking in chat dialog
 #: addon\globalPlugins\visionAssistant\dialogs\chat_dialog.py:322
@@ -2196,7 +2196,7 @@ msgstr "Arka planda işleniyor..."
 #. Translators: Status when page failed to process and can be retried.
 #: addon\globalPlugins\visionAssistant\dialogs\document.py:887
 msgid "[Page not processed. Press Try Again to retry.]"
-msgstr "[Sayfa işlenemedi. Tekrar denemek için Tekrar Dene düğmesine basın.]"
+msgstr "[Sayfa işlenemedi. İşlemi yinelemek için Tekrar Dene düğmesine basın.]"
 
 #. Translators: Spoken message when switching pages
 #: addon\globalPlugins\visionAssistant\dialogs\document.py:902
@@ -4141,7 +4141,7 @@ msgstr "Başlangıçta güncellemeleri denetle"
 #. Translators: Checkbox to toggle markdown cleaning in chat windows
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:373
 msgid "Clean Markdown in Chat"
-msgstr "Sohbette Markdown'ı temizle"
+msgstr "Sohbette Temiz Markdown"
 
 #. Translators: Checkbox to save chat conversations in the History list
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:383
@@ -4947,7 +4947,7 @@ msgstr "--- Oturum sona erdi ---"
 #. Translators: Message announced by NVDA when the live voice conversation ends.
 #: addon\globalPlugins\visionAssistant\features\live_assistant.py:103
 msgid "Live conversation ended."
-msgstr "Canlı sohbeti sona erdi."
+msgstr "Canlı sohbet sona erdi."
 
 #. Translators: The webcam cannot be used while Live operator control is switched on.
 #: addon\globalPlugins\visionAssistant\features\live_assistant.py:322
@@ -5129,7 +5129,7 @@ msgstr "Bilinmeyen Yapay Zeka Hatası"
 #. Translators: Error shown when AI fails to find UI elements
 #: addon\globalPlugins\visionAssistant\features\operator_captcha.py:164
 msgid "AI failed to identify UI elements."
-msgstr "Yapay zeka, kullanıcı arayüz öğelerini tanımlayamadı."
+msgstr "YZ, kullanıcı arayüz öğelerini tanımlayamadı."
 
 #. Translators: Announcement when the AI Operator is manually stopped
 #: addon\globalPlugins\visionAssistant\features\operator_captcha.py:210

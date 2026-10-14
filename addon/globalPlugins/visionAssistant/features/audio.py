@@ -143,10 +143,17 @@ class AudioMixin:
 
 			if mode == "transcribe":
 				dictation_template = get_prompt_text("dictation_transcribe")
+				s_name = vision_config.get_lang_name("source_language")
+				is_auto = vision_config.is_auto_language("source_language")
 				p = apply_prompt_template(
 					dictation_template,
-					[("response_lang", vision_config.get_lang_name("ai_response_language"))],
+					[
+						("response_lang", vision_config.get_lang_name("ai_response_language")),
+						("source_lang", s_name),
+					],
 				)
+				if not is_auto and "{source_lang}" not in dictation_template:
+					p += f" The spoken language is {s_name}. Transcribe speech accurately in that language."
 			else:
 				translation_template = get_prompt_text("dictation_translate")
 
@@ -165,7 +172,11 @@ class AudioMixin:
 					],
 				)
 
-			res = AIHandler.call(p, attachments=[{"mime_type": "audio/wav", "data": audio_data}])
+			res = AIHandler.call(
+				p,
+				attachments=[{"mime_type": "audio/wav", "data": audio_data}],
+				task="stt" if mode == "transcribe" else "chat",
+			)
 
 			if res:
 				if is_ai_error(res):
@@ -313,7 +324,17 @@ class AudioMixin:
 			lang = vision_config.get_lang_name("ai_response_language")
 			if action_type == "transcribe":
 				audio_template = get_prompt_text("audio_transcription")
-				p = apply_prompt_template(audio_template, [("response_lang", lang)])
+				s_name = vision_config.get_lang_name("source_language")
+				is_auto = vision_config.is_auto_language("source_language")
+				p = apply_prompt_template(
+					audio_template,
+					[
+						("response_lang", lang),
+						("source_lang", s_name),
+					],
+				)
+				if not is_auto and "{source_lang}" not in audio_template:
+					p += f" The spoken language is {s_name}. Transcribe speech accurately in that language."
 			else:
 				audio_template = get_prompt_text("audio_translation")
 				target_lang = t_lang if t_lang else vision_config.get_lang_name("target_language")
@@ -336,7 +357,7 @@ class AudioMixin:
 			# Translators: Progress message spoken when the add-on starts taking a screenshot of the current focused object.
 			msg = _("Analyzing...")
 			core.callLater(0, self.report_status, msg)
-			res = AIHandler.call(p, attachments=att)
+			res = AIHandler.call(p, attachments=att, task="stt" if action_type == "transcribe" else "chat")
 
 			if res:
 				if is_ai_error(res):

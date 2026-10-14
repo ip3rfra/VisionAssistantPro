@@ -734,7 +734,16 @@ class VideoMixin:
 					intervals[:] = resume_state["intervals"]
 				if "source" in resume_state:
 					source = resume_state["source"]
-			else:
+
+			def get_compressed_local():
+				nonlocal local_path
+				if not local_path or not os.path.exists(local_path):
+					local_path = source.ensure_local(self, report, abort_check)
+					if prog_dlg and local_path:
+						prog_dlg.local_path = local_path
+				return local_path
+
+			if not resume_state:
 				if not source.prepare(report, abort_check):
 					# Translators: Error message shown when uploading a video file fails.
 					if not prog_dlg:
@@ -755,22 +764,21 @@ class VideoMixin:
 						keys = GeminiHandler._get_api_keys(task="video")
 						source_path = getattr(source, "path", None)
 						if keys and source_path and os.path.isfile(source_path):
-							cached_uri, cached_dur = GeminiHandler._get_cached_video_uri(source_path, keys[0])
+							w_idx = GeminiHandler._working_key_idx % len(keys)
+							cached_uri, cached_dur = GeminiHandler._get_cached_video_uri(source_path, keys[w_idx])
 							if cached_uri:
 								file_uri = cached_uri
 								duration_sec = cached_dur
+								current_key = keys[w_idx]
 								uri_from_cache = True
 					if not file_uri:
-						if not local_path or not os.path.exists(local_path):
-							local_path = source.ensure_local(self, report, abort_check)
-							if abort_check():
-								return
-							if not local_path:
-								if not prog_dlg:
-									self.current_status = _("Idle")
-								return
-							if prog_dlg:
-								prog_dlg.local_path = local_path
+						local_path = get_compressed_local()
+						if abort_check():
+							return
+						if not local_path:
+							if not prog_dlg:
+								self.current_status = _("Idle")
+							return
 
 						file_uri, duration_sec, current_key = GeminiHandler.upload_and_get_duration(
 							local_path,
@@ -848,6 +856,7 @@ class VideoMixin:
 					current_key,
 					source.is_direct,
 					cache_path=getattr(source, "path", None),
+					ensure_local_cb=get_compressed_local,
 				)
 				log.debug(f"Character extraction RAW response:\n{char_res}")
 				if prog_dlg:
@@ -855,6 +864,8 @@ class VideoMixin:
 					prog_dlg.current_key = current_key
 
 				if not char_res or is_ai_error(char_res):
+					if abort_check():
+						return
 					char_err = (
 						ai_error_message(char_res)
 						if char_res and is_ai_error(char_res)
@@ -888,16 +899,13 @@ class VideoMixin:
 						file_uri = None
 						current_key = None
 						uri_from_cache = False
-						if not local_path or not os.path.exists(local_path):
-							local_path = source.ensure_local(self, report, abort_check)
-							if abort_check():
-								return
-							if not local_path:
-								if not prog_dlg:
-									self.current_status = _("Idle")
-								return
-							if prog_dlg:
-								prog_dlg.local_path = local_path
+						local_path = get_compressed_local()
+						if abort_check():
+							return
+						if not local_path:
+							if not prog_dlg:
+								self.current_status = _("Idle")
+							return
 						file_uri, duration_sec, current_key = GeminiHandler.upload_and_get_duration(
 							local_path,
 							report_callback=report,
@@ -932,11 +940,14 @@ class VideoMixin:
 							current_key,
 							source.is_direct,
 							cache_path=getattr(source, "path", None),
+							ensure_local_cb=get_compressed_local,
 						)
 						if prog_dlg:
 							prog_dlg.file_uri = file_uri
 							prog_dlg.current_key = current_key
 						if not char_res or is_ai_error(char_res):
+							if abort_check():
+								return
 							char_err2 = (
 								ai_error_message(char_res)
 								if char_res and is_ai_error(char_res)
@@ -1169,6 +1180,7 @@ class VideoMixin:
 					source.is_direct,
 					validator=validator,
 					cache_path=getattr(source, "path", None),
+					ensure_local_cb=get_compressed_local,
 				)
 				if prog_dlg:
 					prog_dlg.file_uri = file_uri
@@ -1177,6 +1189,8 @@ class VideoMixin:
 				log.debug(f"Segment {seg_idx + 1} of {len(intervals)} RAW response:\n{seg_res}")
 
 				if not seg_res or is_ai_error(seg_res):
+					if abort_check():
+						return
 					# Translators: Error message reported when video segment analysis fails after multiple retries due to network issues.
 					conn_failed_msg = _("Connection failed after retries.")
 					report_err = (

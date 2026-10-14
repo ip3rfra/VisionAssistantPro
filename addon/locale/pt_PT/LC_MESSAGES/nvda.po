@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: VisionAssistantPro\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
 "POT-Creation-Date: 2026-10-02 15:54+0330\n"
-"PO-Revision-Date: 2026-10-06 11:52\n"
+"PO-Revision-Date: 2026-10-07 12:04\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -1067,12 +1067,12 @@ msgstr "Estilo de relatório detalhado (para o Observador de ecrã e da câmara 
 #. Translators: Description for the [lang:code] variable in Variables Guide.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1452
 msgid "Target language code (e.g. [lang:fa], [lang:en])"
-msgstr ""
+msgstr "Código do idioma de destino (ex.: [lang:fa], [lang:en])"
 
 #. Translators: Script description for 'Starts or ends a live voice conversation with the AI Operator in control of the computer.' in Input Gestures dialog.
 #: addon\globalPlugins\visionAssistant\__init__.py:163
 msgid "Starts or ends a live voice conversation with the AI Operator in control of the computer."
-msgstr ""
+msgstr "Inicia ou termina uma conversa de voz em direto com o Operador de IA no controlo do computador."
 
 #. Translators: Error message shown when uploading a video file fails.
 #. Translators: Status when no operation is running.
@@ -1152,7 +1152,7 @@ msgstr "Leitor de &documentos..."
 #. Translators: Menu item for Direct Chat dialog
 #: addon\globalPlugins\visionAssistant\__init__.py:205
 msgid "Direct &Chat..."
-msgstr ""
+msgstr "&Conversa direta..."
 
 #. Translators: Menu item for media transcription and dubbing
 #: addon\globalPlugins\visionAssistant\__init__.py:209
@@ -1167,22 +1167,22 @@ msgstr "Analisar &vídeo..."
 #. Translators: Menu item to start or stop the Live Assistant
 #: addon\globalPlugins\visionAssistant\__init__.py:219
 msgid "&Live Assistant"
-msgstr ""
+msgstr "&Assistente em Direto"
 
 #. Translators: Menu item to start or stop the live voice conversation with the AI Operator
 #: addon\globalPlugins\visionAssistant\__init__.py:223
 msgid "AI &Operator (Live)"
-msgstr ""
+msgstr "&Operador de IA (Em direto)"
 
 #. Translators: Menu item to start or stop the Ambient Observer background assistant
 #: addon\globalPlugins\visionAssistant\__init__.py:227
 msgid "A&mbient Observer"
-msgstr ""
+msgstr "Observador A&mbiente"
 
 #. Translators: Menu item for the Gemini API keys manager
 #: addon\globalPlugins\visionAssistant\__init__.py:231
 msgid "Gemini API Key &Manager..."
-msgstr ""
+msgstr "Chave e Gestor da API Gemini..."
 
 #. Translators: Menu item to open settings
 #: addon\globalPlugins\visionAssistant\__init__.py:237
@@ -1374,7 +1374,7 @@ msgstr "Abre a janela de histórico para rever conversas e documentos anteriores
 #: addon\globalPlugins\visionAssistant\__init__.py:380
 #: addon\globalPlugins\visionAssistant\__init__.py:454
 msgid "Starts or stops the Ambient Observer background assistant."
-msgstr ""
+msgstr "Inicia ou pára o assistente de segundo plano do Ambient Observer."
 
 #. Translators: Command layer help description for Control+L (Live Assistant).
 #: addon\globalPlugins\visionAssistant\__init__.py:382
@@ -1393,7 +1393,7 @@ msgstr "Abre o diálogo de configurações do Vision Assistant."
 #: addon\globalPlugins\visionAssistant\__init__.py:387
 #: addon\globalPlugins\visionAssistant\__init__.py:1094
 msgid "Opens the Gemini API key manager when the Gemini provider is active."
-msgstr ""
+msgstr "Abre o gestor de chaves da API Gemini quando o fornecedor Gemini está ativo."
 
 #. Translators: Command layer help description for Alt+Q (exhausted API keys report).
 #. Translators: Script description for 'Reports the number of Gemini API keys that have exceeded their daily quota and their reset time.' in Input Gestures dialog.
@@ -1430,20 +1430,20 @@ msgstr "O Assistente em Tempo Real só é suportado com o fornecedor Gemini (ou 
 #: addon\globalPlugins\visionAssistant\__init__.py:471
 #: addon\globalPlugins\visionAssistant\__init__.py:579
 msgid "The Ambient Observer is only supported with the Gemini provider (or a Custom provider with API type set to Gemini)."
-msgstr ""
+msgstr "O Ambient Observer só é compatível com o fornecedor Gemini (ou um fornecedor personalizado com um tipo de API definido como Gemini)."
 
 #. Translators: Message announced when the Ambient Observer starts. {mode} is the name of the selected observer mode.
 #: addon\globalPlugins\visionAssistant\__init__.py:524
 #, python-brace-format
 msgid "Observer started: {mode}"
-msgstr ""
+msgstr "Observador iniciado: {mode}"
 
 #. Translators: Message announced when the Ambient Observer is stopped.
 #. Translators: Message announced when the Ambient Observer session ends on its own.
 #: addon\globalPlugins\visionAssistant\__init__.py:544
 #: addon\globalPlugins\visionAssistant\__init__.py:555
 msgid "Observer stopped."
-msgstr ""
+msgstr "Observador parado."
 
 #. Translators: Message reported when calling the update command
 #: addon\globalPlugins\visionAssistant\__init__.py:739
@@ -1534,7 +1534,7 @@ msgstr "Executa o comando personalizado \"{name}\"."
 #. Translators: Error message shown when documentation file cannot be found.
 #: addon\globalPlugins\visionAssistant\__init__.py:1067
 msgid "Documentation file not found."
-msgstr ""
+msgstr "Ficheiro de documentação não encontrado."
 
 #. Translators: Error message when TTS is not supported by the provider
 #: addon\globalPlugins\visionAssistant\ai\core.py:519
@@ -1566,7 +1566,7 @@ msgstr "Acesso negado (HTTP 403 Proibido). Verifique o seu proxy/VPN ou a chave 
 #: addon\globalPlugins\visionAssistant\ai\live_session.py:403
 #: addon\globalPlugins\visionAssistant\features\audio.py:482
 msgid "The AI service is currently busy. Please try again in a moment."
-msgstr ""
+msgstr "O serviço de IA está atualmente ocupado. Tente novamente dentro de alguns instantes."
 
 #. Translators: Error message announced when connecting to the Live service fails. {error} is replaced with the technical connection error details.
 #: addon\globalPlugins\visionAssistant\ai\live_session.py:412
@@ -1577,7 +1577,7 @@ msgstr "Não foi possível ligar ao serviço em direto: {error}"
 #. Translators: Error shown when the system audio (loopback) cannot be captured for the live session.
 #: addon\globalPlugins\visionAssistant\ai\live_session.py:519
 msgid "Could not capture the system audio."
-msgstr ""
+msgstr "Não foi possível capturar o áudio do sistema."
 
 #. Translators: Error shown when the microphone cannot be opened for the live session.
 #: addon\globalPlugins\visionAssistant\ai\live_session.py:522
@@ -2037,7 +2037,7 @@ msgstr "Descrever imagens durante o OCR"
 #. Translators: Checkbox in PDF page range dialog to compress pages before uploading to AI.
 #: addon\globalPlugins\visionAssistant\dialogs\document.py:348
 msgid "&Compress PDF pages before processing"
-msgstr ""
+msgstr "&Comprimir as páginas do PDF antes de processar"
 
 #. Translators: Button to start processing
 #. Translators: Button to start the Ambient Observer with the selected options.
@@ -2196,7 +2196,7 @@ msgstr "A processar em segundo plano…"
 #. Translators: Status when page failed to process and can be retried.
 #: addon\globalPlugins\visionAssistant\dialogs\document.py:887
 msgid "[Page not processed. Press Try Again to retry.]"
-msgstr ""
+msgstr "[Página não processada. Prima Tentar novamente para repetir.]"
 
 #. Translators: Spoken message when switching pages
 #: addon\globalPlugins\visionAssistant\dialogs\document.py:902
@@ -2301,7 +2301,7 @@ msgstr "A tentar novamente as páginas com falha..."
 #: addon\globalPlugins\visionAssistant\dialogs\document.py:1220
 #, python-brace-format
 msgid "Processing finished with {failed} of {total} page(s) failed. Press Try Again to retry."
-msgstr ""
+msgstr "O processamento terminou, mas {failed} de {total} página(s) falharam. Prima Tentar novamente para repetir."
 
 #. Translators: Success message shown when all batches of the document have been processed.
 #: addon\globalPlugins\visionAssistant\dialogs\document.py:1232
@@ -2344,13 +2344,14 @@ msgstr "Nenhum texto para ler."
 #, python-brace-format
 msgid "There are {missing} pages out of {total} that are not processed or failed.\n"
 "Do you want to continue anyway?"
-msgstr ""
+msgstr "Existem {missing} páginas de {total} que não foram processadas ou falharam.\\n\n"
+"Deseja continuar mesmo assim?"
 
 #. Translators: Title of the confirmation dialog when saving an incomplete document.
 #: addon\globalPlugins\visionAssistant\dialogs\document.py:1371
 #: addon\globalPlugins\visionAssistant\dialogs\document.py:1584
 msgid "Incomplete Document"
-msgstr ""
+msgstr "Documento incompleto"
 
 #. Translators: Message while gathering text
 #: addon\globalPlugins\visionAssistant\dialogs\document.py:1379
@@ -2454,17 +2455,17 @@ msgstr "Erro ao guardar: {error}"
 #: addon\globalPlugins\visionAssistant\dialogs\donate.py:31
 #: addon\globalPlugins\visionAssistant\utils\announcements.py:50
 msgid "&Message"
-msgstr ""
+msgstr "&Mensagem"
 
 #. Translators: Button to copy the support email for arranging PayPal or bank transfer (IBAN/SEPA) donations.
 #: addon\globalPlugins\visionAssistant\dialogs\donate.py:45
 msgid "Copy Support Email (PayPal / Bank Transfer)"
-msgstr ""
+msgstr "Copiar o e-mail de suporte (PayPal / Transferência bancária)"
 
 #. Translators: Button to copy the Gram (TON) cryptocurrency wallet address.
 #: addon\globalPlugins\visionAssistant\dialogs\donate.py:50
 msgid "Copy Gram (TON) Address"
-msgstr ""
+msgstr "Copiar o endereço Gram (TON)"
 
 #. Translators: Button to copy the TRON cryptocurrency wallet address.
 #: addon\globalPlugins\visionAssistant\dialogs\donate.py:55
@@ -2474,7 +2475,7 @@ msgstr "Copiar endereço TRON"
 #. Translators: Button to open the website to purchase a Rewarble voucher.
 #: addon\globalPlugins\visionAssistant\dialogs\donate.py:60
 msgid "Buy Rewarble Voucher (Worldwide)"
-msgstr ""
+msgstr "Comprar voucher Rewarble (em todo o mundo)"
 
 #. Translators: Button to open the website to purchase an Apple Gift Card (US Region).
 #: addon\globalPlugins\visionAssistant\dialogs\donate.py:65
@@ -2492,23 +2493,23 @@ msgstr "&Fechar"
 #: addon\globalPlugins\visionAssistant\dialogs\donate.py:85
 #, python-brace-format
 msgid "Support email ({email}) copied to clipboard. Please reach out to receive PayPal or IBAN bank transfer details, or to send voucher and gift card codes. Thank you!"
-msgstr ""
+msgstr "O e-mail de suporte ({email}) foi copiado para a área de transferência. Contacte-nos para obter os dados de pagamento por PayPal ou transferência bancária através de IBAN, ou para enviar códigos de vouchers e cartões-presente. Obrigado!"
 
 #. Translators: Success message shown after an address is copied to the clipboard.
 #: addon\globalPlugins\visionAssistant\dialogs\donate.py:95
 msgid "Gram (TON) address copied to clipboard! Your support is greatly appreciated!"
-msgstr ""
+msgstr "O endereço Gram (TON) foi copiado para a área de transferência! O seu apoio é muito apreciado!"
 
 #. Translators: Success message shown after an address is copied to the clipboard.
 #: addon\globalPlugins\visionAssistant\dialogs\donate.py:104
 msgid "TRON address copied to clipboard! Your support is greatly appreciated!"
-msgstr ""
+msgstr "O endereço TRON foi copiado para a área de transferência! O seu apoio é muito apreciado!"
 
 #. Translators: Message shown after the Rewarble website is opened, explaining how to find partners using screen reader heading navigation.
 #: addon\globalPlugins\visionAssistant\dialogs\donate.py:115
 #, python-brace-format
 msgid "The Rewarble website has been opened. In your browser, press 'H' to navigate to 'Top partners', choose a partner to purchase a voucher, and email the code to: {email} (copied to clipboard)."
-msgstr ""
+msgstr "O site da Rewarble foi aberto No seu navegador, prima 'H' para navegar até «Principais parceiros», escolha um parceiro para comprar um voucher e envie o código por e-mail para: {email} (copiado para a área de transferência)."
 
 #. Translators: Message shown after the gift card website is opened.
 #: addon\globalPlugins\visionAssistant\dialogs\donate.py:126
@@ -2535,359 +2536,376 @@ msgid "{name} is a project born from a personal vision to bridge the gap between
 "3. Vouchers & Gift Cards:\n"
 "You can purchase a Rewarble Voucher (Worldwide) or an Apple Gift Card (US Region) and email the code to: {email}.\n\n"
 "If this assistant has brought value to your daily life, your support is a wonderful way to show appreciation for the original work and the dedication behind it. Thank you for being part of this mission!"
-msgstr ""
+msgstr "{name} é um projeto nascido de uma visão pessoal para colmatar a lacuna entre a IA e a verdadeira acessibilidade. O conceito inicial e muitas das funcionalidades de que desfruta foram criados a partir das minhas próprias ideias para resolver desafios reais e proporcionar um novo nível de independência digital.\\n\n"
+"\\n\n"
+"Tenho muito orgulho em pensar em cada detalhe e transformar tanto as minhas próprias inovações como os seus valiosos pedidos em realidade. Garantir que esta ferramenta continua rápida, estável e em constante evolução é uma jornada criativa contínua que me apaixona.\\n\n"
+"\\n\n"
+"Nota importante: Devido a restrições bancárias regionais, os botões de pagamento automático (como PayPal ou Stripe diretos) não podem ser incorporados diretamente no complemento. No entanto, as doações podem ser feitas de várias formas convenientes (por ordem de preferência):\\n\n"
+"\\n\n"
+"1. PayPal ou transferência bancária (IBAN / SEPA) [Mais recomendado]:\\n\n"
+"Se desejar fazer uma doação através do PayPal ou de uma transferência bancária direta, envie-me um e-mail para: {email}. Terei todo o gosto em fornecer-lhe os dados de transferência mais convenientes.\\n\n"
+"\\n\n"
+"2. Criptomoeda:\\n\n"
+"Pode enviar doações instantâneas através das redes Gram (TON) ou TRON utilizando os botões abaixo.\\n\n"
+"\\n\n"
+"3. Vouchers e cartões-presente:\\n\n"
+"Pode comprar um voucher Rewarble (em todo o mundo) ou um cartão-presente Apple (região dos EUA) e enviar o código por e-mail para: {email}.\\n\n"
+"\\n\n"
+"Se este assistente trouxe valor à sua vida quotidiana, o seu apoio é uma excelente forma de demonstrar apreço pelo trabalho original e pela dedicação que lhe estão subjacentes. Obrigado por fazer parte desta missão!"
 
 #. Translators: Error shown when the Gemini API key manager is used while another provider is selected, {name} is the name of the add-on.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:24
 #, python-brace-format
 msgid "The Gemini API key manager only works with the Google Gemini provider. Change the provider in the {name} settings first."
-msgstr ""
+msgstr "O gestor de chaves da API do Gemini só funciona com o fornecedor Google Gemini. Altere primeiro o fornecedor nas definições de {name}."
 
 #. Translators: Title of the dialog that creates and manages Gemini API keys with the user's Google account, {name} is the name of the add-on.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:31
 #, python-brace-format
 msgid "{name} - Gemini API Key Manager"
-msgstr ""
+msgstr "{name} - Gestor de chaves da API do Gemini"
 
 #. Translators: Title of the account section in the Gemini API keys dialog.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:69
 msgid "Google Account"
-msgstr ""
+msgstr "Conta Google"
 
 #. Translators: Button that starts the Google sign-in process and opens the browser.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:74
 msgid "&Sign In and Open Browser..."
-msgstr ""
+msgstr "&Iniciar sessão e abrir o navegador..."
 
 #. Translators: Button that signs out of the Google account used for creating API keys.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:77
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:323
 msgid "Sign &Out"
-msgstr ""
+msgstr "Terminar &sessão"
 
 #. Translators: Button that cancels the currently running operation.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:80
 msgid "&Cancel Operation"
-msgstr ""
+msgstr "&Cancelar operação"
 
 #. Translators: Title of the box grouping Google Cloud project controls.
 #. Translators: Accessible name for the list of Google Cloud projects.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:88
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:96
 msgid "Projects"
-msgstr ""
+msgstr "Projetos"
 
 #. Translators: Label showing how many Google Cloud projects were loaded and how many have a saved key.
 #. Translators: Label above the project list before the projects are loaded.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:91
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:338
 msgid "Projects: not loaded"
-msgstr ""
+msgstr "Projetos: não carregados"
 
 #. Translators: Button that reloads the list of Google Cloud projects.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:103
 msgid "&Refresh Projects"
-msgstr ""
+msgstr "&Atualizar projetos"
 
 #. Translators: Button that creates a new Google Cloud project together with a Gemini API key.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:106
 msgid "&New Project and Key"
-msgstr ""
+msgstr "&Novo projeto e chave"
 
 #. Translators: Button that creates a Gemini API key on the selected project.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:109
 msgid "Create &Key for Selected Project"
-msgstr ""
+msgstr "Criar &chave para o projeto selecionado"
 
 #. Translators: Title of the box grouping API key controls.
 #. Translators: Accessible name for the list of API keys.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:117
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:126
 msgid "API Keys"
-msgstr ""
+msgstr "Chaves da API"
 
 #. Translators: Label above the list of API keys for the selected Google Cloud project.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:121
 msgid "API Keys:"
-msgstr ""
+msgstr "Chaves da API:"
 
 #. Translators: Button that copies the selected API key to the clipboard.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:133
 msgid "&Copy Selected Key"
-msgstr ""
+msgstr "&Copiar chave selecionada"
 
 #. Translators: Button that copies the most recently created API key to the clipboard.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:136
 msgid "Copy &Last Created Key"
-msgstr ""
+msgstr "Copiar a &última chave criada"
 
 #. Translators: Button that adds the available API key to the add-on's own key list.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:139
 #, python-brace-format
 msgid "&Use in {name}"
-msgstr ""
+msgstr "&Utilizar no {name}"
 
 #. Translators: Button that deletes the selected API key.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:146
 msgid "&Delete Key"
-msgstr ""
+msgstr "&Eliminar chave"
 
 #. Translators: Button that exports saved API keys to a file.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:149
 msgid "&Export Saved Keys..."
-msgstr ""
+msgstr "&Exportar chaves guardadas..."
 
 #. Translators: Message shown when the user starts a new operation while another one is still running.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:241
 msgid "Please wait for the current operation to finish."
-msgstr ""
+msgstr "Aguarde que a operação atual termine."
 
 #. Translators: Suffix added to a project in the list when it has exactly 1 saved API key.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:302
 msgid "1 key"
-msgstr ""
+msgstr "1 chave"
 
 #. Translators: Suffix added to a project in the list when it has multiple saved API keys, {count} is the key count.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:305
 #, python-brace-format
 msgid "{count} keys"
-msgstr ""
+msgstr "{count} chaves"
 
 #. Translators: Suffix added to a project in the list when it has no saved API keys.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:308
 msgid "no keys"
-msgstr ""
+msgstr "nenhuma chave"
 
 #. Translators: Label of the button that signs out, showing the account that is currently signed in, {account} is the account email address.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:320
 #, python-brace-format
 msgid "Sign &Out ({account})"
-msgstr ""
+msgstr "Terminar &sessão ({account})"
 
 #. Translators: Label above the project list while the projects are being loaded.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:327
 msgid "Projects: checking..."
-msgstr ""
+msgstr "Projetos: a verificar..."
 
 #. Translators: Label above the project list showing how many projects were loaded and how many have keys, {total} and {saved} are numbers.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:331
 #, python-brace-format
 msgid "Projects: {total} ({saved} with keys)"
-msgstr ""
+msgstr "Projetos: {total} ({saved} com chaves)"
 
 #. Translators: Label above the project list when the account has no Google Cloud projects.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:335
 msgid "Projects: none"
-msgstr ""
+msgstr "Projetos: nenhum"
 
 #. Translators: Label above the API keys list when no project is selected.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:362
 msgid "API Keys: no project selected"
-msgstr ""
+msgstr "Chaves da API: nenhum projeto selecionado"
 
 #. Translators: Label above the API keys list when the selected project has no saved keys.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:365
 msgid "API Keys: none"
-msgstr ""
+msgstr "Chaves da API: nenhuma"
 
 #. Translators: Label above the API keys list when the selected project has 1 key.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:368
 msgid "API Keys (1 key):"
-msgstr ""
+msgstr "Chaves da API (1 chave):"
 
 #. Translators: Label above the API keys list when the selected project has multiple keys, {count} is the key count.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:371
 #, python-brace-format
 msgid "API Keys ({count} keys):"
-msgstr ""
+msgstr "Chaves da API ({count} chaves):"
 
 #. Translators: Spoken message shown when no Google account is signed in.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:454
 msgid "Not signed in. Press Sign In and Open Browser."
-msgstr ""
+msgstr "Não iniciou sessão. Prima Iniciar sessão e abrir o navegador."
 
 #. Translators: Spoken summary shown after loading the projects, {count} is the project count and {saved} is how many have keys.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:458
 #, python-brace-format
 msgid "Found {count} project(s), {saved} with keys."
-msgstr ""
+msgstr "Foram encontrados {count} projeto(s), {saved} com chaves."
 
 #. Translators: Spoken message shown when the signed-in account has no Google Cloud projects.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:464
 msgid "No projects found. Press New Project and Key to create one."
-msgstr ""
+msgstr "Não foram encontrados projetos. Prima Novo projeto e chave para criar um."
 
 #. Translators: Message shown when the user asks to cancel the running Gemini key operation.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:482
 msgid "Cancelling..."
-msgstr ""
+msgstr "A cancelar..."
 
 #. Translators: Title of the confirmation dialog shown before signing out of Google.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:496
 msgid "Sign Out"
-msgstr ""
+msgstr "Terminar sessão"
 
 #. Translators: Confirmation message shown before removing the stored Google credentials.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:498
 msgid "Remove the stored Google credentials used for creating API keys?"
-msgstr ""
+msgstr "Remover as credenciais Google guardadas utilizadas para criar chaves da API?"
 
 #. Translators: Error message shown when the sign-out did not take effect.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:513
 msgid "Sign out did not complete. Please try again."
-msgstr ""
+msgstr "Não foi possível terminar a sessão. Tente novamente."
 
 #. Translators: Spoken message confirming that the user signed out of Google.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:522
 msgid "Signed out."
-msgstr ""
+msgstr "Sessão terminada."
 
 #. Translators: Error message shown when no project is selected in the Gemini API keys dialog.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:528
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:618
 msgid "Select a project first."
-msgstr ""
+msgstr "Selecione primeiro um projeto."
 
 #. Translators: Prompt message asking for a name for the new API key.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:531
 msgid "Name for the new API key:"
-msgstr ""
+msgstr "Nome da nova chave da API:"
 
 #. Translators: Title of the dialog that asks for a name for the new API key.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:533
 msgid "Create API Key"
-msgstr ""
+msgstr "Criar chave da API"
 
 #. Translators: Prompt message asking for a name for the new Google Cloud project.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:555
 msgid "Name for the new project:"
-msgstr ""
+msgstr "Nome do novo projeto:"
 
 #. Translators: Title of the dialog that asks for a name for the new Google Cloud project.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:557
 msgid "Create Project and Key"
-msgstr ""
+msgstr "Criar projeto e chave"
 
 #. Translators: Spoken message confirming that the new API key was created and copied to the clipboard.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:593
 msgid "API key created and copied to the clipboard."
-msgstr ""
+msgstr "Chave da API criada e copiada para a área de transferência."
 
 #. Translators: Spoken message confirming that the new API key was created.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:596
 msgid "API key created."
-msgstr ""
+msgstr "Chave da API criada."
 
 #. Translators: Title of the dialog that asks whether to add the new API key to the add-on settings.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:601
 msgid "API Key Created"
-msgstr ""
+msgstr "Chave da API criada"
 
 #. Translators: Confirmation message shown after creating an API key, asking whether to add it to the add-on's API key list.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:603
 #, python-brace-format
 msgid "Add this key to the {name} settings so the add-on can use it?"
-msgstr ""
+msgstr "Adicionar esta chave às definições do {name} para que o complemento a possa utilizar?"
 
 #. Translators: Spoken message confirming that the API key was added to the add-on's API key list.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:609
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:712
 #, python-brace-format
 msgid "The key was added to the {name} settings."
-msgstr ""
+msgstr "A chave foi adicionada às definições do {name}."
 
 #. Translators: Spoken message shown when the API key is already present in the add-on's API key list.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:612
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:715
 #, python-brace-format
 msgid "This key is already in the {name} settings."
-msgstr ""
+msgstr "Esta chave já se encontra nas definições do {name}."
 
 #. Translators: Error message shown when no API key is selected before attempting deletion.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:623
 msgid "Select an API key to delete first."
-msgstr ""
+msgstr "Selecione primeiro uma chave da API para eliminar."
 
 #. Translators: Title of the confirmation dialog when deleting an API key.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:628
 msgid "Delete API Key"
-msgstr ""
+msgstr "Eliminar chave da API"
 
 #. Translators: Confirmation message before deleting an API key, {name} is the key name and {project} is the project id.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:631
 #, python-brace-format
 msgid "Delete the API key '{name}' on project {project}?\n\n"
 "This cannot be undone."
-msgstr ""
+msgstr "Eliminar a chave da API '{name}' no projeto {project}?\\n\n"
+"\\n\n"
+"Esta ação não pode ser anulada."
 
 #. Translators: Spoken message shown when a deleted API key was also removed from the add-on's API key list, {name} is the add-on name.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:677
 #, python-brace-format
 msgid "The key was also removed from the {name} settings."
-msgstr ""
+msgstr "A chave também foi removida das definições do {name}."
 
 #. Translators: Spoken message confirming that an API key was deleted, {name} is the key name.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:685
 #, python-brace-format
 msgid "The API key '{name}' was deleted."
-msgstr ""
+msgstr "A chave da API '{name}' foi eliminada."
 
 #. Translators: Spoken message confirming that the API key of the selected project was copied to the clipboard.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:693
 msgid "API key for the selected project copied to the clipboard."
-msgstr ""
+msgstr "A chave da API do projeto selecionado foi copiada para a área de transferência."
 
 #. Translators: Error message shown when copying an API key to the clipboard fails.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:696
 msgid "Could not copy the key to the clipboard."
-msgstr ""
+msgstr "Não foi possível copiar a chave para a área de transferência."
 
 #. Translators: Spoken message confirming that the last created API key was copied to the clipboard.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:703
 msgid "API key copied to the clipboard."
-msgstr ""
+msgstr "Chave da API copiada para a área de transferência."
 
 #. Translators: Error message shown when trying to export keys but no keys are saved.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:721
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:790
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:817
 msgid "There are no saved API keys to export."
-msgstr ""
+msgstr "Não existem chaves da API guardadas para exportar."
 
 #. Translators: Export option to export API keys with project names and key labels into a CSV file.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:725
 msgid "CSV file (.csv) - Full with project names"
-msgstr ""
+msgstr "Ficheiro CSV (.csv) - Completo com nomes dos projetos"
 
 #. Translators: Export option to export only the API keys into a text file, one key per line.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:727
 msgid "Text file (.txt) - Keys only (one per line)"
-msgstr ""
+msgstr "Ficheiro de texto (.txt) - Apenas as chaves (uma por linha)"
 
 #. Translators: Message asking the user which export format they want to use for saved keys.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:735
 msgid "Select the export format:"
-msgstr ""
+msgstr "Selecione o formato de exportação:"
 
 #. Translators: Dialog title for selecting the export format for Gemini API keys.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:737
 msgid "Export Format"
-msgstr ""
+msgstr "Formato de exportação"
 
 #. Translators: Title of the save file dialog for exported Gemini API keys.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:756
 msgid "Export Saved Keys to CSV"
-msgstr ""
+msgstr "Exportar chaves guardadas para CSV"
 
 #. Translators: Title of the save file dialog for exported Gemini API keys as text file.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:762
 msgid "Export Saved Keys to Text"
-msgstr ""
+msgstr "Exportar chaves guardadas para texto"
 
 #. Translators: Spoken message confirming that the API keys were exported.
 #: addon\globalPlugins\visionAssistant\dialogs\gemini_keys.py:786
 msgid "Saved keys exported successfully."
-msgstr ""
+msgstr "As chaves guardadas foram exportadas com sucesso."
 
 #. Translators: Title of the dialog shown when deleting a document from history.
 #: addon\globalPlugins\visionAssistant\dialogs\history_dialog.py:47
@@ -3049,7 +3067,7 @@ msgstr "&Profundidade de Pensamento:"
 #. Translators: Label for Audio Output Device selection in the Live Assistant window.
 #: addon\globalPlugins\visionAssistant\dialogs\live_assistant.py:108
 msgid "&Audio Device:"
-msgstr ""
+msgstr "&Dispositivo de áudio:"
 
 #. Translators: Checkbox in the Live Assistant window to enable push-to-talk mode.
 #: addon\globalPlugins\visionAssistant\dialogs\live_assistant.py:120
@@ -3071,7 +3089,7 @@ msgstr "Definições de &privacidade da câmara..."
 #. Translators: Button cancelling the Live Assistant's current computer operation without ending the conversation.
 #: addon\globalPlugins\visionAssistant\dialogs\live_assistant.py:150
 msgid "Stop operator action"
-msgstr ""
+msgstr "Parar ação do operador"
 
 #. Translators: Button that ends the live voice conversation.
 #: addon\globalPlugins\visionAssistant\dialogs\live_assistant.py:160
@@ -3109,7 +3127,7 @@ msgstr "Usar &câmara web (ffmpeg necessário)"
 #: addon\globalPlugins\visionAssistant\dialogs\live_assistant.py:330
 #: addon\globalPlugins\visionAssistant\dialogs\live_assistant.py:333
 msgid "Use &Webcam (not available with operator control)"
-msgstr ""
+msgstr "Utilizar a &Webcam (não disponível com controlo do operador)"
 
 #. Translators: Label for selecting which video device is used for webcam frames in the Live Assistant window.
 #: addon\globalPlugins\visionAssistant\dialogs\live_assistant.py:374
@@ -3143,45 +3161,45 @@ msgstr "Origem:"
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:122
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:505
 msgid "Observer Mode:"
-msgstr ""
+msgstr "Modo de observador:"
 
 #. Translators: Label for choosing where the Ambient Observer takes the audio it listens to from.
 #. Translators: Label for selecting the audio source used by the Ambient Observer.
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:140
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:521
 msgid "Audio Source:"
-msgstr ""
+msgstr "Fonte de áudio:"
 
 #. Translators: Label for the optional description of what the user is doing while observing the screen or webcam.
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:151
 msgid "About what I am doing:"
-msgstr ""
+msgstr "Sobre o que estou a fazer:"
 
 #. Translators: Label for selecting how detailed the Ambient Observer reports are.
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:173
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:537
 msgid "Reporting Style:"
-msgstr ""
+msgstr "Estilo de relatório:"
 
 #. Translators: Checkbox to enable Push to Talk for the webcam Live Assistant session started by the observer.
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:186
 msgid "Ask questions with Push to Talk"
-msgstr ""
+msgstr "Fazer perguntas com Premir para falar"
 
 #. Translators: Hint shown in the Ambient Observer start dialog for the webcam mode.
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:248
 msgid "The Live Assistant window opens with the webcam, so you can ask questions at any time."
-msgstr ""
+msgstr "A janela do Assistente em direto é aberta com a webcam, para que possa fazer perguntas a qualquer momento."
 
 #. Translators: Hint shown in the Ambient Observer start dialog for the audio translation mode.
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:251
 msgid "Translates continuously what the selected audio source hears."
-msgstr ""
+msgstr "Traduz continuamente o que a fonte de áudio selecionada capta."
 
 #. Translators: Hint shown in the Ambient Observer start dialog for the screen watching mode.
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:253
 msgid "Reports screen changes automatically, without you asking."
-msgstr ""
+msgstr "Comunica automaticamente as alterações no ecrã, sem que tenha de perguntar."
 
 #. Translators: Title of the character name dialog.
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:284
@@ -3677,7 +3695,7 @@ msgstr "Tecla de atalho (opcional): prima as teclas para gravar, por exemplo Ctr
 #. Translators: Label for the feedback behavior choice of a custom prompt.
 #: addon\globalPlugins\visionAssistant\dialogs\prompt_manager_dialog.py:68
 msgid "Feedback behavior:"
-msgstr ""
+msgstr "Comportamento do feedback:"
 
 #. Translators: Label for prompt text input field.
 #: addon\globalPlugins\visionAssistant\dialogs\prompt_manager_dialog.py:84
@@ -3755,7 +3773,7 @@ msgstr "As alterações são aplicadas apenas quando premir OK."
 #. Translators: Label for the filter field above the default prompts list in the Prompt Manager.
 #: addon\globalPlugins\visionAssistant\dialogs\prompt_manager_dialog.py:351
 msgid "Filter:"
-msgstr ""
+msgstr "Filtro:"
 
 #. Translators: Button label to reset currently selected default prompt.
 #: addon\globalPlugins\visionAssistant\dialogs\prompt_manager_dialog.py:370
@@ -3775,7 +3793,7 @@ msgstr "Aplicar ao Selecionado"
 #. Translators: Option in the Prompt Manager filter list that shows prompts from every section.
 #: addon\globalPlugins\visionAssistant\dialogs\prompt_manager_dialog.py:405
 msgid "All"
-msgstr ""
+msgstr "Todos"
 
 #. Translators: Button label for adding a custom prompt.
 #: addon\globalPlugins\visionAssistant\dialogs\prompt_manager_dialog.py:464
@@ -4054,7 +4072,7 @@ msgstr "Obter modelos"
 #. Translators: Button to open the Gemini API keys manager that creates keys with the user's Google account
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:267
 msgid "Get a Gemini API Key..."
-msgstr ""
+msgstr "Obter uma chave da API do Gemini..."
 
 #. Translators: Label for AI Model selection choice box
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:271
@@ -4100,7 +4118,7 @@ msgstr "Modelo de assistente em direto (apenas Gemini):"
 #. Translators: Label for Proxy Mode choice in settings
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:334
 msgid "Proxy Mode:"
-msgstr ""
+msgstr "Modo de proxy:"
 
 #. Translators: Label for Proxy URL input
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:344
@@ -4110,17 +4128,17 @@ msgstr "URL do Proxy:"
 #. Translators: Label for Proxy Username input
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:348
 msgid "Proxy Username:"
-msgstr ""
+msgstr "Nome de utilizador do proxy:"
 
 #. Translators: Label for Proxy Password input
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:353
 msgid "Proxy Password:"
-msgstr ""
+msgstr "Palavra-passe do proxy:"
 
 #. Translators: Label for button to test proxy connection
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:361
 msgid "&Test Proxy Connection"
-msgstr ""
+msgstr "&Testar ligação ao proxy"
 
 #. Translators: Checkbox to enable/disable automatic update checks on startup
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:368
@@ -4140,27 +4158,27 @@ msgstr "Guardar conversas no histórico"
 #. Translators: Title of the shared settings group for all Live features in the Live Assistant tab.
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:405
 msgid "General Live Settings"
-msgstr ""
+msgstr "Definições gerais do modo em direto"
 
 #. Translators: Label for the audio output device selection choice box in Live settings.
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:412
 msgid "Audio Output Device:"
-msgstr ""
+msgstr "Dispositivo de saída de áudio:"
 
 #. Translators: Label for the unified Live frame capture interval spin control.
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:428
 msgid "Frame Interval (seconds, 1 to 10):"
-msgstr ""
+msgstr "Intervalo entre fotogramas (segundos, de 1 a 10):"
 
 #. Translators: Title of the Live Voice Assistant settings group inside the Live Assistant tab.
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:464
 msgid "Live Voice Assistant"
-msgstr ""
+msgstr "Assistente de voz em direto"
 
 #. Translators: Checkbox to start the Live Assistant without its conversation window (open it later with the Show Last Result key).
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:470
 msgid "Direct Output (No Window)"
-msgstr ""
+msgstr "Saída direta (sem janela)"
 
 #. Translators: Checkbox to enable push-to-talk mode for the Live Assistant.
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:475
@@ -4390,20 +4408,20 @@ msgstr "Falha ao obter modelos"
 #. Translators: Spoken message when proxy connection test starts
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:1588
 msgid "Testing proxy connection..."
-msgstr ""
+msgstr "A testar a ligação ao proxy..."
 
 #. Translators: Spoken message when proxy URL is missing during connection test
 #. Translators: Announcement when testing proxy connection without entering a URL
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:1593
 #: addon\globalPlugins\visionAssistant\utils\media_capture.py:410
 msgid "Please enter a proxy URL first."
-msgstr ""
+msgstr "Introduza primeiro um URL de proxy."
 
 #. Translators: Spoken message when testing proxy connection fails with error details
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:1631
 #, python-brace-format
 msgid "Proxy test error: {error}"
-msgstr ""
+msgstr "Erro ao testar o proxy: {error}"
 
 #. Translators: Warning shown when Push to Talk is enabled but no key has been assigned in settings.
 #: addon\globalPlugins\visionAssistant\dialogs\settings.py:1741
@@ -4616,7 +4634,7 @@ msgstr "Etiqueta adicionada com sucesso: {name}"
 #. Translators: Status message announced when the connection to the server is lost and the Ambient Observer tries to reconnect.
 #: addon\globalPlugins\visionAssistant\features\ambient.py:317
 msgid "Connection lost. Reconnecting..."
-msgstr ""
+msgstr "Ligação perdida. A restabelecer a ligação..."
 
 #. Translators: Message in an error dialog which can pop up while trying dictation.
 #: addon\globalPlugins\visionAssistant\features\audio.py:79
@@ -4771,161 +4789,161 @@ msgstr "A dobragem falhou."
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:107
 #, python-brace-format
 msgid "Google API error (HTTP {status}): {detail}"
-msgstr ""
+msgstr "Erro da API do Google (HTTP {status}): {detail}"
 
 #. Translators: Error message shown when the user cancels a running Gemini key operation.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:144
 msgid "Operation cancelled."
-msgstr ""
+msgstr "Operação cancelada."
 
 #. Translators: Error message shown when a Google Cloud operation takes too long, {operation} describes the operation.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:154
 #, python-brace-format
 msgid "Timed out while waiting for {operation}."
-msgstr ""
+msgstr "Tempo limite excedido ao aguardar {operation}."
 
 #. Translators: Error message shown when saved credentials lack Google Cloud permission.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:258
 msgid "Google Cloud permission was not granted. Please click Sign In again and check the Google Cloud checkbox."
-msgstr ""
+msgstr "A permissão do Google Cloud não foi concedida. Clique novamente em Iniciar sessão e marque a caixa de verificação do Google Cloud."
 
 #. Translators: Error message shown when the user is not signed in to Google Cloud.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:280
 msgid "You are not signed in to Google Cloud. Use the Sign In button first."
-msgstr ""
+msgstr "Não iniciou sessão no Google Cloud. Utilize primeiro o botão Iniciar sessão."
 
 #. Translators: Title and heading of the web page shown in the browser after successful Google sign-in.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:324
 msgid "Authentication Successful"
-msgstr ""
+msgstr "Autenticação bem-sucedida"
 
 #. Translators: Message shown in the browser after successful Google sign-in.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:326
 msgid "Authentication successful! You can now close this browser tab and return to NVDA."
-msgstr ""
+msgstr "Autenticação bem-sucedida! Pode agora fechar este separador do navegador e regressar ao NVDA."
 
 #. Translators: Title and heading of the web page shown in the browser when Google sign-in fails.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:338
 msgid "Sign-in Failed"
-msgstr ""
+msgstr "Falha ao iniciar sessão"
 
 #. Translators: Status message shown when the Google sign-in process starts and a browser window will open.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:350
 msgid "Starting Google sign-in. A browser window will open."
-msgstr ""
+msgstr "A iniciar sessão no Google. Será aberta uma janela do navegador."
 
 #. Translators: Status message shown when the add-on opens the browser for Google sign-in.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:383
 msgid "Opening the browser for sign-in... Please check the Google Cloud permission box."
-msgstr ""
+msgstr "A abrir o navegador para iniciar sessão... Marque a caixa de verificação da permissão do Google Cloud."
 
 #. Translators: Error message shown when Google sign-in times out.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:392
 msgid "Google sign-in timed out."
-msgstr ""
+msgstr "O início de sessão no Google excedeu o tempo limite."
 
 #. Translators: Error message shown when Google sign-in returns an error, {error} is the error code.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:402
 #, python-brace-format
 msgid "Google sign-in failed: {error}"
-msgstr ""
+msgstr "Falha ao iniciar sessão no Google: {error}"
 
 #. Translators: Error message shown when Google sign-in fails due to OAuth state mismatch.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:405
 msgid "Google sign-in failed: state mismatch."
-msgstr ""
+msgstr "Falha ao iniciar sessão no Google: incompatibilidade de estado."
 
 #. Translators: Error message shown when Google sign-in was not completed or no auth code was returned.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:408
 msgid "Google sign-in did not complete."
-msgstr ""
+msgstr "O início de sessão no Google não foi concluído."
 
 #. Translators: Status message shown when exchanging the authorization code for tokens.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:411
 msgid "Exchanging authorization code..."
-msgstr ""
+msgstr "A trocar o código de autorização..."
 
 #. Translators: Error message shown when Google returns no access token during authentication.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:447
 msgid "No access token returned by Google."
-msgstr ""
+msgstr "O Google não devolveu nenhum token de acesso."
 
 #. Translators: Error message shown when Google Cloud permission was not consented on Google sign-in.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:453
 msgid "Google Cloud permission was not granted. Please sign in again and ensure the Google Cloud checkbox is ticked on the Google consent page."
-msgstr ""
+msgstr "A permissão do Google Cloud não foi concedida. Inicie sessão novamente e certifique-se de que a caixa de verificação do Google Cloud está marcada na página de consentimento do Google."
 
 #. Translators: Status message shown when the Google sign-in completed successfully.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:475
 msgid "Signed in successfully."
-msgstr ""
+msgstr "Sessão iniciada com sucesso."
 
 #. Translators: Status message shown when the stored Google credentials are removed.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:481
 msgid "Removing the stored Google credentials..."
-msgstr ""
+msgstr "A remover as credenciais Google guardadas..."
 
 #. Translators: Status message shown when signed out successfully.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:517
 msgid "Signed out successfully."
-msgstr ""
+msgstr "Sessão terminada com sucesso."
 
 #. Translators: Status message shown while creating a Google Cloud project.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:641
 msgid "Creating the project..."
-msgstr ""
+msgstr "A criar o projeto..."
 
 #. Translators: Name of the Google Cloud operation that creates a project, shown if it times out.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:653
 msgid "project creation"
-msgstr ""
+msgstr "criação do projeto"
 
 #. Translators: Status message shown while enabling a Google API on a project.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:661
 msgid "Enabling an API..."
-msgstr ""
+msgstr "A ativar uma API..."
 
 #. Translators: Status message shown while retrying to enable a Google API, {seconds} is the delay in seconds.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:666
 #, python-brace-format
 msgid "Retrying in {seconds} seconds..."
-msgstr ""
+msgstr "A tentar novamente dentro de {seconds} segundos..."
 
 #. Translators: Name of the Google Cloud operation that enables an API, shown if it times out.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:684
 msgid "enabling the API"
-msgstr ""
+msgstr "ativação da API"
 
 #. Translators: Status message shown while creating a Gemini API key.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:713
 msgid "Creating the API key..."
-msgstr ""
+msgstr "A criar a chave da API..."
 
 #. Translators: Name of the Google Cloud operation that creates an API key, shown if it times out.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:734
 msgid "API key creation"
-msgstr ""
+msgstr "criação da chave da API"
 
 #. Translators: Name of the Google Cloud operation that deletes an API key, shown if it times out.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:749
 msgid "API key deletion"
-msgstr ""
+msgstr "eliminação da chave da API"
 
 #. Translators: Column header for API key value in exported Gemini API keys CSV file.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:796
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:806
 msgid "Key"
-msgstr ""
+msgstr "Chave"
 
 #. Translators: Column header for project name in exported Gemini API keys CSV file.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:802
 msgid "Project"
-msgstr ""
+msgstr "Projeto"
 
 #. Translators: Column header for key label in exported Gemini API keys CSV file.
 #: addon\globalPlugins\visionAssistant\features\gemini_keys.py:804
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #. Translators: Line appended to the conversation when the live session has ended.
 #: addon\globalPlugins\visionAssistant\features\live_assistant.py:75
@@ -4941,46 +4959,46 @@ msgstr "A conversa em direto terminou."
 #. Translators: The webcam cannot be used while Live operator control is switched on.
 #: addon\globalPlugins\visionAssistant\features\live_assistant.py:322
 msgid "The webcam is not available while operator control is on."
-msgstr ""
+msgstr "A webcam não está disponível enquanto o controlo do operador estiver ativo."
 
 #. Translators: The Live operator task was cancelled.
 #. Translators: The user stopped the operation.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:258
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:676
 msgid "Operator cancelled."
-msgstr ""
+msgstr "Operador cancelado."
 
 #. Translators: The maximum duration of a Live operator task was reached.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:261
 msgid "Operator time limit reached."
-msgstr ""
+msgstr "Tempo limite do operador atingido."
 
 #. Translators: The separate operator is already working.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:264
 msgid "Standalone operator is busy."
-msgstr ""
+msgstr "O operador autónomo está ocupado."
 
 #. Translators: A Live operator request or GUI operation took too long.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:275
 msgid "Operator wait timed out."
-msgstr ""
+msgstr "O tempo limite de espera pelo operador foi atingido."
 
 #. Translators: Computer control is blocked on a protected desktop.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:306
 #: addon\globalPlugins\visionAssistant\features\operator_captcha.py:218
 #: addon\globalPlugins\visionAssistant\features\operator_captcha.py:305
 msgid "Secure mode, locked desktop or screen curtain is active."
-msgstr ""
+msgstr "O modo seguro, o ambiente de trabalho bloqueado ou a cortina de ecrã está ativo."
 
 #. Translators: A usable screen image could not be captured.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:321
 msgid "Invalid screenshot geometry or format."
-msgstr ""
+msgstr "Geometria ou formato da captura de ecrã inválido."
 
 #. Translators: The CAPTCHA answer returned by the AI did not contain usable characters.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:361
 msgid "The CAPTCHA answer was empty."
-msgstr ""
+msgstr "A resposta do CAPTCHA estava vazia."
 
 #. Translators: The visual CAPTCHA was solved and its answer typed for the user.
 #. Translators: The text CAPTCHA was solved and its answer typed for the user.
@@ -4988,116 +5006,116 @@ msgstr ""
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:414
 #, python-brace-format
 msgid "CAPTCHA solved and typed: {text}"
-msgstr ""
+msgstr "CAPTCHA resolvido e introduzido: {text}"
 
 #. Translators: The visual CAPTCHA could not be solved automatically.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:394
 msgid "The visual CAPTCHA could not be solved. Please complete it yourself."
-msgstr ""
+msgstr "Não foi possível resolver o CAPTCHA visual. Conclua-o manualmente."
 
 #. Translators: The AI service returned no usable CAPTCHA answer.
 #. Translators: The service failed after its internal retry policy finished.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:406
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:569
 msgid "The AI service returned no answer."
-msgstr ""
+msgstr "O serviço de IA não devolveu nenhuma resposta."
 
 #. Translators: No challenge was found on the current screen.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:410
 msgid "No CAPTCHA was found on the screen."
-msgstr ""
+msgstr "Não foi encontrado nenhum CAPTCHA no ecrã."
 
 #. Translators: A visual challenge was found while the solver is switched off in settings.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:417
 msgid "A visual CAPTCHA was found, but the solver is disabled in settings."
-msgstr ""
+msgstr "Foi encontrado um CAPTCHA visual, mas o resolvedor está desativado nas definições."
 
 #. Translators: The proposed click is outside the whole desktop area.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:512
 msgid "Action is outside the screen."
-msgstr ""
+msgstr "A ação está fora do ecrã."
 
 #. Translators: Reassurance spoken by Live when a step takes longer than usual.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:548
 msgid "This is taking longer than usual. I am still working on it, please wait."
-msgstr ""
+msgstr "Isto está a demorar mais do que o habitual. Ainda estou a trabalhar nisso, aguarde."
 
 #. Translators: Message when the AI service stayed overloaded until the end.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:572
 msgid "The AI service is busy and could not finish this task. Please try again in a moment."
-msgstr ""
+msgstr "O serviço de IA está ocupado e não conseguiu concluir esta tarefa. Tente novamente dentro de alguns instantes."
 
 #. Translators: Invalid model output was rejected without moving the mouse or typing.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:579
 msgid "The AI returned an invalid action. Nothing was executed."
-msgstr ""
+msgstr "A IA devolveu uma ação inválida. Nada foi executado."
 
 #. Translators: Automatic retries are blocked after a site challenge.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:587
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:730
 msgid "Complete the accessible challenge, toggle operator permission off and on, then ask to continue."
-msgstr ""
+msgstr "Conclua o desafio de acessibilidade, desative e volte a ativar a permissão do operador e, em seguida, peça para continuar."
 
 #. Translators: Unexpected failure of the Live operator.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:592
 msgid "Operator failed. Check the add-on log for details."
-msgstr ""
+msgstr "Falha do operador. Consulte o registo do complemento para obter mais informações."
 
 #. Translators: Maximum number of approved steps reached.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:639
 msgid "Ten-step limit reached; no further action executed."
-msgstr ""
+msgstr "Limite de dez passos atingido; não foram executadas mais ações."
 
 #. Translators: The operator proposed the same action again although nothing changed on screen.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:651
 msgid "The same action was proposed again with no visible change, so the task stopped."
-msgstr ""
+msgstr "A mesma ação foi proposta novamente sem qualquer alteração visível, pelo que a tarefa foi interrompida."
 
 #. Translators: User-facing name for a successfully completed task.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:692
 msgid "Completed"
-msgstr ""
+msgstr "Concluído"
 
 #. Translators: User-facing name for a cancelled task.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:694
 msgid "Cancelled"
-msgstr ""
+msgstr "Cancelado"
 
 #. Translators: User-facing status when the user needs to take over.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:696
 msgid "Your action is required"
-msgstr ""
+msgstr "É necessária a sua ação"
 
 #. Translators: User-facing name for a task limit.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:698
 msgid "Limit reached"
-msgstr ""
+msgstr "Limite atingido"
 
 #. Translators: A Live operator result displayed in the conversation.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:704
 #, python-brace-format
 msgid "Live operator: {status}: {message}"
-msgstr ""
+msgstr "Operador em direto: {status}: {message}"
 
 #. Translators: A tool call belongs to a conversation which has ended.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:721
 msgid "Session is no longer active."
-msgstr ""
+msgstr "A sessão já não está ativa."
 
 #. Translators: Computer control is disabled.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:724
 msgid "Operator permission is not enabled for this session."
-msgstr ""
+msgstr "A permissão do operador não está ativada para esta sessão."
 
 #. Translators: Another operator request is still running.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:727
 msgid "Operator is busy."
-msgstr ""
+msgstr "O operador está ocupado."
 
 #. Translators: An invalid tool call has been rejected.
 #: addon\globalPlugins\visionAssistant\features\live_operator.py:736
 msgid "Invalid tool or arguments."
-msgstr ""
+msgstr "Ferramenta ou argumentos inválidos."
 
 #. Translators: Status message when UI Explorer starts
 #: addon\globalPlugins\visionAssistant\features\operator_captcha.py:93
@@ -5615,12 +5633,12 @@ msgstr "Nenhum texto encontrado."
 #. Translators: Default title for announcement window
 #: addon\globalPlugins\visionAssistant\utils\announcements.py:41
 msgid "Vision Assistant Announcement"
-msgstr ""
+msgstr "Anúncio do Vision Assistant"
 
 #. Translators: Button to open external announcement link in browser
 #: addon\globalPlugins\visionAssistant\utils\announcements.py:62
 msgid "&Open Link"
-msgstr ""
+msgstr "&Abrir ligação"
 
 #. Translators: Button to close announcement
 #: addon\globalPlugins\visionAssistant\utils\announcements.py:67
@@ -5630,71 +5648,73 @@ msgstr ""
 #. Translators: Title of dialog asking the user to download the system audio (loopback) support library.
 #: addon\globalPlugins\visionAssistant\utils\loopback.py:52
 msgid "Download system audio support?"
-msgstr ""
+msgstr "Transferir suporte para áudio do sistema?"
 
 #. Translators: Message in dialog asking the user to download the library used to capture the sound of the system speakers.
 #: addon\globalPlugins\visionAssistant\utils\loopback.py:55
 msgid "Capturing the system's sound requires an additional library (approximately 1MB download).\n\n"
 "Download now to the addon's lib folder?\n\n"
 "This is a one-time download."
-msgstr ""
+msgstr "A captura do som do sistema requer uma biblioteca adicional (transferência de aproximadamente 1 MB).\\\n\n"
+"Transferir agora para a pasta lib do complemento?\n\n"
+"Esta transferência será efetuada apenas uma vez."
 
 #. Translators: Message reported when the user cancels downloading the system audio support library.
 #: addon\globalPlugins\visionAssistant\utils\loopback.py:85
 msgid "Operation cancelled. System audio capture is unavailable."
-msgstr ""
+msgstr "Operação cancelada. A captura de áudio do sistema não está disponível."
 
 #. Translators: Spoken progress percentage during system audio loopback driver download. {percent} is the progress number.
 #: addon\globalPlugins\visionAssistant\utils\loopback.py:108
 #, python-brace-format
 msgid "Downloading system audio support: {percent}%"
-msgstr ""
+msgstr "A transferir o suporte para áudio do sistema: {percent}%"
 
 #. Translators: Status message when downloading the system audio support library.
 #: addon\globalPlugins\visionAssistant\utils\loopback.py:128
 msgid "Downloading system audio support, please wait..."
-msgstr ""
+msgstr "A transferir o suporte para áudio do sistema, aguarde..."
 
 #. Translators: Success message after the system audio support download completes.
 #: addon\globalPlugins\visionAssistant\utils\loopback.py:135
 msgid "System audio support downloaded successfully!"
-msgstr ""
+msgstr "O suporte para áudio do sistema foi transferido com sucesso!"
 
 #. Translators: Error dialog shown when system audio loopback download fails. {error} is the error details.
 #: addon\globalPlugins\visionAssistant\utils\loopback.py:142
 #, python-brace-format
 msgid "Failed to download system audio support: {error}"
-msgstr ""
+msgstr "Falha ao transferir o suporte para áudio do sistema: {error}"
 
 #. Translators: Announcement when testing reverse proxy without an API key
 #: addon\globalPlugins\visionAssistant\utils\media_capture.py:460
 msgid "Please enter an API key for the selected provider to test the reverse proxy."
-msgstr ""
+msgstr "Introduza uma chave da API do fornecedor selecionado para testar o proxy inverso."
 
 #. Translators: Announcement when reverse proxy connection test succeeds with latency in ms and provider name
 #: addon\globalPlugins\visionAssistant\utils\media_capture.py:486
 #, python-brace-format
 msgid "Reverse proxy connected successfully to {provider}. Latency: {latency} ms"
-msgstr ""
+msgstr "Ligação ao proxy inverso estabelecida com sucesso para {provider}. Latência: {latency} ms"
 
 #. Translators: Announcement when reverse proxy responds with an HTTP error status code
 #: addon\globalPlugins\visionAssistant\utils\media_capture.py:495
 #, python-brace-format
 msgid "Reverse proxy reachable ({provider} returned HTTP {code}). Latency: {latency} ms"
-msgstr ""
+msgstr "Proxy inverso acessível ({provider} devolveu HTTP {code}). Latência: {latency} ms"
 
 #. Translators: Announcement when proxy connection test fails with error details
 #: addon\globalPlugins\visionAssistant\utils\media_capture.py:504
 #: addon\globalPlugins\visionAssistant\utils\media_capture.py:544
 #, python-brace-format
 msgid "Proxy connection failed: {error}"
-msgstr ""
+msgstr "Falha na ligação ao proxy: {error}"
 
 #. Translators: Announcement when forward proxy connection test succeeds with protocol name and latency in ms
 #: addon\globalPlugins\visionAssistant\utils\media_capture.py:537
 #, python-brace-format
 msgid "{protocol} proxy connected successfully. Latency: {latency} ms"
-msgstr ""
+msgstr "Ligação ao proxy {protocol} estabelecida com sucesso. Latência: {latency} ms"
 
 #. Translators: Title of dialog asking user to download ffmpeg
 #: addon\globalPlugins\visionAssistant\utils\media_capture.py:566
@@ -5960,7 +5980,8 @@ msgid "An advanced AI assistant for NVDA using Gemini models.\n"
 "- Report Quota Exhausted Keys (Alt+Q)\n"
 "- Report Advanced Routing (Alt+M)\n"
 "- Quick Settings (Up/Down/Left/Right)"
-msgstr ""
+msgstr "Um assistente de IA avançado para o NVDA utilizando modelos Gemini.\n"
+"Comandos: Prima NVDA+Shift+V e, em seguida:\\n- Tradutor inteligente (T) / Área de transferência (Shift+T)\\n- Refinador de texto (R)\\n- Descrever objeto (V) / Ecrã completo (O)\\n- Análise de vídeo (Shift+V)\\n- Gravação de vídeo local (Control+V)\\n- Leitor de documentos (D)\\n- OCR de ficheiros (F)\\n- Resolvedor de CAPTCHA (C)\\n- Conversa direta (Shift+C)\\n- Transcrição e dobragem de multimédia (M)\\n- Ditado inteligente (S)\\n        - Tradução por voz (Control+T)\\n- Comunicar estado (I)\\n- Etiquetar objeto (L)\\n- Gerir/analisar etiquetas (Shift+L)\\n- Explorador da interface (E)\\n- Operador de IA (Shift+A)\\n- Assistente em direto (Control+L) / Operador em direto (Control+A)\\n- Gestor de chaves da API do Gemini (G)\\n- Verificar atualização (U)\\n- Recuperar último resultado (Espaço)\\n- Ajuda dos comandos (H)\\n- Abrir definições (Alt+S)\\n- Comunicar chaves sem quota (Alt+Q)\\n- Comunicar encaminhamento avançado (Alt+M)\\n- Definições rápidas (Cima/Baixo/Esquerda/Direita)"
 
 #. Brief changelog for this version
 #. Translators: what's new content for the add-on version to be shown in the add-on store
@@ -5988,5 +6009,27 @@ msgid "## Changes for 2026.10.15\n\n"
 "*   **Twitter/X Video Downloader Overhaul**: Restored downloading and analysis of Twitter/X videos following upstream scraper failures. Video extraction now utilizes the robust FixTweet API to directly fetch highest-quality MP4 streams from Twitter's CDN, complete with automatic TwitSave fallback and proxy support.\n"
 "*   **Instagram Video Downloader Fix**: Restored downloading and analysis of Instagram Reels and video URLs following upstream form changes on the downloader service.\n"
 "*   **Fixes & Performance**: Push to Talk answers the moment you press the key, the Live Assistant no longer starts a reply in the middle of a sentence, the observer no longer reports the previous picture, and the Thinking Depth list only offers what your model actually supports. The AI Operator can scroll left and right too. Fixed an `AttributeError` when analyzing online videos, and prevented custom prompts without text selection from accidentally injecting background window titles into AI requests.\n"
-msgstr ""
+msgstr "## Alterações para 2026.10.15\n\n"
+"* **A correção mais solicitada — criar uma chave da API do Gemini é finalmente fácil**: Obter uma chave da API em **aistudio.google.com** costumava ser a parte mais difícil de todas. Com um leitor de ecrã, as páginas eram confusas e algumas pessoas simplesmente não conseguiam criar uma chave. Esse problema está agora resolvido diretamente no complemento. Prima **G** na camada de comandos (ou utilize **Obter uma chave da API do Gemini...** nas Definições), inicie sessão através do seu navegador predefinido sem qualquer configuração externa e a sua chave será criada e configurada com uma única confirmação — mesmo que nunca tenha tido um projeto.\n\n"
+"* **Observador ambiente**: O assistente em segundo plano chegou. Prima **Shift+O** na camada de comandos para o iniciar e prima novamente para o parar. Pode traduzir o que capta (através do seu microfone ou do som do sistema), observar o ecrã e comunicar o que mudou, ou abrir o Assistente em direto com a sua webcam e a funcionalidade Premir para falar, para que possa perguntar sobre aquilo que a câmara vê. Envia uma imagem apenas quando algo realmente muda, pelo que um ecrã estático não lhe custa nada, e permanece silencioso quando nada está a acontecer. Também pode iniciar e alternar diretamente o observador através de Prompts personalizados e teclas de atalho dedicadas utilizando `[ambient_screen]`, `[ambient_webcam]` ou `[ambient_audio]`, juntamente com modificadores (`[loopback]`, `[mic]`, `[brief]`, `[detailed]`, `[lang:code]`), com validação automática de combinações de variáveis incompatíveis.\n\n"
+"* **Operador em direto**: O Assistente em direto pode agora executar no seu computador aquilo que lhe pede enquanto fala com ele. Prima **Control+A** na camada de comandos para iniciar uma sessão de operador em direto e, em seguida, basta perguntar em linguagem natural. Funciona com pedidos de várias etapas, comunica cada etapa com a própria voz do Assistente em direto, trata das combinações de teclas de que necessita e decide por si próprio quando a tarefa está concluída. **Saída direta em direto (sem janela)** também está disponível nas Definições rápidas.\n\n"
+"* **Dicionário de personagens e gestão de séries**: A janela de Análise de vídeo inclui agora um poderoso sistema de **Dicionário de personagens**! Adicione, edite, importe ou gira nomes de personagens, descrições físicas e papéis por série — a IA associa automaticamente os personagens descobertos ao seu dicionário e junta os novos à medida que analisa mais episódios. As suas notas manuais são sempre preservadas com prioridade sobre as atualizações da IA, enquanto as descrições físicas se mantêm atualizadas entre episódios. O dicionário é guardado por série e reutilizado em todos os vídeos dessa série. Na lista de personagens, prima **F2** para editar o personagem selecionado e **Delete** para o remover.\n\n"
+"* **Suporte para SOCKS5, HTTP e proxy inverso com teste de latência**: Contorne facilmente as restrições de rede com suporte completo para proxies em todo o complemento — incluindo o Assistente em direto, o Observador ambiente e a geração de TTS! Escolha entre 4 modos de funcionamento nas Definições gerais: **Detetar automaticamente**, **Proxy SOCKS5**, **Proxy HTTP** ou **Proxy inverso**. O SOCKS5 suporta autenticação por nome de utilizador/palavra-passe RFC 1929 e encaminhamento de domínios; o proxy HTTP suporta autenticação básica. Um novo botão **Testar ligação ao proxy** é executado em segundo plano e comunica a latência da sua ligação em milissegundos.\n\n"
+"* **Cache de ficheiros de vídeo durante 48 horas**: Os vídeos enviados para o Gemini são agora colocados em cache durante 48 horas! Pode gerar novamente ficheiros SRT ou MP3 para o mesmo vídeo sem voltar a carregá-lo — mesmo depois de reiniciar o NVDA. A cache tem em conta a chave e é invalidada automaticamente quando a sua chave da API é alterada.\n\n"
+"* **Deteção de silêncio com tecnologia de IA (Silero VAD)**: A AD expandida utiliza agora o modelo neural Silero VAD para uma deteção precisa do silêncio — distinguindo as pausas naturais do diálogo da música e do ruído de fundo. O modelo é transferido automaticamente na primeira utilização (com a sua autorização), tal como o ffmpeg e o eSpeak.\n\n"
+"* **Vídeo da webcam para o Assistente em direto**: A janela do Assistente em direto inclui agora uma caixa de verificação **Utilizar a &Webcam** para enviar a imagem da sua webcam para a IA em vez do ecrã — ideal para fazer perguntas sobre objetos físicos, documentos ou o que o rodeia. Se o ffmpeg ainda não estiver instalado, marcar a caixa de verificação irá transferi-lo (uma única vez, com a sua autorização). A opção é desativada quando não é detetada nenhuma câmara ou quando as definições de privacidade do Windows bloqueiam o acesso à câmara, com um botão para abrir as definições de privacidade da câmara. Se a câmara estiver ativada, mas não produzir quaisquer fotogramas, o problema é registado no registo do NVDA para diagnóstico, em vez de mudar silenciosamente para o ecrã.\n\n"
+"* **Seleção do dispositivo de saída de áudio**: Pode agora selecionar um dispositivo de saída de áudio dedicado para o Assistente em direto e o Observador ambiente. Escolha entre a saída predefinida do NVDA, o Windows Sound Mapper ou qualquer placa de som física ligada (como auscultadores USB ou colunas externas) no separador Definições em direto, diretamente na janela do Assistente em direto ou em tempo real através das Definições rápidas (NVDA+Shift+V e, em seguida, Cima/Baixo/Esquerda/Direita).\n\n"
+"* **Gestor de prompts**: O separador Prompts predefinidos inclui agora uma lista de **Filtro**, para que possa mostrar todos os prompts ou apenas uma secção (por exemplo, **Ambiente**). Também pode editar aí os textos de contexto do observador e a nova **Instrução do operador em direto**.\n\n"
+"* **Filtragem inteligente de modelos no encaminhamento avançado**: As listas pendentes do Encaminhamento avançado de modelos categorizam agora dinamicamente os modelos Gemini de acordo com as suas capacidades, sem criar desordem. O Assistente em direto apresenta apenas modelos genuínuos de comunicação bidirecional em direto e de áudio nativo, o TTS apresenta apenas modelos dedicados à síntese de voz, o STT dá prioridade aos modelos Transcribe e multimodais, e a Análise de vídeo, o OCR e o Operador de IA filtram de forma clara os modelos utilitários de finalidade única (como modelos de geração de imagens, geração de vídeo e embeddings). Os modelos futuros são detetados automaticamente com base nas capacidades, sem necessidade de atualizações da versão.\n\n"
+"* **Rastreio da primeira aparição das personagens**: A IA descreve agora o aspeto físico de cada personagem apenas uma vez — na sua primeira aparição no vídeo. As aparições seguintes utilizam apenas os nomes, eliminando descrições repetitivas entre segmentos e mantendo simultaneamente a narrativa natural e dinâmica.\n\n"
+"* **Diretório de dados unificado**: Todos os ficheiros de dados do complemento (histórico, séries, etiquetas, progresso do OCR, caches e registos) foram migrados para uma única pasta `VisionAssistant` dentro do diretório de configuração do NVDA — mantendo tudo organizado e facilitando as cópias de segurança manuais.\n\n"
+"* **Experiência melhorada ao guardar vídeos**: Ao guardar ficheiros SRT ou MP3, a caixa de diálogo de ficheiros abre agora, por predefinição, na pasta do vídeo de origem, quer abra o vídeo através da caixa de diálogo de ficheiros, quer utilize Shift+V no Explorador.\n\n"
+"* **Eliminar documentos com ou sem o respetivo texto em cache**: A janela do Histórico (`Control + H`) disponibiliza agora duas formas de eliminar um documento — prima Delete e escolha **Eliminar apenas do histórico** ou **Eliminar do histórico e o texto em cache**. A segunda opção elimina o texto OCR em cache desse documento, pelo que, na próxima abertura, este será analisado novamente desde o início — ideal após uma digitalização de má qualidade. Uma caixa de verificação **Não perguntar novamente** memoriza a sua escolha para eliminações futuras. Os dados de retoma de operações interrompidas nunca são alterados.\n\n"
+"* **Cache OCR com conhecimento do motor e com fusão no Leitor de documentos**: O texto OCR em cache é agora armazenado por motor de OCR, pelo que mudar o motor de OCR faz com que o documento seja sempre analisado novamente com o novo motor, em vez de reproduzir o resultado anterior. Ao reabrir um documento, a caixa de diálogo do intervalo de páginas é novamente apresentada (preenchida previamente com a sua última escolha), reutilizando instantaneamente as páginas já analisadas e analisando apenas as que faltam — a cache é fundida página a página em vez de ser substituída, pelo que todos os intervalos que leu são mantidos para utilização futura.\n\n"
+"* **Compressão de PDF no Leitor de documentos**: Foi adicionada uma definição opcional **Comprimir as páginas do PDF antes de processar** à caixa de diálogo do intervalo de páginas do Leitor de documentos. Ao enviar documentos PDF digitalizados de grandes dimensões ou alta resolução para o Gemini ou Mistral, as páginas são automaticamente reduzidas e novamente comprimidas para diminuir significativamente o tamanho dos dados enviados, acelerar o processamento e evitar tempos limite de rede. A opção está desativada por predefinição e é automaticamente ocultada ao utilizar o motor Chrome ou fornecedores de imagens baseados em base64.\n\n"
+"* **Personalização do comportamento do feedback por prompt**: Personalize individualmente a forma como cada prompt personalizado apresenta o seu resultado! No editor de prompts personalizados, escolha entre **Definição global**, **Copiar para a área de transferência**, **Saída direta (mensagem do NVDA)**, **Copiar para a área de transferência e saída direta** ou **Janela de conversação**. Isto permite que determinados prompts comuniquem diretamente sem abrir uma janela, enquanto outros abrem uma conversa completa.\n\n"
+"* **Novas variáveis dinâmicas de prompts (`[currentURL]` e `[text]`)**: Os Prompts personalizados suportam agora `[currentURL]` para obter o URL do documento ativo no Google Chrome, Mozilla Firefox e Microsoft Edge, e `[text]` para inserir dinamicamente o conteúdo textual completo do campo de edição atualmente focado (ignorando caixas de palavra-passe protegidas).\n\n"
+"* **Reformulação do descarregador de vídeos do Twitter/X**: Foi restaurada a transferência e análise de vídeos do Twitter/X após falhas dos scrapers a montante. A extração de vídeos utiliza agora a robusta API FixTweet para obter diretamente os streams MP4 da mais alta qualidade a partir da CDN do Twitter, com fallback automático para o TwitSave e suporte para proxy.\n\n"
+"* **Correção do descarregador de vídeos do Instagram**: Foi restaurada a transferência e análise de Reels e URLs de vídeo do Instagram após alterações nos formulários do serviço de transferência.\n\n"
+"* **Correções e desempenho**: A funcionalidade Premir para falar responde no momento em que prime a tecla, o Assistente em direto já não inicia uma resposta a meio de uma frase, o observador já não comunica a imagem anterior e a lista de Profundidade de pensamento apresenta apenas as opções efetivamente suportadas pelo seu modelo. O Operador de IA também pode deslocar-se para a esquerda e para a direita. Foi corrigido um `AttributeError` ao analisar vídeos online e foram impedidos os prompts personalizados sem seleção de texto de injetar acidentalmente títulos de janelas em segundo plano nos pedidos enviados para a IA.\n"
 

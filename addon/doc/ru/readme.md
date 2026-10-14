@@ -92,14 +92,14 @@ _Это дополнение было выпущено для сообществ
 
 ## 2. Менеджер ключей API Gemini
 
-Creating a Gemini API key on **aistudio.google.com** used to be the hardest step of the add-on. With a screen reader the pages were confusing, and some people simply could not create a key at all. The **Gemini API Key Manager** solves that problem. Press **G** in the Command Layer, or open **NVDA Menu > Preferences > Settings > Vision Assistant > Connection** and press **Get a Gemini API Key...**.
+Создание ключа API Gemini на сайте **aistudio.google.com** раньше было самым сложным шагом при работе с дополнением. С помощью программы чтения с экрана эти страницы были непонятными, а некоторые пользователи вообще не могли создать ключ. **Менеджер ключей API Gemini** решает эту проблему. Нажмите клавишу **G** в командном слое или откройте меню **NVDA > Параметры > Настройки > Vision Assistant > Подключение** и нажмите кнопку **Получить ключ API Gemini...**.
 
-- **Signing in:** When you open the manager, your default browser opens directly with Google's secure sign-in page. Sign in with your Google account — no external tools, SDKs, or command-line setups are required. The account you are signed in with is always shown on the **Sign Out** button.
-- **Creating a key:** After signing in, you can create a key immediately with **New Project and Key** without any prior setup. If you already have existing projects, they appear in a simple list where you can select one and press **Create Key for Selected Project**.
-- **What happens next:** The new key is copied to the clipboard straight away, saved inside the add-on for later, and you are asked once whether to add it to the add-on's key list. That is all you need — no web pages to hunt through.
-- **Working with your keys:** **Copy Key for Selected Project** copies the key of the project you have selected, **Copy Last Created Key** copies the key you created a moment ago, and **Export Saved Keys to CSV...** saves everything you have created to a file.
-- **Deleting a key:** **Delete a Key...** shows the keys that exist on the selected project, asks you which one to remove, and confirms before deleting. Deleting a key also removes it from the add-on's key list, so no broken key is ever left in the rotation. Keys created outside the add-on can be deleted too, as long as your account has permission on that project.
-- **Signing out:** **Sign Out** removes the stored sign-in information from your computer, so you can switch to another account whenever you like.
+- **Вход в систему:** Когда вы открываете менеджер, ваш браузер по умолчанию открывает страницу безопасного входа Google. Войдите в систему под своей учетной записью Google — не требуются никакие внешние инструменты, SDK или настройка командной строки. Учетная запись, под которой вы вошли, всегда отображается на кнопке **Выйти**.
+- **Создание ключа:** После входа в систему вы можете сразу создать ключ с помощью кнопки **Новый проект и ключ** без какой-либо предварительной настройки. Если у вас уже есть проекты, они отображаются в виде простого списка, где вы можете выбрать один из них и нажать кнопку **Создать ключ для выбранного проекта**.
+- **Что происходит дальше:** Новый ключ сразу же копируется в буфер обмена, сохраняется в дополнении для дальнейшего использования, и вас один раз спросят, хотите ли вы добавить его в список ключей дополнения. Это все, что вам нужно — больше не нужно искать нужные страницы в Интернете.
+- **Работа с ключами:** Функция **Копировать ключ для выбранного проекта** копирует ключ выбранного вами проекта, **Копировать последний созданный ключ** копирует ключ, который вы создали минуту назад, а **Экспортировать сохраненные ключи в CSV...** сохраняет все созданные вами ключи в файл.
+- **Удаление ключа:** Пункт **Удалить ключ...** показывает ключи, существующие в выбранном проекте, спрашивает, какой именно нужно удалить, и запрашивает подтверждение перед удалением. Удаление ключа также удаляет его из списка ключей дополнения, поэтому неработающие ключи никогда не остаются в ротации. Ключи, созданные вне дополнения, также могут быть удалены, если у вашей учетной записи есть соответствующие права для этого проекта.
+- **Выход из учетной записи:** Кнопка **Выйти** удаляет сохраненную информацию о входе с вашего компьютера, поэтому вы можете переключиться на другую учетную запись в любое время.
 
 ## 3. Командный слой и сочетания клавиш
 
@@ -254,7 +254,7 @@ Vision Assistant Pro представляет мощные возможност�
 2. **Транскрибировать и перевести (на целевой язык)**: Транскрибирует речь и переводит её на ваш настроенный целевой язык.
 3. **Озвучить и перевести (на целевой язык)** _(только Gemini)_: Мощная новая функция, которая транскрибирует речь, переводит её на ваш целевой язык и синтезирует озвученный дубляж с использованием TTS-движка дополнения.
 
-## 8) Продвинутый читатель документов и изображений
+## 8. Продвинутый читатель документов и изображений
 
 **Чтение документов** превращает ваши документы в чистый, читаемый текст — так что вы можете читать, переводить и слушать всё: от отсканированной книги до стопки фотографий. Он обрабатывает многостраничные PDF, сложные изображения, форматы iPhone HEIC и даже простые текстовые (`.txt`) и HTML (`.html`, `.htm`) файлы, которые открываются мгновенно без OCR или обработки ИИ. Выберите несколько файлов сразу, и они объединяются в один непрерывный документ в порядке страниц. Доступны три OCR-движка — **Chrome (быстрый)**, **ИИ (расширенный)** для превосходного сохранения макета и **Нет (извлечь текстовый слой)** для PDF с возможностью поиска — выбираются в Настройки → Чтение документов.
 
@@ -318,8 +318,8 @@ _В отличие от старых инструментов маркировк
 
 ## 10. Живой голосовой помощник
 
-The Live Assistant turns Vision Assistant Pro into a real-time, interactive copilot.
-_(Note: This feature is exclusive to Google Gemini and Gemini-compatible Custom providers)._
+Живой помощник превращает Vision Assistant Pro в копилота реального времени, интерактивного.
+_(Примечание: Эта функция эксклюзивна для Google Gemini и Gemini-совместимых пользовательских провайдеров)._
 
 - **Активация:** Нажмите **Control + L** в командном слое, чтобы открыть диалог Живого помощника.
 - **Взаимодействие в реальном времени:** Говорите естественно через ваш микрофон. ИИ будет одновременно слушать ваш голос и смотреть на ваш активный экран. Вы можете задавать вопросы вроде «На что я смотрю?» или «Прочитай мне третий абзац».
@@ -329,22 +329,22 @@ _(Note: This feature is exclusive to Google Gemini and Gemini-compatible Custom 
 
 ## 11. Фоновый наблюдатель (фоновый помощник)
 
-The Ambient Observer turns Vision Assistant Pro into your background eyes, without any conversation: it keeps listening and watching while you work, reports what changes, and stays silent when nothing happens.
-_(Note: This feature is exclusive to Google Gemini and Gemini-compatible Custom providers)._
+Функция «Фоновый наблюдатель» превращает Vision Assistant Pro в ваши глаза на заднем плане без необходимости ведения диалога: она продолжает слушать и смотреть, пока вы работаете, сообщает об изменениях и сохраняет молчание, когда ничего не происходит.
+_(Примечание: эта функция доступна только для Google Gemini и совместимых с Gemini пользовательских провайдеров)._
 
 - **Исправления ошибок и улучшения стабильности**: Исправлено зависание во время генерации MP3 при закрытии диалога прогресса в середине задачи, устранено состояние гонки в хранилище словаря персонажей, добавлена надлежащая отчётность об ошибках кодирования MP3 и исправлен цикл ожидания в Чтении документов для учёта отмены пользователем.
-- **Modes:** **Audio Translation Only** translates what it hears, **Screen Watcher Only** reports screen changes, and **Webcam Watcher Only** opens the Live Assistant window with your camera and Push to Talk, so you can ask questions about what the camera sees.
-- **Audio Source:** In the audio mode, choose whether to translate your **Microphone** or the **System Audio (Loopback)**. The small loopback library is downloaded once on first use, with your permission.
-- **Context:** For the screen and webcam modes, pick an optional **About what I am doing** option (for example watching a film, following a meeting or call, reading a label, or checking your appearance) to focus the reports; you can also type your own context.
-- **Reporting:** The add-on compares every new frame with the previous one and sends it to the AI only when the picture really changed, so a static screen never costs you requests. The AI then reports only what is new and never repeats itself.
-- **Welcome Message:** Except in the translation mode, the observer greets you briefly when it starts, so you know it is listening.
-- **Settings:** In **Settings > Live Assistant**, set the **Observer Mode**, the **Frame Interval** (1 to 10 seconds) and the **Reporting Style** (brief or detailed). The observer instruction and each context text can be edited in the Prompt Manager (section **Ambient**).
+- **Режимы:** **Только перевод аудио** переводит то, что слышит, **Только наблюдение за экраном** сообщает об изменениях на экране, а **Только наблюдение с веб-камеры** открывает окно интерактивного помощника с вашей камерой и функцией «Нажми и говори» (Push to Talk), чтобы вы могли задавать вопросы о том, что видит камера.
+- **Источник звука:** В звуковом режиме выберите, что именно переводить: ваш **микрофон** или **системный звук (цифровая петля/Loopback)**. Небольшая библиотека для перехвата звука загружается один раз при первом использовании с вашего разрешения.
+- **Контекст:** Для режимов экрана и веб-камеры выберите опциональный контекст **О том, что я делаю** (например, «просмотр фильма», «участие в совещании или звонке», «чтение этикетки» или «проверка внешнего вида»), чтобы сфокусировать отчеты; вы также можете ввести свой собственный контекст.
+- **Отчеты:** Дополнение сравнивает каждый новый кадр с предыдущим и отправляет его ИИ только тогда, когда изображение действительно изменилось, поэтому статичный экран никогда не расходует ваши запросы. Затем ИИ сообщает только о том, что изменилось, и никогда не повторяется.
+- **Приветственное сообщение:** За исключением режима перевода, наблюдатель кратко приветствует вас при запуске, чтобы вы знали, что он слушает.
+- **Настройки:** В разделе **Настройки > Интерактивный помощник** укажите **Режим наблюдателя**, **Интервал кадров** (от 1 до 10 секунд) и **Стиль отчетов** (краткий или подробный). Инструкцию наблюдателя и каждый текст контекста можно отредактировать в Диспетчере промптов (раздел **Ambient**).
 
 ## 12. Пользовательские запросы и переменные
 
 Вы можете управлять запросами в **Настройки > Запросы > Управление запросами...**.
 
-- **Filter:** The **Default Prompts** tab has a **Filter** list above the prompt list that shows **All** prompts or only one section at a time (for example **Ambient**), so long lists stay easy to navigate.
+- **Фильтр:** На вкладке **Промпты по умолчанию** над списком промптов расположен список **Фильтр**, который позволяет отображать **Все** промпты или только один раздел за раз (например, **Окружение**), что облегчает навигацию по длинным спискам.
 
 ### Custom Prompt Shortcuts
 
@@ -355,19 +355,19 @@ _(Note: This feature is exclusive to Google Gemini and Gemini-compatible Custom 
 
 ### Per-Prompt Feedback Behavior
 
-Each custom prompt can individually define its output delivery behavior:
+Каждый пользовательский промпт может индивидуально определять поведение доставки своего результата:
 
-- **Global setting:** Follows the general Connection output setting (Direct Output or Chat window).
-- **Copy to clipboard:** Copies the AI response directly to the clipboard without opening a window.
+- **Глобальная настройка:** следует общим настройкам вывода соединения (прямой вывод или окно чата).
+- **Копировать в буфер обмена:** копирует ответ ИИ прямо в буфер обмена без открытия окна.
 - **Провайдер ИИ MiniMax**: Интегрирован MiniMax как равноправный провайдер с полной мультимодальной поддержкой (чат, зрение, OCR), пользовательским TTS с использованием более 300+ динамических голосов и автоматическим удалением блоков рассуждений (например, ` thinking...`) из выводов.
-- **Copy to clipboard and Direct Output:** Copies the response to the clipboard and speaks it directly.
-- **Chat window:** Always opens the result in an interactive conversation window.
+- **Копировать в буфер обмена и прямой вывод:** копирует ответ в буфер обмена и одновременно озвучивает его.
+- **Окно чата:** всегда открывает результат в интерактивном окне диалога.
 
 ### Поддерживаемые переменные
 
 - `[selection]`: Текущий выделенный текст.
-- `[text]`: Complete text content of the currently focused edit field (automatically ignores protected password boxes).
-- `[currentURL]`: Webpage or document URL from supported web browsers (Chrome, Edge, Firefox).
+- `[text]`: полное текстовое содержимое текущего поля ввода в фокусе (автоматически игнорирует защищенные поля ввода пароля).
+- `[currentURL]`: URL веб-страницы или документа из поддерживаемых веб-браузеров (Chrome, Edge, Firefox).
 - `[clipboard]`: Содержимое буфера обмена.
 - `[clipboard_image]`: Изображение, находящееся в буфере обмена.
 - `[screen_obj]`: Снимок объекта навигатора.
@@ -376,21 +376,21 @@ Each custom prompt can individually define its output delivery behavior:
 - `[file_ocr]`: Выбрать изображение/PDF/TIFF для извлечения текста.
 - `[file_read]`: Выбрать документ для чтения (TXT, код, PDF).
 - `[file_audio]`: Выбрать аудиофайл для анализа (MP3, WAV, OGG).
-- `[ambient_screen]`: Starts continuous Screen Observer background session.
-- `[ambient_webcam]`: Starts continuous Webcam Observer background session (checks Push to Talk from settings).
-- `[ambient_audio]`: Starts live Audio Observer translation session.
-- `[loopback]`: Uses system audio playback as sound source (for `[ambient_audio]`).
-- `[mic]`: Uses microphone as sound source (for `[ambient_audio]` and `[ambient_webcam]`).
-- `[brief]`: Sets observer reporting style to brief (single sentence).
-- `[detailed]`: Sets observer reporting style to detailed (2-3 sentences).
-- `[lang:code]`: Specifies target language code for audio translation (e.g., `[lang:fa]`, `[lang:en]`).
+- `[ambient_screen]`: запускает фоновый сеанс непрерывного наблюдения за экраном (Screen Observer).
+- `[ambient_webcam]`: запускает фоновый сеанс непрерывного наблюдения с веб-камеры (Webcam Observer) (проверяет настройку режима рации / Push to Talk).
+- `[ambient_audio]`: запускает сеанс живого перевода аудио (Audio Observer).
+- `[loopback]`: использует воспроизведение системного аудио в качестве источника звука (для `[ambient_audio]`).
+- `[mic]`: использует микрофон в качестве источника звука (для `[ambient_audio]` и `[ambient_webcam]`).
+- `[brief]`: устанавливает краткий стиль отчета наблюдателя (одно предложение).
+- `[detailed]`: устанавливает подробный стиль отчета наблюдателя (2–3 предложения).
+- `[lang:code]`: задает код целевого языка для перевода аудио (например, `[lang:fa]`, `[lang:en]`).
 - `{target_lang}`: Текущий целевой язык.
 - `{source_lang}`: Текущий исходный язык.
 - `{response_lang}`: Текущий язык ответов ИИ.
 - `{swap_target}`: Резервный язык для перевода.
 - `{swap_instruction}`: Инструкция для интеллектуального обменного перевода.
 
-_Note on Ambient Prompts:_ Prompts containing ambient variables act as a toggle — pressing the shortcut while active immediately stops the session. Incompatible combinations (such as combining static screenshot variables like `[screen_full]` with ambient observer modes, combining multiple ambient modes, or adding prompt instructions to `[ambient_audio]`) are strictly validated and prevented when saving.
+_Примечание об окружениях (Ambient Prompts):_ Промпты, содержащие переменные окружения, действуют как переключатель — нажатие горячей клавиши во время их активности немедленно останавливает сеанс. Несовместимые комбинации (такие как объединение статических переменных снимка экрана, например `[screen_full]`, с режимами фонового наблюдения, комбинация нескольких режимов фонового наблюдения или добавление инструкций промпта к `[ambient_audio]`) строго проверяются и предотвращаются при сохранении.
 
 ## 13. Реальные сценарии использования (Какую функцию мне использовать?)
 
@@ -455,28 +455,28 @@ _Если вы хотите поддержать проект финансово
 
 ## Изменения для 2026.10.15
 
-- **The Most Requested Fix — Creating a Gemini API Key Is Finally Easy**: Getting an API key on **aistudio.google.com** used to be the hardest step of all. With a screen reader the pages were confusing, and some people simply could not create a key at all. That problem is now solved directly inside the add-on. Press **G** in the Command Layer (or use **Get a Gemini API Key...** in Settings), sign in through your default browser with zero external setup, and your key is created and configured with one confirmation — even if you never had a project before.
-- **Ambient Observer**: The background assistant is here. Press **Shift+O** in the Command Layer to start it, and press it again to stop it. It can translate what it hears (your microphone or the sound of the system), watch the screen and tell you what changed, or open the Live Assistant with your webcam and Push to Talk so you can ask about whatever the camera sees. It sends a picture only when something really changed, so a still screen costs you nothing, and it stays quiet when nothing is happening. You can also launch and toggle the observer directly through Custom Prompts and dedicated shortcut keys using `[ambient_screen]`, `[ambient_webcam]`, or `[ambient_audio]` along with modifiers (`[loopback]`, `[mic]`, `[brief]`, `[detailed]`, `[lang:code]`), with automatic validation against conflicting variable combinations.
-- **Live Operator**: The Live Assistant can now carry out what you ask on your computer while you talk to it. Press **Control+A** in the Command Layer to start a live operator session, then just ask in plain language. It works through multi-step requests, says every step in the Live Assistant’s own voice, takes care of the key combinations it needs, and decides by itself when the task is finished. **Live Direct Output (No Window)** is in Quick Settings too.
+- **Самое запрашиваемое исправление — создание ключа API Gemini стало простым**: Получение ключа API на сайте **aistudio.google.com** раньше было самым сложным шагом. С программой чтения с экрана страницы выглядели запутанными, а некоторые пользователи вообще не могли создать ключ. Теперь эта проблема решена прямо внутри дополнения. Нажмите клавишу **G** в командном слое (или используйте пункт **Получить ключ API Gemini...** в настройках), войдите в систему через браузер по умолчанию без сложной внешней настройки, и ваш ключ будет создан и настроен всего по одному подтверждению — даже если у вас никогда раньше не было проектов.
+- **Окружающий наблюдатель (Ambient Observer)**: Фоновый ассистент уже здесь. Нажмите **Shift+O** в командном слое для его запуска, и нажмите еще раз для остановки. Он может переводить то, что слышит (с вашего микрофона или звуков системы), следить за экраном и сообщать вам об изменениях или открывать интерактивный чат (Live Assistant) с вашей веб-камерой и функцией Push to Talk, чтобы вы могли задавать вопросы о том, что видит камера. Он отправляет изображение только тогда, когда что-то действительно изменилось, поэтому статичный экран не расходует ресурсы, а в моменты тишины он молчит. Вы также можете запускать и переключать наблюдателя напрямую через настраиваемые запросы и выделенные комбинации клавиш, используя `[ambient_screen]`, `[ambient_webcam]` или `[ambient_audio]` вместе с модификаторами (`[loopback]`, `[mic]`, `[brief]`, `[detailed]`, `[lang:код]`), с автоматической проверкой на конфликтующие комбинации переменных.
+- **Интерактивный оператор (Live Operator)**: Live Assistant теперь может выполнять ваши поручения на компьютере прямо во время разговора с ним. Нажмите **Control+A** в командном слое для запуска сеанса интерактивного оператора, а затем просто сформулируйте задачу на обычном языке. Он обрабатывает многошаговые запросы, озвучивает каждый шаг собственным голосом Live Assistant, выполняет необходимые комбинации клавиш и сам определяет, когда задача завершена. Пункт **Прямой вывод в реальном времени (без окна)** также доступен в быстрых настройках.
 - **Словарь персонажей и управление сериалами**: Диалог анализа видео теперь включает мощную систему **словаря персонажей**! Добавляйте, редактируйте, импортируйте или управляйте именами персонажей, физическими описаниями и ролями по сериалам — ИИ автоматически сопоставляет обнаруженных персонажей с вашим словарём и объединяет новых по мере анализа дополнительных эпизодов. Ваши ручные заметки всегда сохраняются с приоритетом над обновлениями ИИ, а физические описания остаются актуальными во всех эпизодах. Словарь сохраняется по сериалам и повторно используется для каждого видео в этом сериале. В списке персонажей нажмите **F2**, чтобы редактировать выбранного персонажа, и **Delete**, чтобы удалить его.
-- **SOCKS5, HTTP, and Reverse Proxy Support with Latency Testing**: Seamlessly bypass network restrictions with complete proxy support across the entire add-on — including the Live Assistant, Ambient Observer, and TTS generation! Choose from 4 operating modes in General settings: **Auto-detect**, **SOCKS5 Proxy**, **HTTP Proxy**, or **Reverse Proxy**. SOCKS5 supports RFC 1929 username/password authentication and domain tunneling; HTTP proxy supports Basic authentication. A new **Test Proxy Connection** button runs in the background and announces your connection latency in milliseconds.
+- **Поддержка SOCKS5, HTTP и обратного прокси с тестированием задержки**: Плавно обходите сетевые ограничения благодаря полной поддержке прокси во всем дополнении, включая Live Assistant, Ambient Observer и генерацию TTS! Выберите один из 4 режимов работы в общих настройках: **Автоопределение**, **Прокси SOCKS5**, **Прокси HTTP** или **Обратный прокси**. SOCKS5 поддерживает аутентификацию по имени пользователя/паролю согласно RFC 1929 и туннелирование доменов; HTTP-прокси поддерживает базовую аутентификацию (Basic). Новая кнопка **Проверить соединение с прокси** работает в фоновом режиме и озвучивает задержку соединения в миллисекундах.
 - **48-часовое кэширование видеофайлов**: Видео, загруженные в Gemini, теперь кэшируются на 48 часов! Вы можете повторно генерировать SRT или MP3-выводы для того же видео без повторной загрузки — даже после перезапуска NVDA. Кэш привязан к ключу и автоматически аннулируется при смене API-ключа.
 - **Обнаружение тишины на основе ИИ (Silero VAD)**: Расширенное AD теперь использует нейросетевую модель Silero VAD для точного обнаружения тишины — различая естественные паузы диалога от музыки и фонового шума. Модель загружается автоматически при первом использовании (с вашего разрешения), как ffmpeg и eSpeak.
 - **Видео с веб-камеры для Живого помощника**: Окно Живого помощника теперь имеет флажок **Использовать &веб-камеру**, чтобы отправлять поток вашей веб-камеры ИИ вместо экрана — идеально для вопросов о физических объектах, документах или вашем окружении. Если ffmpeg ещё не установлен, отметка флажка загрузит его (однократно, с вашего разрешения). Опция отключена, когда камера не обнаружена или настройки конфиденциальности Windows блокируют доступ к камере, с кнопкой для открытия настроек конфиденциальности камеры. Если камера включена, но не выдаёт кадры, проблема регистрируется в журнале NVDA для диагностики вместо молчаливого переключения обратно на экран.
-- **Audio Output Device Selection**: You can now select a dedicated audio output device for the Live Assistant and Ambient Observer. Choose between NVDA's default output, Windows Sound Mapper, or any connected physical sound card (like USB headphones or external speakers) in the Live Settings tab, directly inside the Live Assistant dialog, or on the fly via Quick Settings (NVDA+Shift+V then Up/Down/Left/Right).
-- **Prompt Manager**: The Default Prompts tab has a **Filter** list now, so you can show all prompts or just one section (for example **Ambient**). You can also edit the observer’s context texts and the new **Live Operator Instruction** there.
-- **Smart Model Filtering in Advanced Routing**: Advanced Model Routing dropdowns now dynamically categorize Gemini models by capability without clutter. The Live Assistant only displays genuine bidirectional live and native-audio models, TTS only displays dedicated speech synthesis models, STT prioritizes Transcribe and multimodal models, and Video Analysis, OCR, and AI Operator cleanly filter out single-purpose utility models (such as image generation, video generation, and embedding models). Future models are detected automatically based on capability without requiring version updates.
+- **Выбор устройства вывода звука**: Теперь вы можете выбрать выделенное устройство вывода звука для Live Assistant и Ambient Observer. Выбирайте между выводом NVDA по умолчанию, звуковым сопоставителем Windows (Sound Mapper) или любой подключенной физической звуковой картой (например, USB-наушниками или внешними динамиками) на вкладке живых настроек, прямо внутри диалога Live Assistant или на лету через быстрые настройки (`NVDA+Shift+V`, а затем стрелки Вверх/Вниз/Влево/Вправо).
+- **Менеджер запросов (Prompt Manager)**: На вкладке запросов по умолчанию теперь есть список **Фильтр**, позволяющий отобразить все запросы или только один раздел (например, **Ambient**). Там же вы можете редактировать контекстные тексты наблюдателя и новую **инструкцию для интерактивного оператора**.
+- **Умная фильтрация моделей в расширенной маршрутизации**: Выпадающие списки расширенной маршрутизации моделей теперь динамически и без лишнего мусора классифицируют модели Gemini по возможностям. Live Assistant отображает только подлинные двунаправленные интерактивные модели с поддержкой нативного аудио, TTS — только специализированные модели синтеза речи, STT отдает приоритет моделям транскрипции и мультимодальным моделям, а анализ видео, OCR и ИИ-оператор аккуратно исключают узкоспециализированные вспомогательные модели (такие как модели генерации изображений, видео и эмбеддингов). Будущие модели определяются автоматически на основе их возможностей без необходимости обновления версий.
 - **Отслеживание первого появления персонажей**: ИИ теперь описывает физический облик каждого персонажа только один раз — при их первом появлении в видео. Последующие появления используют только имена, устраняя повторяющиеся описания в разных сегментах, сохраняя повествование свежим и естественным.
 - **Единый каталог данных**: Все файлы данных дополнения (история, сериалы, метки, прогресс OCR, кэши и журналы) были перенесены в единую папку `VisionAssistant` внутри каталога конфигурации NVDA — всё организовано и упрощает ручное резервное копирование.
 - **Улучшенный опыт сохранения видео**: При сохранении SRT или MP3-файлов диалог файла теперь открывается в папке исходного видео по умолчанию, независимо от того, открыли ли вы видео через диалог файла или Shift+V из Проводника.
 - **Удаление документов с кэшированным текстом или без него**: Диалог истории (`Control + H`) теперь предлагает два способа удаления документа — нажмите Delete и выберите **Удалить только из истории** или **Удалить из истории и кэшированный текст**. Второй вариант очищает кэшированный текст OCR этого документа, так что при следующем открытии он сканируется с нуля — идеально после плохого сканирования. Флажок **Больше не спрашивать** запоминает ваш выбор для будущих удалений. Ваши данные возобновления прерванной операции никогда не затрагиваются.
 - **Кэш OCR с учётом движка и объединением в Чтении документов**: Кэшированный текст OCR теперь хранится по OCR-движку, поэтому переключение OCR-движка всегда сканирует заново новым движком вместо воспроизведения старого результата. Повторное открытие документа снова показывает диалог диапазона страниц (предзаполненный вашим последним выбором), мгновенно повторно используя уже отсканированные страницы и сканируя только отсутствующие — кэш объединяется страница за страницей вместо замены, поэтому каждый прочитанный диапазон сохраняется для последующего использования.
-- **PDF Compression in Document Reader**: Added an optional **Compress PDF pages before processing** setting in the Document Reader's page range dialog. When uploading large or high-resolution scanned PDF documents to Gemini or Mistral, pages are automatically downscaled and re-compressed to dramatically reduce upload payload size, speed up processing, and prevent network timeouts. The option is disabled by default and automatically hidden when using the Chrome engine or base64-based image providers.
-- **Per-Prompt Feedback Behavior Customization**: Customize how each custom prompt delivers its output individually! In the custom prompt editor, choose between **Global setting**, **Copy to clipboard**, **Direct Output (NVDA message)**, **Copy to clipboard and Direct Output**, or **Chat window**. This allows specific prompts to speak directly without opening a window while others open a full chat.
-- **New Dynamic Prompt Variables (`[currentURL]` & `[text]`)**: Custom Prompts now support `[currentURL]` to capture the active document URL across Google Chrome, Mozilla Firefox, and Microsoft Edge, and `[text]` to dynamically insert the full text content of the currently focused edit field (ignoring protected password boxes).
-- **Twitter/X Video Downloader Overhaul**: Restored downloading and analysis of Twitter/X videos following upstream scraper failures. Video extraction now utilizes the robust FixTweet API to directly fetch highest-quality MP4 streams from Twitter's CDN, complete with automatic TwitSave fallback and proxy support.
-- **Instagram Video Downloader Fix**: Restored downloading and analysis of Instagram Reels and video URLs following upstream form changes on the downloader service.
-- **Fixes & Performance**: Push to Talk answers the moment you press the key, the Live Assistant no longer starts a reply in the middle of a sentence, the observer no longer reports the previous picture, and the Thinking Depth list only offers what your model actually supports. The AI Operator can scroll left and right too. Fixed an `AttributeError` when analyzing online videos, and prevented custom prompts without text selection from accidentally injecting background window titles into AI requests.
+- **Сжатие PDF в программе чтения документов**: В диалог диапазона страниц программы чтения документов добавлена необязательная настройка **Сжимать страницы PDF перед обработкой**. При загрузке больших или сканированных PDF-документов высокого разрешения в Gemini или Mistral страницы автоматически уменьшаются в размерах и повторно сжимаются, что значительно сокращает объем загружаемых данных, ускоряет обработку и предотвращает тайм-ауты сети. Эта опция отключена по умолчанию и автоматически скрывается при использовании движка Chrome или поставщиков изображений на основе base64.
+- **Настройка поведения обратной связи для каждого запроса**: Настройте индивидуально то, как каждый настраиваемый запрос выводит свой результат! В редакторе настраиваемых запросов выберите один из вариантов: **Глобальная настройка**, **Копировать в буфер обмена**, **Прямой вывод (сообщение NVDA)**, **Копировать в буфер обмена и прямой вывод** или **Окно чата**. Это позволяет определенным запросам озвучивать ответ напрямую без открытия окна, в то время как другие будут открывать полноценный чат.
+- **Новые переменные динамических запросов (`[currentURL]` и `[text]`)**: Пользовательские запросы теперь поддерживают `[currentURL]` для получения URL активного документа в Google Chrome, Mozilla Firefox и Microsoft Edge, а также `[text]` для динамической вставки полного текстового содержимого текущего сфокусированного поля ввода (игнорируя защищенные поля паролей).
+- **Переработка загрузчика видео Twitter/X**: Восстановлена скачивание и анализ видео с Twitter/X после сбоев в работе вышестоящих скраперов. Извлечение видео теперь использует надежный API FixTweet для прямой загрузки MP4-потоков высочайшего качества с CDN Twitter, в комплекте с автоматическим резервным копированием через TwitSave и поддержкой прокси.
+- **Исправление загрузчика видео Instagram**: Восстановлено скачивание и анализ Reels и видео-URL из Instagram после изменений формы на стороне сервиса загрузки.
+- **Исправления и производительность**: Функция Push to Talk отвечает в момент нажатия клавиши, Live Assistant больше не начинает ответ посреди предложения, наблюдатель больше не сообщает о предыдущей картинке, а список глубины рассуждений предлагает только то, что действительно поддерживается вашей моделью. ИИ-оператор теперь тоже может прокручивать страницу влево и вправо. Исправлена ошибка `AttributeError` при анализе онлайн-видео и предотвращено случайное внедрение заголовков фоновых окон в запросы к ИИ для пользовательских запросов без выделенного текста.
 
 ## Изменения для 2026.09.01
 
@@ -548,7 +548,7 @@ _Если вы хотите поддержать проект финансово
 - **Улучшенная симуляция клавиатуры**: Улучшена инъекция нажатий клавиш для полной поддержки «Extended Keys» (таких как стрелки, Home, End, Page Up/Down, Insert, Delete и F1-F12). Это гарантирует безупречную работу навигационных и командных сочетаний клавиш, отправляемых ИИ-оператором, во всех приложениях.
 - **Поддержка изображений HEIC/HEIF**: Добавлена нативная поддержка форматов фотографий iPhone. Теперь вы можете напрямую выбирать файлы `.heic` и `.heif` для описания ИИ, OCR или чтения документов без предварительного преобразования.
 
-## Изменения для 5.5 (Обновление автоматизации)
+## Изменения для 6.5.0
 
 - **Живой помощник**: Добавлена функция голосового и экранного ассистента в реальном времени, доступная исключительно для провайдера Google Gemini (или Gemini-совместимых пользовательских провайдеров). Включает интерактивную настройку голоса и глубины мышления непосредственно в диалоге, с автоматическим переподключением при изменении настроек.
 - **MiniMax AI Provider**: Integrated MiniMax as a peer provider with full multimodal support (chat, vision, OCR), custom TTS using over 300+ dynamic voices, and automatic stripping of reasoning blocks (e.g., ` thinking... response`) from outputs.
@@ -557,7 +557,7 @@ _Если вы хотите поддержать проект финансово
 - **Состояние просмотрщика документов**: Исправлена ошибка, при которой общий статус плагина (проверяемый через `I`) оставался на «Пакетная обработка запущена» во время длительных сканирований документов.
 - **Устранён сбой потоков**: Исправлен серьёзный сбой утверждения потока `IsMain() failed in wxTimerImpl` при открытии документов из фонового потока путём перехода очереди обратных вызовов GUI на `wx.CallAfter`.
 
-## Изменения для 5.0
+## Изменения для 6.1.2
 
 - **Предварительная проверка дублирующихся меток**: Исправлена проблема в одиночной маркировке, где проверка дубликатов использовала старые координатные ключи, заставляя NVDA делать дублирующиеся запросы к ИИ для уже помеченных объектов вместо объявления существующей метки.
 - **Чат с документом для не-Gemini провайдеров**: Исправлена строгая проверка API-ключа в Чате с документом (`on_ask`), чтобы гарантировать, что пользователи на OpenAI, Groq или локальных пользовательских провайдерах (таких как Ollama) могут успешно общаться с документами без блокировки.
@@ -565,37 +565,37 @@ _Если вы хотите поддержать проект финансово
 - **Фильтр алфанумерических символов CAPTCHA**: Исправлена логика фильтрации в решателе CAPTCHA, чтобы гарантировать правильную очистку неалфанумерических символов во всех ситуациях.
 - **Обновление справки командного слоя**: Исправлено сочетание клавиш объявления статуса в меню справки с `L` на `I`, и добавлены обе команды маркировки (`L` и `Shift+L`) в список.
 
-## Изменения для 4.6
+## Изменения для 6.1.1
 
 - **Исправление вывода мышления Gemma 4**: Исправлена проблема с моделями Gemma 4, где весь внутренний процесс мышления отображался как окончательный ответ или где отключение мышления приводило к пустым ответам. Дополнение теперь правильно изолирует и извлекает только окончательный чистый текстовый ответ.
 - **Пакетный OCR из Проводника**: Теперь вы можете выбрать несколько фотографий или PDF-файлов непосредственно в Проводнике Windows и извлечь текст или проанализировать их пакетно. Дополнение автоматически отфильтрует и обработает только поддерживаемые форматы файлов.
 
-## Изменения для 4.5
+## Изменения для 6.1.0
 
 - **Универсальная интеграция локального ИИ (Настройка локального ИИ)**: Добавлена новая кнопка **«Настройка локального ИИ»** в настройках пользовательского провайдера. Пользователи теперь могут автоматически настраивать локальные ИИ-движки, включая **Ollama**, **LM Studio**, **Jan.ai** и **KoboldCPP**, мгновенно.
 - **Интеллектуальный обход локального прокси**: Перестроена логика подключения с продвинутым механизмом обхода прокси. Дополнение теперь достаточно умно, чтобы полностью обходить системные прокси Windows для локальных loopback-соединений, обеспечивая стабильные локальные подключения ИИ даже когда ваш VPN/TUN-режим активен.
 - **Ультрастабильная маркировка ИИ (v2)**: Абсолютные ключи координат экрана заменены на продвинутую гибридную систему **Object Signature**. Метки теперь полагаются на программные идентификаторы (UIA **AutomationId** или Win32 **ControlID**) и координаты относительно окна, делая ваши пользовательские метки полностью устойчивыми к изменению размера окна, перемещению, переключению мониторов или масштабированию.
 - **Бесшовная автоматическая миграция меток**: Обновление полностью прозрачно. Дополнение автоматически перенесёт ваши старые метки на основе координат в новый стабильный формат отпечатка в фоне при первом фокусе, без потери данных.
 
-## Изменения для 4.0.3
+## Изменения для 6.0
 
 - **Представляем семантическую маркировку ИИ**: Пользователи теперь могут навсегда помечать безымянные кнопки и иконки с помощью ИИ. Нажмите **L**, чтобы пометить текущий объект навигатора (поддерживается как фокус Tab, так и навигация по объектам), или **Shift+L**, чтобы сканировать и пометить всё приложение сразу.
 - **Интеллектуальное управление метками**: Добавлен новый, полностью доступный диалог менеджера меток (через **Shift+L**, если метки существуют) для просмотра, переименования или пакетного удаления пользовательских меток.
 - **Прямой анализ файлов (обход диалога файла)**: Дополнение теперь достаточно умно, чтобы определить, фокусируетесь ли вы в данный момент на PDF- или графическом файле в Проводнике Windows. Нажатие **F (Умное действие с файлом)** или **D (Чтение документов)** на выделенном файле немедленно обработает его, полностью обходя стандартный диалог «Открыть».
 
-## Изменения для 4.0.1
+## Изменения для 5.6
 
 - **Добавлен движок OCR «Нет (извлечь текстовый слой)»**: Пользователи теперь могут извлекать текст непосредственно из PDF с возможностью поиска без использования кредитов ИИ, значительно улучшая скорость и конфиденциальность для текстовых документов.
 - **Уточнённая точность обозревателя интерфейса**: Улучшен запрос обозревателя интерфейса для лучшей идентификации типов элементов (таких как List Items) и точного сообщения состояний, таких как «(Checked)», «(Selected)» или «(Expanded)», игнорируя системные компоненты Windows, такие как панель задач и часы.
 - **Напоминание о настройке после установки**: Добавлено уведомление после установки, чтобы направить пользователей в меню настроек для настройки их API-ключей и предпочтений.
 
-## Изменения для 3.6.0
+## Изменения для 5.5.2
 
 - **Исправлена проблема ввода ИИ-оператора:** Исправлена ошибка, при которой буква 'v' вводилась вместо вставки текста на некоторых системах. Это исправление устраняет конфликты синхронизации, возникавшие при высокой нагрузке на систему.
 - **Улучшенная стабильность:** Добавлена надёжная обработка ошибок для операций с буфером обмена, чтобы предотвратить сбои дополнения, когда системный буфер обмена временно заблокирован другими приложениями.
 - **Оптимизация синхронизации:** Скорректированы внутренние задержки для событий клавиатуры, чтобы обеспечить более высокую надёжность на разных скоростях системы и лучшую совместимость со сторонними менеджерами буфера обмена.
 
-## Изменения для 3.5.0
+## Изменения для 5.5 (Обновление автоматизации)
 
 - **ИИ-оператор (Автономное управление - Shift+A):** Это жемчужина v5.5. Vision Assistant Pro перешёл от пассивного ассистента к вашему личному **ИИ-оператору**. Он не просто описывает экран — он берёт на себя управление.
   - _Как это работает:_ Теперь вы можете давать голосовые инструкции для управления вашим ПК. Например, в полностью недоступном приложении, где ваш скринридер молчит, вы можете нажать **Shift+A** и ввести: _«Нажми на кнопку Настройки»_ или _«Найди поле поиска, введи 'Последние новости' и нажми Enter»_. ИИ визуально идентифицирует элементы, перемещает мышь и выполняет задачу за вас.
@@ -605,7 +605,7 @@ _Если вы хотите поддержать проект финансово
 - **Контекстно-зависимое умное действие с файлом (F):** Клавиша «F» была полностью переработана. Она больше не предполагает, что вы хотите только OCR. Когда вы выбираете одно изображение, она теперь интеллектуально спрашивает о вашем намерении: вы можете выбрать **Подробное визуальное описание**, чтобы понять сцену, или **Структурированное извлечение текста (OCR)** для чтения. Меню адаптируется динамически в зависимости от типа файла и вашего активного ИИ-движка.
 - **Оптимизация ядра:** Мы провели глубокую очистку внутренней логики дополнения, удалив неиспользуемые устаревшие функции и избыточный код. Это приводит к более лёгкому, быстрому и надёжному опыту для всех пользователей.
 
-## Изменения для 3.1.0
+## Изменения для 5.0
 
 - **Многопровайдерная архитектура**: Добавлена полная поддержка **OpenAI**, **Groq** и **Mistral** наряду с Google Gemini. Пользователи теперь могут выбрать предпочитаемый ИИ-бэкенд.
 - **Расширенная маршрутизация моделей**: Пользователи нативных провайдеров (Gemini, OpenAI и т.д.) теперь могут выбирать конкретные модели из выпадающего списка для разных задач (OCR, STT, TTS).
@@ -615,14 +615,14 @@ _Если вы хотите поддержать проект финансово
 - **Гибридный OCR и перевод**: Оптимизирована логика для использования Google Translate для скорости при использовании Chrome OCR и перевода на основе ИИ при использовании движков Gemini/Groq/OpenAI.
 - **Универсальное «Пересканировать с ИИ»**: Функция повторного сканирования Чтения документов больше не ограничена Gemini. Теперь она использует любой активный ИИ-провайдер для повторной обработки страниц.
 
-## Изменения для 3.0
+## Изменения для 4.6
 
 - **Интерактивный повтор результата:** Добавлена клавиша **Space** в командный слой, позволяющая пользователям мгновенно повторно открыть последний ответ ИИ в окне чата для дополнительных вопросов, даже когда режим «Прямой вывод» активен.
 - **Центр сообщества Telegram:** Добавлена ссылка «Официальный Telegram-канал» в меню NVDA «Сервис», обеспечивая быстрый способ оставаться в курсе последних новостей, функций и релизов.
 - **Улучшенная стабильность ответов:** Оптимизирована базовая логика для Перевода, OCR и Распознавания для обеспечения более надёжной производительности и более плавного опыта при использовании прямого речевого вывода.
 - **Улучшенное руководство по интерфейсу:** Обновлены описания настроек и документация для лучшего объяснения новой системы вызова и того, как она работает вместе с настройками прямого вывода.
 
-## Изменения для 2.9
+## Изменения для 4.5
 
 - **Продвинутый менеджер запросов:** Представлен выделенный диалог управления в настройках для настройки системных запросов по умолчанию и управления пользовательскими запросами с полной поддержкой добавления, редактирования, переупорядочивания и предварительного просмотра.
 - **Всесторонняя поддержка прокси:** Решены проблемы сетевого подключения путём обеспечения строгого применения настроек прокси, настроенных пользователем, ко всем API-запросам, включая перевод, OCR и генерацию речи.
@@ -631,7 +631,7 @@ _Если вы хотите поддержать проект финансово
 - **Оптимизированный интерфейс настроек:** Оптимизирован интерфейс настроек путём реорганизации управления запросами в отдельный диалог, обеспечивая более чистый и доступный пользовательский опыт.
 - **Руководство по переменным запросов:** Добавлено встроенное руководство в диалоги запросов, чтобы помочь пользователям легко идентифицировать и использовать динамические переменные, такие как [selection], [clipboard] и [screen_obj].
 
-## Изменения для 2.8
+## Изменения для 4.0.3
 
 - **Улучшенная сетевая устойчивость:** Добавлен механизм автоматических повторных попыток для лучшей обработки нестабильных интернет-соединений и временных ошибок сервера, обеспечивая более надёжные ответы ИИ.
 - **Диалог визуального перевода:** Представлено выделенное окно для результатов перевода. Пользователи теперь могут легко навигировать и читать длинные переводы строка за строкой, аналогично результатам OCR.
@@ -640,7 +640,7 @@ _Если вы хотите поддержать проект финансово
 - **Улучшенная стабильность API:** Переключение на более надёжный метод аутентификации на основе заголовков, устранение потенциальных ошибок «Все ключи API не сработали», вызванных конфликтами ротации ключей.
 - **Исправления ошибок:** Устранено несколько потенциальных сбоев, включая проблему во время завершения работы дополнения и ошибку фокуса в диалоге чата.
 
-## Изменения для 6.5.0
+## Изменения для 4.0.1
 
 - **Продвинутое чтение документов:** Мощный новый просмотрщик для PDF и изображений с выбором диапазона страниц, фоновой обработкой и бесшовной навигацией `Ctrl+PageUp/Down`.
 - **Новое подменю в меню «Сервис»:** Добавлено выделенное подменю «Vision Assistant» в меню NVDA «Сервис» для более быстрого доступа к основным функциям, настройкам и документации.
@@ -654,23 +654,23 @@ _Если вы хотите поддержать проект финансово
 - **Редизайн диалога обновлений:** Представлен новый доступный интерфейс с прокручиваемым текстовым полем для чёткого чтения изменений версии перед установкой.
 - **Унифицированное состояние и UX:** Стандартизированы диалоги файлов во всём дополнении и улучшена команда 'L' для сообщения прогресса в реальном времени.
 
-## Изменения для 2.6
+## Изменения для 3.6.0
 
 - **Система справки:** Добавлена команда помощи (`H`) в командный слой для предоставления легкодоступного списка всех сочетаний клавиш и их функций.
 - **Анализ онлайн-видео:** Расширена поддержка для включения видео **Twitter (X)**. Также улучшено обнаружение URL и стабильность для более надёжного опыта.
 - **Вклад в проект:** Добавлен опциональный диалог пожертвования для пользователей, желающих поддержать будущие обновления проекта и непрерывный рост.
 
-## Изменения для 2.5
+## Изменения для 3.5.0
 
 \*   \*\*Командный слой:\*\* Представлена система командного слоя (по умолчанию: `NVDA+Shift+V`) для группировки сочетаний клавиш под одним главным ключом. Например, вместо нажатия `NVDA+Control+Shift+T` для перевода, теперь вы нажимаете `NVDA+Shift+V`, затем `T`.
 \*   \*\*Анализ онлайн-видео:\*\* Добавлена новая функция для анализа видео YouTube и Instagram напрямую путём предоставления URL.
 
-## Изменения для 2.1.1
+## Изменения для 3.1.0
 
 - **Режим прямого вывода:** Добавлена опция пропуска диалога чата и прослушивания ответов ИИ напрямую через речь для более быстрого и бесшовного опыта.
 - **Интеграция с буфером обмена:** Добавлена новая настройка для автоматического копирования ответов ИИ в буфер обмена.
 
-## Изменения для 2.1
+## Изменения для 3.0
 
 - **Новые языки:** Добавлены переводы на **персидский** и **вьетнамский** языки.
 - **Расширенные модели ИИ:** Реорганизован список выбора моделей с чёткими префиксами (`[Бесплатно]`, `[Про]`, `[Авто]`) для помощи пользователям в различении бесплатных и ограниченных по скорости (платных) моделей. Добавлена поддержка **Gemini 3.0 Pro** и **Gemini 2.0 Flash Lite**.
@@ -678,7 +678,7 @@ _Если вы хотите поддержать проект финансово
 - **Обработка файлов:** Исправлена проблема, при которой загрузка файлов с неанглийскими именами не удавалась.
 - **Оптимизация запросов:** Улучшена логика перевода и структурированы результаты Распознавания.
 
-## Изменения для 2.0
+## Изменения для 2.9
 
 - **Добавлены французский и турецкий переводы.**
 - **Форматированный просмотр:** Добавлена кнопка «Просмотр с форматированием» в диалогах чата для просмотра разговора с правильным стилем (заголовки, жирный шрифт, код) в стандартном окне с возможностью просмотра.
@@ -686,7 +686,7 @@ _Если вы хотите поддержать проект финансово
 - **Управление диалогами:** Исправлена проблема, при которой окна «Обработка текста» или чата открывались несколько раз или не фокусировались правильно.
 - **Улучшения UX:** Стандартизированы заголовки диалогов файлов до «Открыть» и удалены избыточные голосовые объявления (например, «Открытие меню...») для более плавного опыта.
 
-## Изменения для 1.5
+## Изменения для 2.8
 
 - Добавлен итальянский перевод.
 - **Отчёт о состоянии:** Добавлена новая команда (NVDA+Control+Shift+I) для объявления текущего статуса дополнения (например, «Загрузка...», «Анализ...»).
@@ -699,20 +699,20 @@ _Если вы хотите поддержать проект финансово
 - **Настройки обновлений:** «Проверять обновления при запуске» теперь отключено по умолчанию для соответствия политикам Add-on Store.
 - Очистка кода.
 
-## Изменения для 1.0
+## Изменения для 2.7
 
 - Структура проекта перенесена в официальный NV Access Add-on Template для лучшего соответствия стандартам.
 - Реализована логика автоматических повторных попыток для ошибок HTTP 429 (Rate Limit) для обеспечения надёжности во время высокого трафика.
 - Оптимизированы запросы перевода для более высокой точности и лучшей обработки логики «Умной замены».
 - Обновлён русский перевод.
 
-## Изменения для 6.0
+## Изменения для 2.6
 
 - Добавлена поддержка русского перевода (спасибо nvda-ru).
 - Обновлены сообщения об ошибках для предоставления более описательной обратной связи относительно подключения.
 - Целевой язык по умолчанию изменён на английский.
 
-## Изменения для 5.5.2
+## Изменения для 2.5
 
 - Добавлена команда Native File OCR (NVDA+Control+Shift+F).
 - Добавлена кнопка «Сохранить чат» в диалоги результатов.
@@ -721,15 +721,15 @@ _Если вы хотите поддержать проект финансово
 - Переключение на Gemini File API для лучшей обработки PDF и аудиофайлов.
 - Исправлен сбой при переводе текста, содержащего фигурные скобки.
 
-## Изменения для 6.1.1
+## Изменения для 2.1.1
 
 - Исправлена проблема, при которой переменная [file_ocr] не функционировала правильно в пользовательских запросах.
 
-## Изменения для 6.1.2
+## Изменения для 2.1
 
 - Все сочетания клавиш стандартизированы для использования NVDA+Control+Shift для устранения конфликтов с раскладкой ноутбука NVDA и системными горячими клавишами.
 
-## Изменения для 2.7
+## Изменения для 2.0
 
 - Реализована встроенная система автоматического обновления.
 - Добавлен умный кэш переводов для мгновенного извлечения ранее переведённого текста.
@@ -738,7 +738,7 @@ _Если вы хотите поддержать проект финансово
 - Оптимизированы запросы ИИ для строгого соблюдения вывода на целевом языке.
 - Исправлен сбой, вызванный специальными символами во входном тексте.
 
-## Изменения для 5.6
+## Изменения для 1.5
 
 - Добавлена поддержка более 20 новых языков.
 - Реализован интерактивный диалог обработки для дополнительных вопросов.
@@ -747,6 +747,6 @@ _Если вы хотите поддержать проект финансово
 - Исправлены сбои COMError в конкретных приложениях, таких как Firefox и Word.
 - Добавлен механизм автоматических повторных попыток для ошибок сервера.
 
-## Изменения для 6.1.0
+## Изменения для 1.0
 
 - Первоначальный выпуск.

@@ -253,7 +253,7 @@ Vision Assistant Pro 引入了专为视障用户设计的强大视频处理功�
 2. **转录并翻译 (目标语言)**：转录语音并将其翻译为您的目标语言。
 3. **配音并翻译 (目标语言)** _(仅限 Gemini)_：一项强大的新功能，可转录语音、翻译为目标语言，并使用插件的 TTS 引擎合成口语配音。
 
-## 8) 高级文档与图像阅读器
+## 8. 高级文档与图像阅读器
 
 **文档阅读器** 可将您的文档转换为清晰易读的文本——让您可以阅读、翻译并聆听从扫描书籍到一叠照片的任何内容。它支持多页 PDF、复杂图像、iPhone HEIC 格式，甚至是纯文本（`.txt`）和 HTML（`.html`、`.htm`）文件，这些文件无需 OCR 或 AI 处理即可瞬间打开。一次性选择多个文件，它们将按页面顺序合并为一份连续的文档。提供三种 OCR 引擎可供选择——**Chrome (快速)**、具有卓越版面保留能力的 **AI (高级)**，以及用于可搜索 PDF 的 **无 (提取文本层)**——可在 设置 → 文档阅读器 中选择。
 
@@ -546,7 +546,7 @@ _如果您希望在经济上支持本项目并在此看到您的名字，您可�
 - **增强键盘模拟**：改进了按键注入，以完全支持“扩展键”（例如方向键、Home、End、Page Up/Down、Insert、Delete 和 F1-F12）。这确保了 AI 操作员发送的导航和快捷键命令在所有应用程序中都能完美工作。这确保了 AI 操作员发送的导航和快捷键命令能够在所有应用程序中完美执行。
 - **HEIC/HEIF 图像支持**：添加了对 iPhone 照片格式的原生支持。您可以直接选择 `.heic` 和 `.heif` 文件进行 AI 描述、OCR 或文档阅读，无需事先转换。您现在可以直接选择 `.heic` 和 `.heif` 文件进行 AI 描述、OCR 或文档阅读，无需事先转换。
 
-## 6.1.0 更新日志
+## 6.5.0 更新日志
 
 - **Live Assistant**: Added a real-time voice and screen assistant feature, available exclusively for the Google Gemini provider (or Gemini-compatible custom providers). Includes interactive voice and thinking depth customization directly inside the dialog, with automatic reconnection upon changing settings.
 - **MiniMax AI Provider**: Integrated MiniMax as a peer provider with full multimodal support (chat, vision, OCR), custom TTS using over 300+ dynamic voices, and automatic stripping of reasoning blocks (e.g., ` thinking... response`) from outputs.
@@ -568,7 +568,7 @@ _如果您希望在经济上支持本项目并在此看到您的名字，您可�
 - **Gemma 4 Thinking Output Fix**: Fixed an issue with Gemma 4 models where the entire internal thought process was displayed as the final response, or where disabling thinking resulted in empty responses. The add-on now correctly isolates and extracts only the final clean text response.
 - **Batch OCR from File Explorer**: You can now select multiple photos or PDFs directly in Windows File Explorer and extract text or analyze them in batch. The add-on will automatically filter and process only the supported file formats.
 
-## 6.5.0 更新日志
+## 6.1.0 更新日志
 
 - **通用本地 AI 集成 (设置本地 AI)**：在自定义提供商设置中添加了全新的 **"设置本地 AI"** 按钮。用户现在可以即时自动配置本地 AI 引擎，包括 **Ollama**、**LM Studio**、**Jan.ai** 和 **KoboldCPP**。
 - **Intelligent Local Proxy Bypass**: Rebuilt the connection logic with an advanced proxy bypass mechanism. The add-on is now smart enough to completely bypass Windows system proxies for local loopback connections, ensuring stable local AI connections even when your VPN/TUN-mode is active.

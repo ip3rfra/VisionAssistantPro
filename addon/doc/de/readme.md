@@ -16,14 +16,14 @@ Gehen Sie zu **NVDA-Menü > Optionen > Einstellungen > KI Assistent pro**. Das E
 - **API-Schlüssel:** Geben Sie einzelne oder mehrere API-Schlüssel ein (getrennt durch Kommas oder neue Zeilen), um eine automatische Rotation zu ermöglichen.
 - **Modelle abrufen:** Nachdem Sie Ihren API-Schlüssel eingegeben haben, drücken Sie diese Schaltfläche, um die aktuelle Liste der verfügbaren Modelle vom Anbieter herunterzuladen.
 - **KI-Modell:** Wählen Sie das Hauptmodell aus, das für den allgemeinen Chat und die Analysen verwendet werden soll.
-- **Advanced Model Routing (Task-specific):** Optionally select dedicated models from dropdowns for OCR, STT, TTS, AI Operator, Video, and Live Assistant tasks. For Gemini, models are dynamically categorized by capability without clutter.
+- **Erweitertes Modell-Routing (aufgabenspezifisch):** Wählen Sie optional über Auswahllisten eigene Modelle für OCR, STT, TTS, KI-Operator, Video und Live-Assistent. Bei Gemini werden die Modelle dynamisch und übersichtlich nach ihren Fähigkeiten sortiert.
 - **Einstellungen für benutzerdefinierte Anbieter:** Konfigurieren Sie lokale oder benutzerdefinierte Endpunkte. Enthält **Lokale KI einrichten** (Ein-Klick-Konfiguration für Ollama, LM Studio, Jan.ai oder KoboldCPP) und die **Erweiterte Endpunkt-Konfiguration**.
-- **Proxy Configuration:** Full support for tunneling and endpoint redirection across the entire add-on (including the Live Assistant, Ambient Observer, and TTS). Enter your **Proxy URL** and select your **Proxy Mode**:
-  - **Auto-detect:** Automatically detects whether the URL is a forward proxy or reverse proxy.
-  - **SOCKS5 Proxy:** Forces forward tunneling via SOCKS5 with RFC 1929 username/password authentication and domain name resolution.
-  - **HTTP Proxy:** Forces forward tunneling via an HTTP proxy with Basic authentication.
-  - **Reverse Proxy:** Direct endpoint replacement for custom AI gateways and self-hosted mirrors (credentials are disabled in this mode).
-- **Test Proxy Connection:** A non-blocking button that tests connectivity and measures server latency in milliseconds (spoken via NVDA).
+- **Proxy-Konfiguration:** Volle Unterstützung für Tunneling und Endpunkt-Umleitung im gesamten Add-on (einschließlich Live-Assistent, Ambient Observer und TTS). Geben Sie Ihre **Proxy-URL** ein und wählen Sie Ihren **Proxy-Modus**:
+  - **Automatisch erkennen:** Erkennt automatisch, ob es sich bei der URL um einen Forward-Proxy oder einen Reverse-Proxy handelt.
+  - **SOCKS5-Proxy:** Erzwingt Forward-Tunneling über SOCKS5 mit Benutzername/Passwort-Authentifizierung nach RFC 1929 und Auflösung von Domainnamen.
+  - **HTTP-Proxy:** Erzwingt Forward-Tunneling über einen HTTP-Proxy mit Basic-Authentifizierung.
+  - **Reverse-Proxy:** Direkter Ersatz des Endpunkts für benutzerdefinierte KI-Gateways und selbst gehostete Spiegelserver (Anmeldedaten sind in diesem Modus deaktiviert).
+- **Proxy-Verbindung testen:** Eine nicht blockierende Schaltfläche, die die Verbindung prüft und die Server-Latenz in Millisekunden misst (von NVDA angesagt).
 - **Verbindungs- & Ausgabeoptionen:** Konfigurieren Sie Proxy-URL, Update-Prüfung beim Start, Bereinigtes Markdown im Chat, KI-Antworten in die Zwischenablage kopieren und Direkte Ausgabe (Kein Chat-Fenster).
 - **Chats im Verlauf speichern:** Behalten Sie Ihre Chat-Gespräche in der Verlaufsliste.
 
@@ -71,14 +71,14 @@ _Hinweis: Dieser Reiter wird nur angezeigt, wenn **Google Gemini** (oder ein Gem
 
 - **System-Prompt für Direkten Chat:** Der Direkte Chat (`Umschalt+C`) besitzt nun einen eigenen editierbaren System-Prompt („Direct Chat Instruction“), um Persönlichkeit und Ausgabesprache festzulegen.
 - **Eigene Prompt-Tastenkombinationen:** Weisen Sie jedem benutzerdefinierten Prompt direkt im Prompt-Manager ein eigenes Tastaturkürzel zu. Drücken Sie die Tasten zur Aufnahme – Einzeltasten funktionieren innerhalb der Befehlsebene (und global als `NVDA + Umschalt + Taste`), Tastenkombinationen wie `Strg + Umschalt + 1` funktionieren eigenständig global.
-- **Per-Prompt Feedback Behavior:** Choose how each prompt outputs its result individually (Global setting, Copy to clipboard, Direct Output / NVDA message, Copy to clipboard + Direct Output, or Chat window).
+- **Ausgabeverhalten pro Prompt:** Legen Sie für jeden Prompt einzeln fest, wie sein Ergebnis ausgegeben wird (Globale Einstellung, In die Zwischenablage kopieren, Direkte Ausgabe / NVDA-Meldung, In die Zwischenablage kopieren + Direkte Ausgabe oder Chat-Fenster).
 
 ### 1.9 Erweitert Reiter & Globales Logging
 
 Navigieren Sie zum Reiter **Erweitert**, um das globale Logging des Add-ons zu konfigurieren:
 
 - **Dedizierte Log-Datei aktivieren:** Schaltet die Protokollierung aller betrieblichen Ereignisse, API-Anfragen und Fehler über alle Module hinweg in eine separate Datei (`vision_assistant.log`) ein.
-- **Log-Level:** Wählen Sie die Detailtiefe zwischen **Debug (Alle Details)**, **Info (General Information)**, **Warning (Nur Warnungen)** und **Error (Nur Fehler)**.
+- **Log-Level:** Wählen Sie die Detailtiefe zwischen **Debug (Alle Details)**, **Info (Allgemeine Informationen)**, **Warnung (Nur Warnungen)** und **Fehler (Nur Fehler)**.
 - **Logs aufbewahren für:** Legen Sie automatische Aufbewahrungsfristen fest, um ältere Log-Einträge automatisch zu bereinigen (von 1 Stunde bis 90 Tage).
 - **Log-Verwaltung:** Nutzen Sie **Log-Datei öffnen**, **Log-Ordner öffnen** oder **Log-Datei löschen**, um Protokolldaten direkt zu überprüfen oder zu bereinigen, ohne NVDA neu zu starten oder reguläre NVDA-Protokolle zu beeinträchtigen.
 - **Einheitliches Datenverzeichnis:** Alle Datendateien des Add-ons (Verlauf, Serien, Beschriftungen, OCR-Fortschritte, Caches und Logs) werden in einem einzigen `VisionAssistant`-Ordner innerhalb Ihres NVDA-Konfigurationsverzeichnisses gespeichert – das hält Ordnung und macht manuelle Backups zum Kinderspiel.
@@ -92,14 +92,14 @@ Der Reiter **Erweitert** enthält zudem einen Bereich für **Sichern und Wiederh
 
 ## 2. Gemini-API-Schlüsselmanager
 
-Creating a Gemini API key on **aistudio.google.com** used to be the hardest step of the add-on. With a screen reader the pages were confusing, and some people simply could not create a key at all. The **Gemini API Key Manager** solves that problem. Press **G** in the Command Layer, or open **NVDA Menu > Preferences > Settings > Vision Assistant > Connection** and press **Get a Gemini API Key...**.
+Das Erstellen eines Gemini-API-Schlüssels auf **aistudio.google.com** war bisher der schwierigste Schritt des Add-ons. Mit einem Screenreader waren die Seiten unübersichtlich, und manche Menschen konnten schlicht gar keinen Schlüssel anlegen. Der **Gemini-API-Schlüsselmanager** löst dieses Problem. Drücken Sie **G** in der Befehlsebene oder öffnen Sie **NVDA-Menü > Optionen > Einstellungen > KI Assistent pro > Verbindung** und drücken Sie **Gemini-API-Schlüssel abrufen...**.
 
-- **Signing in:** When you open the manager, your default browser opens directly with Google's secure sign-in page. Sign in with your Google account — no external tools, SDKs, or command-line setups are required. The account you are signed in with is always shown on the **Sign Out** button.
-- **Creating a key:** After signing in, you can create a key immediately with **New Project and Key** without any prior setup. If you already have existing projects, they appear in a simple list where you can select one and press **Create Key for Selected Project**.
-- **What happens next:** The new key is copied to the clipboard straight away, saved inside the add-on for later, and you are asked once whether to add it to the add-on's key list. That is all you need — no web pages to hunt through.
-- **Working with your keys:** **Copy Key for Selected Project** copies the key of the project you have selected, **Copy Last Created Key** copies the key you created a moment ago, and **Export Saved Keys to CSV...** saves everything you have created to a file.
-- **Deleting a key:** **Delete a Key...** shows the keys that exist on the selected project, asks you which one to remove, and confirms before deleting. Deleting a key also removes it from the add-on's key list, so no broken key is ever left in the rotation. Keys created outside the add-on can be deleted too, as long as your account has permission on that project.
-- **Signing out:** **Sign Out** removes the stored sign-in information from your computer, so you can switch to another account whenever you like.
+- **Anmelden:** Wenn Sie den Manager öffnen, startet Ihr Standardbrowser direkt mit der sicheren Anmeldeseite von Google. Melden Sie sich mit Ihrem Google-Konto an – externe Werkzeuge, SDKs oder Kommandozeilen-Einrichtungen sind nicht erforderlich. Das angemeldete Konto wird stets auf der Schaltfläche **Abmelden** angezeigt.
+- **Schlüssel erstellen:** Nach der Anmeldung können Sie ohne jede Vorbereitung sofort mit **Neues Projekt und Schlüssel** einen Schlüssel erstellen. Haben Sie bereits Projekte, erscheinen diese in einer einfachen Liste, in der Sie eines auswählen und **Schlüssel für ausgewähltes Projekt erstellen** drücken können.
+- **Was danach passiert:** Der neue Schlüssel wird sofort in die Zwischenablage kopiert, zur späteren Verwendung im Add-on gespeichert, und Sie werden einmalig gefragt, ob er zur Schlüsselliste des Add-ons hinzugefügt werden soll. Mehr ist nicht nötig – keine Webseiten, auf denen Sie suchen müssen.
+- **Mit Ihren Schlüsseln arbeiten:** **Schlüssel des ausgewählten Projekts kopieren** kopiert den Schlüssel des gewählten Projekts, **Zuletzt erstellten Schlüssel kopieren** kopiert den Schlüssel, den Sie gerade erstellt haben, und **Gespeicherte Schlüssel als CSV exportieren...** speichert alle von Ihnen erstellten Schlüssel in einer Datei.
+- **Schlüssel löschen:** **Schlüssel löschen...** zeigt die Schlüssel des ausgewählten Projekts an, fragt, welcher entfernt werden soll, und bittet vor dem Löschen um Bestätigung. Ein gelöschter Schlüssel wird auch aus der Schlüsselliste des Add-ons entfernt, sodass nie ein ungültiger Schlüssel in der Rotation zurückbleibt. Auch außerhalb des Add-ons erstellte Schlüssel können gelöscht werden, sofern Ihr Konto Berechtigungen für das jeweilige Projekt hat.
+- **Abmelden:** **Abmelden** entfernt die gespeicherten Anmeldeinformationen von Ihrem Computer, sodass Sie jederzeit zu einem anderen Konto wechseln können.
 
 ## 3. Befehlsebene & Tastenkombinationen
 
@@ -108,45 +108,45 @@ Um Tastaturkonflikte zu vermeiden, verwendet dieses Add-on eine **Befehlsebene**
 1. Drücken Sie **NVDA + Umschalt + V** (Haupttaste), um die Ebene zu aktivieren (Sie hören einen Signalton).
 2. Lassen Sie die Tasten los und drücken Sie dann eine der folgenden Einzeltasten:
 
-| Key                                                                                                                                                                                                                              | Funktion                                                                                                                                                                                                                                                                                                                              | Beschreibung                                                                                                                                                                                                                                                                                          |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Umschalt + A**                                                                                                                                                                                                                 | **KI-Operator**                                                                                                                                                                                                                                                                                                                       | **Autonome Steuerung:** Weisen Sie die KI an, eine Aufgabe auf Ihrem Bildschirm auszuführen. Erneutes Drücken bricht die Aktion sofort ab.                                                                                                            |
-| **Szenario: Sie haben ein Bild auf einer Webseite oder eine unbeschriftete Grafik in einem Dokument gefunden.**                                                                                  | **UI Explorer**                                                                                                                                                                                                                                                                                                                       | \|&#xA;\| **E** \| **UI-Explorer** \| **Interaktiver Klick:** Identifiziert und klickt auf UI-Elemente in jeder Anwendung.                                                                                                                                            |
-| **Szenario: Sie stoßen auf unerwartete Fehler, API-Verbindungsabbrüche oder möchten lokale Server analysieren.**                                                                                 | \|&#xA;\| **T** \| Intelligenter Übersetzer \| Übersetzt Text unter dem Navigator-Objekt oder der Markierung.                                                                                                                                                                                                         | Translates text under navigator cursor or selection.                                                                                                                                                                                                                                  |
-| \|&#xA;\| **Strg + T** \| Sprach-Übersetzung \| Transkribiert, übersetzt und tippt das Ergebnis basierend auf Ihren Spracheinstellungen.                                                                         | Übersetzung                                                                                                                                                                                                                                                                                                                           | Translates content currently in the clipboard.                                                                                                                                                                                                                                        |
-| **Szenario: Sie möchten ein langes, 50-seitiges PDF-Dokument lesen.**                                                                                                                            | Text Refiner                                                                                                                                                                                                                                                                                                                          | \|&#xA;\| **R** \| Text-Optimierer \| Zusammenfassen, Grammatik korrigieren, Erklären oder **Eigene Prompts** ausführen.                                                                                                                                                              |
-| Übersetzt von **BFW Würzburg** im Rahmen des Projekts "NVDA Nachhaltig"                                                                                                                                                          | Object Vision                                                                                                                                                                                                                                                                                                                         | \|&#xA;\| **V** \| Objekt-Vision \| Beschreibt das aktuelle Navigator-Objekt.                                                                                                                                                                                                         |
-| \|                                                                                                                                                                                                                               | KI Assistent pro enthält einen hochoptimierten Dokumentenleser, der für mehrseitige PDFs, komplexe Bilder und sogar iPhone-HEIC-Formate entwickelt wurde.                                                                                                                                                             | \|&#xA;\| **O** \| Vollbild-Vision \| Analysiert das gesamte Bildschirmlayout und den Inhalt.                                                                                                                                                                                         |
-| **Visuelle CAPTCHA-Unterstützung:** Unterstützung für das automatische Lösen komplexer visueller Aufgaben wie hCaptcha und reCAPTCHA hinzugefügt.                                                | Video Analysis                                                                                                                                                                                                                                                                                                                        | \|&#xA;\| **Umschalt + V** \| Videoanalyse \| Analysiert lokale Videodateien oder Online-Videos von **YouTube**, **Instagram**, **TikTok** oder **Twitter (X)**.                                                                                                   |
-| \|&#xA;\| **Alt + M** \| Routing-Prüfung \| Meldet die aktuell im erweiterten Modell-Routing ausgewählten KI-Modelle.                                                                                            | Local Video Recording                                                                                                                                                                                                                                                                                                                 | \|&#xA;\| **Strg + V** \| Lokale Videoaufnahme \| Nimmt ein lautloses Video Ihres Bildschirms auf und analysiert die Aktionen und das Layout.                                                                                                                                         |
-| **Szenario: Sie sehen sich eine stumme Videoanleitung oder Animation auf Ihrem Bildschirm an.**                                                                                                  | Document Reader                                                                                                                                                                                                                                                                                                                       | \|&#xA;\| **D** \| Dokumentenleser \| Fortgeschrittener Leser für PDF, Bilder und einfache Text-/HTML-Dateien mit Seitenbereichsauswahl.                                                                                                                                              |
-| Wie es funktioniert                                                                                                                                                                                                              | **Smart File Action**                                                                                                                                                                                                                                                                                                                 | \|&#xA;\| **F** \| **Smarte Datei-Aktion** \| Kontextabhängige Erkennung aus ausgewählten Bild-, PDF- oder TIFF-Dateien.                                                                                                                                                              |
-| **Optionale Seitenzahlen im Dokumentenleser:** Neue Einstellung zum Ein- oder Ausblenden von Seitenzahlen und Trennlinien in exportierten Texten/HTML-Dateien sowie in der formatierten Ansicht. | Media Transcription & Dubbing                                                                                                                                                                                                                                                                                     | \|&#xA;\| **M** \| Medien-Transkription & Synchronisation \| Transkribiert oder synchronisiert Audio-/Videodateien (MP3, WAV, MP4 usw.) in Ihre Zielsprache.                                                                   |
-| **C**                                                                                                                                                                                                                            | CAPTCHA Solver                                                                                                                                                                                                                                                                                                                        | \|&#xA;\| **C** \| CAPTCHA-Löser \| Erfasst und löst CAPTCHAs.                                                                                                                                                                                                                        |
-| **Sprach-Übersetzung (`Strg+T`):** Neues Feature zum Diktieren von Sprache, die mittels KI sofort übersetzt und direkt an der Cursorposition eingefügt wird.                  | Direct Chat                                                                                                                                                                                                                                                                                                                           | Opens a direct text-based chat interface with the AI.                                                                                                                                                                                                                                 |
-| **Szenario: Sie müssen ein unzugängliches CAPTCHA umgehen.**                                                                                                                                     | Smart Dictation                                                                                                                                                                                                                                                                                                                       | \|&#xA;\| **S** \| Intelligentes Diktat \| Wandelt Sprache in Text um. Drücken zum Starten, erneut drücken zum Stoppen/Einfügen.                                                                                                                                      |
-| \|&#xA;\| **Umschalt + T** \| Zwischenablage-Übersetzer \| Übersetzt den aktuellen Inhalt der Zwischenablage.                                                                                                    | **Überarbeitung der Audio-Transkription:** Das Modul unterstützt nun Audio- und Videodateien und bietet 3 Modi: Transkribieren, Transkribieren & Übersetzen sowie eine neue Sprach-Synchronfassung ("Dub and Translate", exklusiv für Gemini). | Transcribes, translates, and types the result based on your language settings.                                                                                                                                                                                                        |
-| **Szenario: Sie stoßen auf eine App voller „unbenannter Schaltflächen“.**                                                                                                                        | **Online-Videoanalyse:** Unterstützung für **Twitter (X)** Videos hinzugefügt sowie URL-Erkennung verbessert.                                                                                                                                                                      | \|&#xA;\| **Strg + L** \| **Live-Assistent** \| **Echtzeit-Copilot (nur Gemini):** Startet oder beendet ein Live-Sprach- und Bildschirmgespräch mit dem KI-Assistenten.                                                                            |
-| **Strg+A**                                                                                                                                                                                                                       | **Live-Operator**                                                                                                                                                                                                                                                                                                                     | **Autonome Computersteuerung (nur Gemini):** Startet oder beendet eine Live-Operatorsitzung, um Bildschirm und Aktionen an die KI zu delegieren.                                                                                                   |
-| **G**                                                                                                                                                                                                                            | **Gemini-API-Schlüsselmanager**                                                                                                                                                                                                                                                                                                       | **Erstellen Sie Ihren API-Schlüssel ohne Web (nur Gemini):** Öffnet den Manager, der die Anforderungen Ihres Computers einrichtet, den Browser zur Anmeldung öffnet und einen Schlüssel für das ausgewählte Projekt erstellt, kopiert oder löscht. |
-| **I**                                                                                                                                                                                                                            | Statusbericht                                                                                                                                                                                                                                                                                                                         | Kündigt den aktuellen Fortschritt an (z. B. „Scannen...“, „Leerlauf“).                                                                                                             |
-| **L**                                                                                                                                                                                                                            | **Objekt beschriften**                                                                                                                                                                                                                                                                                                                | **Semantische KI-Beschriftung:** Beschriftet das aktuell fokussierte Navigator-Objekt oder Symbol dauerhaft.                                                                                                                                                          |
-| **Umschalt + L**                                                                                                                                                                                                                 | **Beschriftungen verwalten/scannen**                                                                                                                                                                                                                                                                                                  | Öffnet den Beschriftungs-Manager (falls vorhanden) oder scannt die App nach unbeschrifteten Elementen.                                                                                                                                                             |
-| **U**                                                                                                                                                                                                                            | Nach Updates suchen                                                                                                                                                                                                                                                                                                                   | Sucht auf GitHub manuell nach der neuesten Version des Add-ons.                                                                                                                                                                                                                       |
-| **Leertaste**                                                                                                                                                                                                                    | Letztes Ergebnis abrufen                                                                                                                                                                                                                                                                                                              | Zeigt die letzte KI-Antwort in einem Chat-Dialog zur Überprüfung oder Weiterverfolgung an.                                                                                                                                                                                            |
-| **H**                                                                                                                                                                                                                            | Befehlshilfe                                                                                                                                                                                                                                                                                                                          | Zeigt eine Liste aller verfügbaren Tastenkombinationen an.                                                                                                                                                                                                                            |
-| **Strg + H**                                                                                                                                                                                                                     | **Verlauf**                                                                                                                                                                                                                                                                                                                           | Öffnet das Verlaufsdialogfeld, in dem Ihre vergangenen Chats und Dokumente mit Typfiltern und Optionen zum Löschen aufgelistet sind.                                                                                                                                                  |
-| **Alt + S**                                                                                                                                                                                                                      | Einstellungen                                                                                                                                                                                                                                                                                                                         | Öffnet das Dialogfeld „Einstellungen von Vision Assistant Pro“.                                                                                                                                                                                                                       |
-| **Alt + Q**                                                                                                                                                                                                                      | Bericht über Schlüssel mit erschöpftem Kontingent                                                                                                                                                                                                                                                                                     | Meldet die Anzahl der Gemini-API-Schlüssel, die ihr Tageskontingent überschritten haben, welche Modelle betroffen sind und deren Zurücksetzungszeit.                                                                                                                                  |
-| **Alt + M**                                                                                                                                                                                                                      | Routing-Audit                                                                                                                                                                                                                                                                                                                         | Meldet die KI-Modelle, die derzeit im erweiterten Routing für spezielle Aufgaben ausgewählt sind (überspringt Standardeinstellungen).                                                                                                                              |
-| **Auf / Ab**                                                                                                                                                                                                                     | Schnelleinstellungs-Navigation                                                                                                                                                                                                                                                                                                        | Navigiert zwischen Schnelleinstellungs-Kategorien (Anbieter, Modell, Ausgabe)... in der Befehlsebene.                                                                                                              |
-| **Links / Rechts**                                                                                                                                                                                                               | Change Quick Setting                                                                                                                                                                                                                                                                                                                  | \|&#xA;\| **Pfeil links / rechts** \| Schnelleinstellung ändern \| Ändert den Wert der aktuell ausgewählten Schnelleinstellung.                                                                                                                                                       |
+| Key                | Funktion                                                   | Beschreibung                                                                                                                                                                                                                                                                                          |
+| ------------------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Umschalt + A**   | **KI-Operator**                                            | **Autonome Steuerung:** Weisen Sie die KI an, eine Aufgabe auf Ihrem Bildschirm auszuführen. Erneutes Drücken bricht die Aktion sofort ab.                                                                                                            |
+| **E**              | **UI-Explorer**                                            | **Interaktiver Klick:** Identifiziert und klickt auf UI-Elemente in jeder Anwendung.                                                                                                                                                                                  |
+| **T**              | Intelligenter Übersetzer                                   | Übersetzt Text unter dem Navigator-Objekt oder der Markierung.                                                                                                                                                                                                                        |
+| **Umschalt + T**   | Übersetzung                                                | Übersetzt den aktuellen Inhalt der Zwischenablage.                                                                                                                                                                                                                                    |
+| **R**              | Text-Optimierer                                            | Zusammenfassen, Grammatik korrigieren, Erklären oder **Eigene Prompts** ausführen.                                                                                                                                                                                                    |
+| **V**              | Objekt-Vision                                              | Beschreibt das aktuelle Navigator-Objekt.                                                                                                                                                                                                                                             |
+| **O**              | Vollbild-Vision                                            | Analysiert das gesamte Bildschirmlayout und den Inhalt.                                                                                                                                                                                                                               |
+| **Strg + V**       | Videoanalyse                                               | Analysiert lokale Videodateien oder Online-Videos von **YouTube**, **Instagram**, **TikTok** oder **Twitter (X)**.                                                                                                                                                 |
+| **Umschalt + V**   | Lokale Videoaufnahme                                       | Nimmt ein lautloses Video Ihres Bildschirms auf und analysiert die Aktionen und das Layout.                                                                                                                                                                                           |
+| **D**              | Dokumentenleser                                            | Fortgeschrittener Leser für PDF, Bilder und einfache Text-/HTML-Dateien mit Seitenbereichsauswahl.                                                                                                                                                                                    |
+| **F**              | **Smarte Datei-Aktion**                                    | Kontextabhängige Erkennung aus ausgewählten Bild-, PDF- oder TIFF-Dateien.                                                                                                                                                                                                            |
+| **M**              | Medien-Transkription & Synchronisation | Transkribiert oder synchronisiert Audio-/Videodateien (MP3, WAV, MP4 usw.) in Ihre Zielsprache.                                                                                                                                                    |
+| **C**              | CAPTCHA-Löser                                              | Erfasst und löst CAPTCHAs.                                                                                                                                                                                                                                                            |
+| **Umschalt + C**   | Direkter Chat                                              | Öffnet eine direkte, textbasierte Chat-Oberfläche mit der KI.                                                                                                                                                                                                                         |
+| **S**              | Intelligentes Diktat                                       | Wandelt Sprache in Text um. Drücken zum Starten, erneut drücken zum Stoppen/Einfügen.                                                                                                                                                                                 |
+| **Strg + T**       | Sprach-Übersetzung                                         | Transkribiert, übersetzt und tippt das Ergebnis basierend auf Ihren Spracheinstellungen.                                                                                                                                                                                              |
+| **Strg + L**       | **Live-Assistent**                                         | **Echtzeit-Copilot (nur Gemini):** Startet oder beendet ein Live-Sprach- und Bildschirmgespräch mit dem KI-Assistenten.                                                                                                                            |
+| **Strg + A**       | **Live-Operator**                                          | **Autonome Computersteuerung (nur Gemini):** Startet oder beendet eine Live-Operatorsitzung, um Bildschirm und Aktionen an die KI zu delegieren.                                                                                                   |
+| **G**              | **Gemini-API-Schlüsselmanager**                            | **Erstellen Sie Ihren API-Schlüssel ohne Web (nur Gemini):** Öffnet den Manager, der die Anforderungen Ihres Computers einrichtet, den Browser zur Anmeldung öffnet und einen Schlüssel für das ausgewählte Projekt erstellt, kopiert oder löscht. |
+| **I**              | Statusbericht                                              | Kündigt den aktuellen Fortschritt an (z. B. „Scannen...“, „Leerlauf“).                                                                                                             |
+| **L**              | **Objekt beschriften**                                     | **Semantische KI-Beschriftung:** Beschriftet das aktuell fokussierte Navigator-Objekt oder Symbol dauerhaft.                                                                                                                                                          |
+| **Umschalt + L**   | **Beschriftungen verwalten/scannen**                       | Öffnet den Beschriftungs-Manager (falls vorhanden) oder scannt die App nach unbeschrifteten Elementen.                                                                                                                                                             |
+| **U**              | Nach Updates suchen                                        | Sucht auf GitHub manuell nach der neuesten Version des Add-ons.                                                                                                                                                                                                                       |
+| **Leertaste**      | Letztes Ergebnis abrufen                                   | Zeigt die letzte KI-Antwort in einem Chat-Dialog zur Überprüfung oder Weiterverfolgung an.                                                                                                                                                                                            |
+| **H**              | Befehlshilfe                                               | Zeigt eine Liste aller verfügbaren Tastenkombinationen an.                                                                                                                                                                                                                            |
+| **Strg + H**       | **Verlauf**                                                | Öffnet das Verlaufsdialogfeld, in dem Ihre vergangenen Chats und Dokumente mit Typfiltern und Optionen zum Löschen aufgelistet sind.                                                                                                                                                  |
+| **Alt + S**        | Einstellungen                                              | Öffnet das Dialogfeld „Einstellungen von KI Assistent pro“.                                                                                                                                                                                                                           |
+| **Alt + Q**        | Bericht über Schlüssel mit erschöpftem Kontingent          | Meldet die Anzahl der Gemini-API-Schlüssel, die ihr Tageskontingent überschritten haben, welche Modelle betroffen sind und deren Zurücksetzungszeit.                                                                                                                                  |
+| **Alt + M**        | Routing-Prüfung                                            | Meldet die KI-Modelle, die derzeit im erweiterten Routing für spezielle Aufgaben ausgewählt sind (überspringt Standardeinstellungen).                                                                                                                              |
+| **Auf / Ab**       | Schnelleinstellungs-Navigation                             | Navigiert zwischen Schnelleinstellungs-Kategorien (Anbieter, Modell, Ausgabe)... in der Befehlsebene.                                                                                                              |
+| **Links / Rechts** | Schnelleinstellung ändern                                  | Ändert den Wert der aktuell ausgewählten Schnelleinstellung.                                                                                                                                                                                                                          |
 
 ## 4. Chat & Verlauf
 
 Chat-Fenster und der Verlaufsdialog greifen nahtlos über alle Funktionen hinweg ineinander, sodass Sie Konversationen nachlesen und jederzeit dort weitermachen können, wo Sie aufgehört haben.
 
-### 3.1 Tastenkombinationen für das Chatfenster
+### 4.1 Tastenkombinationen für das Chatfenster
 
 Wenn ein Chat-Fenster geöffnet ist (Direkter Chat, Dokumenten-Chat, Text-Optimierer usw.), können Sie das Gespräch mit folgenden Tasten prüfen:
 
@@ -154,7 +154,7 @@ Wenn ein Chat-Fenster geöffnet ist (Direkter Chat, Dokumenten-Chat, Text-Optimi
 - **Alt + Pfeil hoch:** Liest die vorherige Nachricht vor.
 - **Alt + C:** Kopiert die aktuell ausgewählte Nachricht in die Zwischenablage.
 
-### 3.2 Verlauf (Strg + H)
+### 4.2 Verlauf (Strg + H)
 
 Drücken Sie **Strg + H** in der Befehlsebene, um den **Verlauf** Ihrer bisherigen Chats und Dokumente zu öffnen, filterbar nach Typ (Alle / Chats / Dokumente). Öffnen Sie einen Chat, um die Konversation fortzusetzen – einschließlich angehängter Dateien, die automatisch erneut verknüpft werden – oder öffnen Sie ein Dokument zum Weiterlesen. Drücken Sie **Entf** auf einem Eintrag, um ihn zu entfernen, oder **Alle löschen**, um die Liste zu leeren. Bei Dokumenten fragt das System beim Löschen, ob nur der Verlaufseintrag entfernt oder auch der zwischengespeicherte OCR-Text bereinigt werden soll, damit beim nächsten Öffnen komplett frisch gescannt wird – inklusive einer Option **Nicht mehr fragen**, um Ihre Wahl zu speichern.
 
@@ -166,14 +166,14 @@ Der **KI-Operator** macht aus KI Assistent pro von einem passiven Leser einen ak
 
 Der größte Vorteil? Es funktioniert perfekt in absolut unzugänglicher Software. Wenn Sie in einer benutzerdefinierten Anwendung, einer Remotedesktop-Verbindung oder auf einer Website feststecken, bei der Ihr Screenreader völlig stumm bleibt, stört das den Operator nicht. Da er den Bildschirm visuell „sieht“, kann er Elemente finden, lesen und mit ihnen interagieren, die keinerlei Barrierefreiheits-Labels besitzen.
 
-### 4.1 So funktioniert es
+### 5.1 So funktioniert es
 
 1. Drücken Sie **NVDA + Umschalt + V** und dann **Umschalt + A** (oder nutzen Sie die direkte Tastenkombination), um den KI-Operator-Dialog zu öffnen.
 2. Tippen Sie in verständlicher Sprache ein, was Sie tun möchten (z. B. „Klicke auf die Schaltfläche Speichern“, „Was sagt die Fehlermeldung?“ oder „Benenne die Datei in endgueltig.pdf um“).
 3. Die KI analysiert Ihren Bildschirm, identifiziert die relevanten Elemente und führt die Aktion aus oder liefert die Antwort. Wenn eine Aufgabe mehrere Schritte erfordert, arbeitet der Operator so lange weiter, bis sie abgeschlossen ist.
 4. Drücken Sie jederzeit erneut **Umschalt + A**, um eine laufende Aktion sofort abzubrechen.
 
-### 4.2 Unterstützte Aktionen
+### 5.2 Unterstützte Aktionen
 
 Der Operator versteht eine Vielzahl von Befehlen:
 
@@ -187,23 +187,23 @@ Der Operator versteht eine Vielzahl von Befehlen:
 - **Tastendruck:** „Drücke Enter“, „Drücke Tab“, „Drücke Escape“
 - **Mehrschrittige Aufgaben:** „Öffne den Datei-Explorer, suche den Bericht und benenne ihn in endgueltig.pdf um“
 
-### 4.3 Wichtige Hinweise
+### 5.3 Wichtige Hinweise
 
 - **⚠️ Warnung zur API-Nutzung:** Da der Operator genau „sehen“ muss, was auf dem Bildschirm passiert, um präzise zu sein, sendet er bei jedem Schritt einen hochauflösenden Screenshot. Eine häufige Nutzung verbraucht Ihr API-Kontingent viel schneller als standardmäßige textbasierte Aufgaben.
 - **Administrator-Anwendungen:** Wenn NVDA nicht mit Administratorrechten ausgeführt wird, kann der Operator möglicherweise nicht mit Fenstern interagieren, die erhöhte Rechte erfordern. Dies ist eine Sicherheitsbeschränkung von Windows, kein Fehler im Add-on.
 - **Best Practices:** Um die besten Ergebnisse zu erzielen, geben Sie klare und spezifische Befehle. „Klicke auf die blaue Senden-Schaltfläche unten im Formular“ funktioniert fast immer besser als nur „Klicke auf die Schaltfläche“.
 
-### 4.4 Live-Operator (Strg+A)
+### 5.4 Live-Operator (Strg+A)
 
-Der Live-Assistent macht KI Assistent pro zu einem interaktiven Echtzeit-Copiloten.
-_(Hinweis: Diese Funktion ist exklusiv für Google Gemini und Gemini-kompatible benutzerdefinierte Anbieter verfügbar)_.
+Der Ambient Observer macht KI Assistent pro zu Ihren Augen im Hintergrund – ganz ohne Gespräch: Er hört und schaut weiter zu, während Sie arbeiten, meldet, was sich ändert, und bleibt still, wenn nichts passiert.
+_(Hinweis: Diese Funktion ist exklusiv für Google Gemini und Gemini-kompatible benutzerdefinierte Anbieter verfügbar)._
 
-- **Globales & Dediziertes File-Logging:** Neues optionales Protokollierungssystem im Reiter "Erweitert" zur Aufzeichnung aller Aktionen in eine separate Datei (`vision_assistant.log`) mit konfigurierbaren Log-Levels und Aufbewahrungsfristen.
-- **How it works:** Ask in plain language, for example "open Chrome and search for a website" or "rename this file to final". The operator looks at the screen, carries out the steps one by one, and keeps working through multi-step requests until the task is done.
-- **Announcements:** Every step is spoken in the Live Assistant's own voice, and it tells you when the task is finished, or why it could not be done.
-- **CAPTCHA:** If a CAPTCHA appears, the operator tries your built-in **CAPTCHA solver** first; if it cannot solve it, it asks you to complete the accessible challenge yourself.
+- Drücken Sie **Strg + A** in der Befehlsebene, um eine Live-Operatorsitzung zu starten.
+- **So funktioniert es:** Bitten Sie in Alltagssprache, zum Beispiel „Öffne Chrome und suche nach einer Website“ oder „Benenne diese Datei in endgueltig um“. Der Operator schaut auf den Bildschirm, führt die Schritte nacheinander aus und arbeitet mehrschrittige Anfragen ab, bis die Aufgabe erledigt ist.
+- **Ansagen:** Jeder Schritt wird mit der eigenen Stimme des Live-Assistenten angesagt, und er teilt Ihnen mit, wenn die Aufgabe abgeschlossen ist – oder warum sie nicht ausgeführt werden konnte.
+- **CAPTCHA:** Erscheint ein CAPTCHA, versucht der Operator zuerst Ihren integrierten **CAPTCHA-Löser**; kann dieser es nicht lösen, bittet er Sie, die barrierefreie Aufgabe selbst zu lösen.
 - **Neugestaltung der Einstellungen:** Das Einstellungsfenster wurde auf ein modernes Layout mit Reitern umgestellt.
-- **Settings:** The operator's own instruction can be edited in the Prompt Manager (section **Live**, **Live Operator Instruction**). The **Live Direct Output (No Window)** switch is available in Quick Settings as well.
+- **Einstellungen:** Die eigene Anweisung des Operators kann im Prompt-Manager bearbeitet werden (Abschnitt **Live**, **Anweisung für Live-Operator**). Der Schalter **Live: Direkte Ausgabe (Kein Fenster)** ist auch in den Schnelleinstellungen verfügbar.
 
 ## 6. Videoanalyse & Audiobeschreibung
 
@@ -211,7 +211,7 @@ _(Hinweis: Diese Funktion ist exklusiv für Google Gemini und Gemini-kompatible 
 
 KI Assistent pro führt leistungsstarke Videoverarbeitungsfunktionen ein, die speziell für blinde und sehbehinderte Benutzer entwickelt wurden. Es kann sowohl Online-Videos als auch lokale Bildschirmaufnahmen analysieren, um hochdetaillierte visuelle Beschreibungen zu liefern und professionelle Audiobeschreibungs-Skripte (SRT) zu erstellen.
 
-### 5.1 Lokale Bildschirmaufnahme (Strg + V)
+### 6.1 Lokale Bildschirmaufnahme (Strg + V)
 
 Wenn Sie auf ein stummes Video, eine Animation oder eine Anleitung auf Ihrem Bildschirm stoßen, können Sie diese direkt aufnehmen:
 
@@ -220,7 +220,7 @@ Wenn Sie auf ein stummes Video, eine Animation oder eine Anleitung auf Ihrem Bil
 3. Drücken Sie erneut **Strg + V**, um die Aufnahme zu stoppen.
 4. Die KI analysiert den aufgenommenen Videoabschnitt und liefert eine hochdetaillierte Beschreibung der Szene, der Charaktere und der Aktionen.
 
-### 5.2 Videoanalyse (Umschalt + V)
+### 6.2 Videoanalyse (Umschalt + V)
 
 Sie können sowohl lokale Videodateien als auch Online-Videos analysieren. Wählen Sie einfach eine lokale Datei im Explorer aus oder kopieren Sie einen Videolink in Ihre Zwischenablage. Sie können auch überall **Umschalt + V** drücken (z. B. im Mediaplayer), um einen Dialog zum Auswählen einer Datei oder Einfügen einer URL aufzurufen.
 
@@ -228,17 +228,17 @@ Sie können sowohl lokale Videodateien als auch Online-Videos analysieren. Wähl
 - Die KI erkennt die Datei bzw. URL automatisch, verarbeitet das Video und liefert eine umfassende visuelle Beschreibung und Audio-Zusammenfassung.
 - **48-Stunden-Zwischenspeicherung von Videodateien:** Zu Gemini hochgeladene Videos werden 48 Stunden lang zwischengespeichert! Sie können SRT- oder MP3-Ausgaben für dasselbe Video ohne erneuten Upload neu generieren – selbst nach einem Neustart von NVDA. Der Cache erkennt den verwendeten API-Schlüssel und wird bei einem Schlüsselwechsel automatisch ungültig.
 
-### 5.3 Erstellung von Audiobeschreibungen (SRT)
+### 6.3 Erstellung von Audiobeschreibungen (SRT)
 
 Für ein strukturierteres Erlebnis kann das Add-on professionelle Audiobeschreibungs-Skripte im Standard-SubRip-Format (SRT) generieren.
 
 - **Smarte Pausen-Anpassung (Gap-Timing):** Die KI hört auf die Tonspur und verankert ihre Beschreibungen gezielt in natürlichen Sprechpausen, um Überschneidungen mit Dialogen intelligent zu minimieren.
 - **Charakter-Verfolgung:** Die Engine führt vorab eine Analyse durch, um Personen anhand unveränderlicher Gesichtsmerkmale zu erfassen. Sie baut ein globales Wörterbuch auf, um Charaktere über Szenen hinweg fehlerfrei zu benennen. Zudem wird der **erste Auftritt** jedes Charakters verfolgt: Seine optische Erscheinung wird nur einmalig beim ersten Auftauchen beschrieben – spätere Szenen nutzen nur noch den etablierten Namen, was die Erzählung flüssig und natürlich hält.
 - **Wortgetreues Text-OCR:** Jeder Text auf dem Bildschirm (Schilder, Telefone, Abspanne) wird strikt wortgetreu zitiert.
-- **Nutzung:** Legen Sie die generierte `.srt`-Datei einfach in denselben Ordner wie Ihre Videodatei mit exakt demselben Dateinamen. Konfigurieren Sie Ihren Mediaplayer (z. B. VLC oder PotPlayer) so, dass der Untertiteltext während der Wiedergabe direkt an Ihren Screenreader oder Ihre TTS-Engine weitergeleitet wird. Konfigurieren Sie dann Ihren Media-Player (z. B. VLC oder PotPlayer) so, dass der Untertiteltext während der Wiedergabe direkt an Ihren Screenreader oder Ihre TTS-Engine weitergeleitet wird.
+- **Nutzung:** Legen Sie die generierte `.srt`-Datei einfach in denselben Ordner wie Ihre Videodatei mit exakt demselben Dateinamen. Konfigurieren Sie dann Ihren Mediaplayer (z. B. VLC oder PotPlayer) so, dass der Untertiteltext während der Wiedergabe direkt an Ihren Screenreader oder Ihre TTS-Engine weitergeleitet wird.
 - **Verbesserter Speicher-Workflow:** Beim Speichern von SRT- oder MP3-Dateien öffnet sich der Dateidialog nun standardmäßig direkt im Ordner des Quellvideos – unabhängig davon, ob das Video über den Auswahldialog oder per Umschalt+V aus dem Explorer geöffnet wurde.
 
-### 5.4 Synchronisierte Audiosprachausgabe (MP3-Export)
+### 6.4 Synchronisierte Audiosprachausgabe (MP3-Export)
 
 Das Add-on geht über die Erstellung textbasierter SRT-Dateien hinaus und fungiert als vollständiges Werkzeug zur Erstellung von Audiobeschreibungen, indem es die Beschreibungen in Sprache synthetisiert und mit dem Video abmischt. Sie können nun **Gemini Live TTS** als Sprach-Engine wählen, um unbegrenzte und hochrealistische Beschreibungen über die Gemini Live API zu erzeugen. Beim Generieren einer MP3-Datei für lokale Videos stehen Ihnen mehrere Mischmodi zur Verfügung:
 
@@ -254,7 +254,7 @@ Das Modul zur Audio-Transkription unterstützt sowohl Audio- als auch Videodatei
 2. **Transkribieren und Übersetzen (Zielsprache):** Transkribiert die Sprache und übersetzt sie in Ihre konfigurierte Zielsprache.
 3. **Synchronisieren und Übersetzen (Zielsprache) _(nur Gemini)_:** Eine leistungsstarke Funktion, die Sprache transkribiert, übersetzt und mit der TTS-Engine des Add-ons eine neu eingesprochene Audio-Synchronfassung erzeugt.
 
-## 8) Erweiterter Dokumenten- & Bildleser
+## 8. Erweiterter Dokumenten- & Bildleser
 
 Der **Dokumentenleser** verwandelt Dokumente in sauberen, lesbaren Text – damit Sie von eingescannten Büchern bis hin zu Fotostapeln alles lesen, übersetzen und anhören können. Er verarbeitet mehrseitige PDFs, komplexe Bilder, iPhone-HEIC-Formate und sogar reine Text- (`.txt`) sowie HTML-Dateien (`.html`, `.htm`), die ganz ohne OCR- oder KI-Verarbeitung sofort geöffnet werden. Wenn Sie mehrere Dateien auf einmal auswählen, werden diese in Seitenreihenfolge zu einem einzigen Dokument zusammengefügt. Drei OCR-Engines stehen bereit – **Chrome (Schnell)**, **KI (Erweitert)** für hervorragenden Layouterhalt und **Keine (Textschicht extrahieren)** für durchsuchbare PDFs – wählbar unter Einstellungen → Dokumentenleser.
 
@@ -266,15 +266,15 @@ Der **Dokumentenleser** verwandelt Dokumente in sauberen, lesbaren Text – dami
 4. Die Textextraktion startet im Hintergrund in Stapeln. Sie können das Fenster jederzeit schließen und später fortfahren – es geht nichts verloren.
 5. Sobald Seiten bereitstehen, lesen Sie diese im Viewer: blättern Sie zwischen Seiten, springen Sie zu bestimmten Seiten, stellen Sie der KI Fragen, speichern Sie den Text oder erzeugen Sie eine Audio-Sprachausgabe.
 
-### 7.1 Stapelverarbeitung & Fortsetzen
+### 8.1 Stapelverarbeitung & Fortsetzen
 
 Sie müssen ein riesiges Dokument nicht auf einmal lesen. Wählen Sie einen Seitenbereich (z. B. `1-20`) oder behalten Sie die Standardeinstellung bei, und die KI extrahiert alle Seiten im Hintergrund. Falls NVDA abstürzt oder der Scan unterbrochen wird, merkt sich das Add-on Ihren Fortschritt und bietet an, genau dort **fortzufahren**, wo Sie aufgehört haben – selbst über Neustarts hinweg! Vollständig gescannte Dokumente werden zudem zwischengespeichert, sodass ein erneutes Öffnen (aus den Zuletzt gelesenen Dokumenten oder über **D**) den Text sofort ohne erneutes OCR lädt, sofern sich die Quelldateien nicht geändert haben.
 
-### 7.2 Intelligente Dateiaktion
+### 8.2 Intelligente Dateiaktion
 
 Sie müssen das Dokument nicht immer zuerst über den Dialog öffnen. Markieren Sie im Explorer einfach eine PDF-, Bild- oder Text-/HTML-Datei und drücken Sie **D** (Dokumentenleser) – oder markieren Sie eine PDF- oder Bilddatei und drücken Sie **F** (Smarte Datei-Aktion) in der Befehlsebene. Das Add-on umgeht den Dateidialog sofort und verarbeitet die markierte Datei. Die Auswahl mehrerer Dateien verarbeitet diese gebündelt als ein Gesamtdokument.
 
-### 7.3 Steuerelemente & Tastenkombinationen des Dokumentenbetrachters
+### 8.3 Steuerelemente & Tastenkombinationen des Dokumentenbetrachters
 
 Wenn das Fenster des Dokumentenlesers geöffnet ist, stehen folgende Optionen zur Verfügung:
 
@@ -291,11 +291,11 @@ Wenn das Fenster des Dokumentenlesers geöffnet ist, stehen folgende Optionen zu
 
 - **Gehe zu:** Wählen Sie eine beliebige Seite aus der Seitenauswahl.
 - **Formatiert anzeigen:** Zeigt das gesamte Dokument zusammenhängend als formatierten Text an.
-- **Retry Failed Pages:** Retry only the batches that failed due to a temporary server error (e.g., high demand). This button appears automatically when needed.
+- **Fehlgeschlagene Seiten wiederholen:** Wiederholt nur die Stapel, die aufgrund eines vorübergehenden Serverfehlers (z. B. hohe Auslastung) fehlgeschlagen sind. Diese Schaltfläche erscheint bei Bedarf automatisch.
 - **TTS-Stimme / TTS-Engine:** Wählen Sie die Stimme; bei Gemini können Sie zwischen **Standard TTS** und gestreamtem **Gemini Live** wählen.
 - **Zurück / Weiter:** Zwischen Seiten blättern (entspricht Strg+BildAuf/BildAb).
 
-### 7.4 Zuletzt geöffnete Dokumente (D)
+### 8.4 Zuletzt geöffnete Dokumente (D)
 
 **Zuletzt gelesene Dokumente im Reader:** Das Drücken von **D** in der Befehlsebene zeigt nun Ihre kürzlich gelesenen Dokumente an erster Stelle. Wählen Sie eines aus, um an der vorherigen Leseposition fortzufahren – selbst wenn das OCR bereits beendet war – oder drücken Sie **Datei öffnen...** (`Strg + O`), um wie gewohnt zu suchen.
 
@@ -303,23 +303,23 @@ Wenn das Fenster des Dokumentenlesers geöffnet ist, stehen folgende Optionen zu
 
 Stecken Sie in einer Anwendung fest, in der überall nur „unbenannte Schaltfläche“ angesagt wird? Die semantische KI-Beschriftungs-Engine löst dieses Problem dauerhaft.
 
-### 8.1 Dauerhafte Objektbeschriftung (L)
+### 9.1 Dauerhafte Objektbeschriftung (L)
 
 Fokussieren Sie Ihren Screenreader auf eine unbenannte Grafik oder Schaltfläche und drücken Sie **L** in der Befehlsebene. Die KI schaut sich die Schaltfläche visuell an, ermittelt ihre Funktion und vergibt eine dauerhafte Beschriftung.
 Im Gegensatz zu älteren Beschriftungswerkzeugen verwendet dieses Add-on ein fortschrittliches, hybrides „Objektsignatur-System“ (AutomationId/ControlID). Ihre benutzerdefinierten Beschriftungen überstehen das Ändern der Fenstergröße, Monitorwechsel und Anwendungs-Updates!
 
-### 8.2 Vollständiger Anwendungs-Scan (Umschalt + L)
+### 9.2 Vollständiger Anwendungs-Scan (Umschalt + L)
 
 Drücken Sie **Umschalt + L**, um das gesamte aktive Fenster auf einmal zu scannen. Die KI findet alle unbeschrifteten Elemente und benennt sie intelligent in einem Rutsch. Sie können diese Beschriftungen später im integrierten Beschriftungs-Manager anzeigen, umbenennen oder im Stapel löschen.
 
-### 8.3 UI Explorer (E)
+### 9.3 UI Explorer (E)
 
 Möchten Sie mit einem Element interagieren, ohne manuell dorthin zu navigieren? Drücken Sie **E**, um den UI-Explorer zu aktivieren. Die KI scannt den Bildschirm und generiert eine barrierefreie Liste aller anklickbaren Elemente (und ignoriert dabei System-Rauschen wie die Taskleiste). Wählen Sie ein Element aus der Liste, und das Add-on klickt es sofort für Sie an.
 
 ## 10. Live-Sprachassistent
 
-The Live Assistant turns Vision Assistant Pro into a real-time, interactive copilot.
-_(Note: This feature is exclusive to Google Gemini and Gemini-compatible Custom providers)._
+Der Live-Assistent macht KI Assistent pro zu einem interaktiven Echtzeit-Copiloten.
+_(Hinweis: Diese Funktion ist exklusiv für Google Gemini und Gemini-kompatible benutzerdefinierte Anbieter verfügbar)._
 
 - **Aktivierung:** Drücken Sie **Strg + L** in der Befehlsebene, um den Live-Assistenten-Dialog zu öffnen.
 - **Echtzeit-Interaktion:** Sprechen Sie ganz natürlich durch Ihr Mikrofon. Die KI hört gleichzeitig auf Ihre Stimme und schaut auf Ihren aktiven Bildschirm. Sie können Fragen stellen wie „Was sehe ich hier?“ oder „Lies mir den dritten Absatz vor.“
@@ -330,44 +330,44 @@ _(Note: This feature is exclusive to Google Gemini and Gemini-compatible Custom 
 ## 11. Ambient Observer (Hintergrund-Assistent)
 
 The Ambient Observer turns Vision Assistant Pro into your background eyes, without any conversation: it keeps listening and watching while you work, reports what changes, and stays silent when nothing happens.
-_(Note: This feature is exclusive to Google Gemini and Gemini-compatible Custom providers)._
+_(Hinweis: Diese Funktion ist exklusiv für Google Gemini und Gemini-kompatible benutzerdefinierte Anbieter verfügbar)_.
 
-- **Visueller Übersetzungsdialog:** Neues Fenster für Übersetzungsergebnisse, das zeilenweises Lesen langer Texte ermöglicht.
-- **Modes:** **Audio Translation Only** translates what it hears, **Screen Watcher Only** reports screen changes, and **Webcam Watcher Only** opens the Live Assistant window with your camera and Push to Talk, so you can ask questions about what the camera sees.
-- **Audio Source:** In the audio mode, choose whether to translate your **Microphone** or the **System Audio (Loopback)**. The small loopback library is downloaded once on first use, with your permission.
-- **Context:** For the screen and webcam modes, pick an optional **About what I am doing** option (for example watching a film, following a meeting or call, reading a label, or checking your appearance) to focus the reports; you can also type your own context.
-- **Reporting:** The add-on compares every new frame with the previous one and sends it to the AI only when the picture really changed, so a static screen never costs you requests. The AI then reports only what is new and never repeats itself.
-- **Welcome Message:** Except in the translation mode, the observer greets you briefly when it starts, so you know it is listening.
-- **Settings:** In **Settings > Live Assistant**, set the **Observer Mode**, the **Frame Interval** (1 to 10 seconds) and the **Reporting Style** (brief or detailed). The observer instruction and each context text can be edited in the Prompt Manager (section **Ambient**).
+- **Starten:** Drücken Sie **Umschalt + O** in der Befehlsebene, um den Observer zu starten, und drücken Sie es erneut, um ihn zu beenden.
+- **Modi:** **Nur Audio-Übersetzung** übersetzt, was er hört, **Nur Bildschirm beobachten** meldet Änderungen auf dem Bildschirm, und **Nur Webcam beobachten** öffnet das Live-Assistenten-Fenster mit Ihrer Kamera und Push-to-Talk, sodass Sie Fragen zu dem stellen können, was die Kamera sieht.
+- **Audioquelle:** Wählen Sie im Audiomodus, ob Ihr **Mikrofon** oder der **Systemton (Loopback)** übersetzt werden soll. Die kleine Loopback-Bibliothek wird bei der ersten Nutzung einmalig mit Ihrer Zustimmung heruntergeladen.
+- **Kontext:** Für den Bildschirm- und den Webcam-Modus können Sie optional eine Angabe unter **Was ich gerade tue** wählen (zum Beispiel einen Film ansehen, einem Meeting oder Anruf folgen, ein Etikett lesen oder Ihr Aussehen überprüfen), um die Meldungen gezielter zu machen; Sie können auch einen eigenen Kontext eintippen.
+- **Meldungen:** Das Add-on vergleicht jedes neue Bild mit dem vorherigen und sendet es nur dann an die KI, wenn sich das Bild tatsächlich verändert hat – ein unveränderter Bildschirm kostet Sie also keine Anfragen. Die KI meldet dann nur Neues und wiederholt sich nie.
+- **Begrüßung:** Außer im Übersetzungsmodus begrüßt Sie der Observer beim Start kurz, damit Sie wissen, dass er zuhört.
+- **Einstellungen:** Legen Sie unter **Einstellungen > Live-Assistent** den **Observer-Modus**, das **Bildintervall** (1 bis 10 Sekunden) und den **Meldestil** (kurz oder ausführlich) fest. Die Observer-Anweisung und jeder Kontexttext können im Prompt-Manager bearbeitet werden (Abschnitt **Ambient**).
 
 ## 12. Benutzerdefinierte Eingabeaufforderungen & Variablen
 
 Sie können Prompts unter **Einstellungen > Prompts > Prompts verwalten...** verwalten.
 
-- **Filter:** The **Default Prompts** tab has a **Filter** list above the prompt list that shows **All** prompts or only one section at a time (for example **Ambient**), so long lists stay easy to navigate.
+- **Filter:** Der Reiter **Standard-Prompts** hat über der Prompt-Liste eine **Filter**-Liste, die **Alle** Prompts oder jeweils nur einen Abschnitt anzeigt (zum Beispiel **Ambient**), damit auch lange Listen übersichtlich bleiben.
 
 ### Eigene Prompt-Tastenkombinationen
 
 Weisen Sie benutzerdefinierten Prompts direkt im Prompt-Manager ein eigenes Tastaturkürzel zu, um sie sofort mit der aktuellen Auswahl oder dem Kontext auszuführen:
 
-- **Befehlsebene:** Einführung der Befehlsebene (Standard: `NVDA+Umschalt+V`), um Kürzel unter einer Haupttaste zu gruppieren.
+- **Einzeltaste** (z. B. `1`, `p` oder `F3`): Funktioniert innerhalb der Befehlsebene und global als `NVDA + Umschalt + Taste`.
 - **Tastenkombination** (z. B. `Strg + Umschalt + 1`, `Alt + P` oder `Einfügen + 1`): Funktioniert eigenständig global.
 
-### Per-Prompt Feedback Behavior
+### Ausgabeverhalten pro Prompt
 
-Each custom prompt can individually define its output delivery behavior:
+Jeder benutzerdefinierte Prompt kann individuell festlegen, wie sein Ergebnis ausgegeben wird:
 
-- **Global setting:** Follows the general Connection output setting (Direct Output or Chat window).
-- **Diktat-Stabilität:** Ignoriert nun Audioclips unter 1 Sekunde, um Halluzinationen zu vermeiden.
+- **Globale Einstellung:** Folgt der allgemeinen Ausgabeeinstellung im Reiter Verbindung (Direkte Ausgabe oder Chat-Fenster).
+- **In die Zwischenablage kopieren:** Kopiert die Antwort ausschließlich in die Zwischenablage.
 - **Direct Output (NVDA message):** Speaks/brailles the AI response directly via NVDA speech.
-- **Copy to clipboard and Direct Output:** Copies the response to the clipboard and speaks it directly.
-- **Chat window:** Always opens the result in an interactive conversation window.
+- **In die Zwischenablage kopieren und Direkte Ausgabe:** Kopiert die Antwort in die Zwischenablage und gibt sie direkt aus.
+- **Chat-Fenster:** Öffnet das Ergebnis immer in einem interaktiven Konversationsfenster.
 
 ### Unterstützte Variablen
 
 - `[selection]`: Aktuell markierter Text.
-- `[text]`: Complete text content of the currently focused edit field (automatically ignores protected password boxes).
-- `[currentURL]`: Webpage or document URL from supported web browsers (Chrome, Edge, Firefox).
+- `[text]`: Gesamter Textinhalt des aktuell fokussierten Eingabefelds (geschützte Passwortfelder werden automatisch ignoriert).
+- `[currentURL]`: URL der Webseite oder des Dokuments aus unterstützten Webbrowsern (Chrome, Edge, Firefox).
 - `[clipboard]`: Inhalt der Zwischenablage.
 - `[clipboard_image]`: Aktuell in der Zwischenablage befindliches Bild.
 - `[screen_obj]`: Screenshot des Navigator-Objekts.
@@ -376,21 +376,21 @@ Each custom prompt can individually define its output delivery behavior:
 - `[file_ocr]`: Bild-/PDF-Datei für Textextraktion auswählen.
 - `[file_read]`: Dokument zum Lesen auswählen (TXT, Code, PDF).
 - `[file_audio]`: Audiodatei zur Analyse auswählen (MP3, WAV, OGG).
-- `[ambient_screen]`: Starts continuous Screen Observer background session.
-- `[ambient_webcam]`: Starts continuous Webcam Observer background session (checks Push to Talk from settings).
-- `[ambient_audio]`: Starts live Audio Observer translation session.
-- `[loopback]`: Uses system audio playback as sound source (for `[ambient_audio]`).
-- `[mic]`: Uses microphone as sound source (for `[ambient_audio]` and `[ambient_webcam]`).
-- `[brief]`: Sets observer reporting style to brief (single sentence).
-- `[detailed]`: Sets observer reporting style to detailed (2-3 sentences).
-- `[lang:code]`: Specifies target language code for audio translation (e.g., `[lang:fa]`, `[lang:en]`).
+- `[ambient_screen]`: Startet eine fortlaufende Bildschirmbeobachtung im Hintergrund.
+- `[ambient_webcam]`: Startet eine fortlaufende Webcam-Beobachtung im Hintergrund (berücksichtigt die Push-to-Talk-Einstellung).
+- `[ambient_audio]`: Startet eine Live-Übersetzungssitzung des Audio-Observers.
+- `[loopback]`: Verwendet die Systemtonwiedergabe als Tonquelle (für `[ambient_audio]`).
+- `[mic]`: Verwendet das Mikrofon als Tonquelle (für `[ambient_audio]` und `[ambient_webcam]`).
+- `[brief]`: Setzt den Meldestil des Observers auf kurz (ein Satz).
+- `[detailed]`: Setzt den Meldestil des Observers auf ausführlich (2–3 Sätze).
+- `[lang:code]`: Legt den Sprachcode der Zielsprache für die Audio-Übersetzung fest (z. B. `[lang:fa]`, `[lang:en]`).
 - `{target_lang}`: Aktuelle Zielsprache.
 - `{source_lang}`: Aktuelle Quellsprache.
 - `{response_lang}`: Aktuelle KI-Antwortsprache.
 - `{swap_target}`: Ausweichsprache für die intelligente Übersetzung mit automatischem Tausch.
 - `{swap_instruction}`: Anweisungsblock für die intelligente Übersetzung mit automatischem Tausch.
 
-_Note on Ambient Prompts:_ Prompts containing ambient variables act as a toggle — pressing the shortcut while active immediately stops the session. Incompatible combinations (such as combining static screenshot variables like `[screen_full]` with ambient observer modes, combining multiple ambient modes, or adding prompt instructions to `[ambient_audio]`) are strictly validated and prevented when saving.
+_Hinweis zu Ambient-Prompts:_ Prompts mit Ambient-Variablen funktionieren als Umschalter – wird das Kürzel bei laufender Sitzung gedrückt, endet diese sofort. Unverträgliche Kombinationen (etwa statische Screenshot-Variablen wie `[screen_full]` zusammen mit Ambient-Modi, mehrere Ambient-Modi gleichzeitig oder zusätzliche Prompt-Anweisungen bei `[ambient_audio]`) werden beim Speichern streng geprüft und verhindert.
 
 ## 13. Praktische Anwendungsfälle (Welche Funktion sollte ich verwenden?)
 
@@ -445,30 +445,30 @@ _Wenn Sie das Projekt finanziell unterstützen und Ihren Namen hier sehen möcht
 
 ---
 
-## Änderungen für 2026.10.15
+## Änderungen für 15.10.2026
 
-- **The Most Requested Fix — Creating a Gemini API Key Is Finally Easy**: Getting an API key on **aistudio.google.com** used to be the hardest step of all. With a screen reader the pages were confusing, and some people simply could not create a key at all. That problem is now solved directly inside the add-on. Press **G** in the Command Layer (or use **Get a Gemini API Key...** in Settings), sign in through your default browser with zero external setup, and your key is created and configured with one confirmation — even if you never had a project before.
-- **Ambient Observer**: The background assistant is here. Press **Shift+O** in the Command Layer to start it, and press it again to stop it. It can translate what it hears (your microphone or the sound of the system), watch the screen and tell you what changed, or open the Live Assistant with your webcam and Push to Talk so you can ask about whatever the camera sees. It sends a picture only when something really changed, so a still screen costs you nothing, and it stays quiet when nothing is happening. You can also launch and toggle the observer directly through Custom Prompts and dedicated shortcut keys using `[ambient_screen]`, `[ambient_webcam]`, or `[ambient_audio]` along with modifiers (`[loopback]`, `[mic]`, `[brief]`, `[detailed]`, `[lang:code]`), with automatic validation against conflicting variable combinations.
-- **Live Operator**: The Live Assistant can now carry out what you ask on your computer while you talk to it. Press **Control+A** in the Command Layer to start a live operator session, then just ask in plain language. It works through multi-step requests, says every step in the Live Assistant’s own voice, takes care of the key combinations it needs, and decides by itself when the task is finished. **Live Direct Output (No Window)** is in Quick Settings too.
+- **Die meistgewünschte Verbesserung – Einen Gemini-API-Schlüssel zu erstellen ist endlich einfach:** Einen API-Schlüssel auf **aistudio.google.com** zu bekommen, war bisher der schwierigste Schritt überhaupt. Mit einem Screenreader waren die Seiten unübersichtlich, und manche Menschen konnten schlicht gar keinen Schlüssel anlegen. Dieses Problem ist nun direkt im Add-on gelöst. Drücken Sie **G** in der Befehlsebene (oder nutzen Sie **Gemini-API-Schlüssel abrufen...** in den Einstellungen), melden Sie sich ganz ohne externe Einrichtung über Ihren Standardbrowser an, und Ihr Schlüssel wird mit einer einzigen Bestätigung erstellt und eingerichtet – selbst wenn Sie noch nie ein Projekt hatten.
+- **Ambient Observer:** Der Hintergrund-Assistent ist da. Drücken Sie **Umschalt+O** in der Befehlsebene, um ihn zu starten, und erneut, um ihn zu beenden. Er kann übersetzen, was er hört (Ihr Mikrofon oder den Systemton), den Bildschirm beobachten und Ihnen sagen, was sich geändert hat, oder den Live-Assistenten mit Ihrer Webcam und Push-to-Talk öffnen, damit Sie nach allem fragen können, was die Kamera sieht. Er sendet nur dann ein Bild, wenn sich wirklich etwas verändert hat – ein unveränderter Bildschirm kostet Sie also nichts –, und er bleibt still, wenn nichts passiert. Sie können den Observer auch direkt über eigene Prompts und eigene Tastenkürzel starten und umschalten, mit `[ambient_screen]`, `[ambient_webcam]` oder `[ambient_audio]` sowie den Zusätzen (`[loopback]`, `[mic]`, `[brief]`, `[detailed]`, `[lang:code]`); widersprüchliche Variablenkombinationen werden automatisch erkannt.
+- **Live-Operator:** Der Live-Assistent kann nun das, worum Sie ihn bitten, auf Ihrem Computer ausführen, während Sie mit ihm sprechen. Drücken Sie **Strg+A** in der Befehlsebene, um eine Live-Operatorsitzung zu starten, und bitten Sie einfach in Alltagssprache. Er arbeitet mehrschrittige Anfragen ab, sagt jeden Schritt mit der eigenen Stimme des Live-Assistenten an, kümmert sich selbst um die nötigen Tastenkombinationen und entscheidet eigenständig, wann die Aufgabe erledigt ist. **Live: Direkte Ausgabe (Kein Fenster)** gibt es auch in den Schnelleinstellungen.
 - **Charakter-Wörterbuch & Serienverwaltung:** Der Videoanalyse-Dialog enthält nun ein leistungsstarkes **Charakter-Wörterbuch**-System! Fügen Sie Charakternamen, optische Beschreibungen und Rollen pro Serie hinzu, bearbeiten, importieren oder verwalten Sie diese – die KI gleicht erkannte Personen automatisch mit dem Wörterbuch ab und fügt neue Charaktere beim Analysieren weiterer Episoden hinzu. Ihre manuellen Notizen behalten immer Vorrang vor KI-Aktualisierungen, während Beschreibungen über Episoden hinweg aktuell bleiben. Das Wörterbuch wird pro Serie gespeichert und für jedes Video der Serie wiederverwendet. Drücken Sie in der Liste **F2** zum Bearbeiten und **Entf** zum Löschen.
-- **SOCKS5, HTTP, and Reverse Proxy Support with Latency Testing**: Seamlessly bypass network restrictions with complete proxy support across the entire add-on — including the Live Assistant, Ambient Observer, and TTS generation! Choose from 4 operating modes in General settings: **Auto-detect**, **SOCKS5 Proxy**, **HTTP Proxy**, or **Reverse Proxy**. SOCKS5 supports RFC 1929 username/password authentication and domain tunneling; HTTP proxy supports Basic authentication. A new **Test Proxy Connection** button runs in the background and announces your connection latency in milliseconds.
+- **Unterstützung für SOCKS5-, HTTP- und Reverse-Proxys mit Latenztest:** Umgehen Sie Netzwerkbeschränkungen nahtlos mit vollständiger Proxy-Unterstützung im gesamten Add-on – einschließlich Live-Assistent, Ambient Observer und TTS-Erzeugung! Wählen Sie in den allgemeinen Einstellungen aus 4 Betriebsarten: **Automatisch erkennen**, **SOCKS5-Proxy**, **HTTP-Proxy** oder **Reverse-Proxy**. SOCKS5 unterstützt Benutzername/Passwort-Authentifizierung nach RFC 1929 und Domain-Tunneling; der HTTP-Proxy unterstützt Basic-Authentifizierung. Eine neue Schaltfläche **Proxy-Verbindung testen** läuft im Hintergrund und sagt Ihre Verbindungslatenz in Millisekunden an.
 - **48-Stunden-Zwischenspeicherung von Videos:** Zu Gemini hochgeladene Videos werden nun für 48 Stunden zwischengespeichert! Sie können SRT- oder MP3-Dateien für dasselbe Video neu generieren, ohne es erneut hochzuladen – selbst nach einem Neustart von NVDA. Der Cache ist schlüsselabhängig und wird automatisch zurückgesetzt, wenn sich Ihr API-Schlüssel ändert.
 - Die Stille-Erkennung nutzt nun das neuronale Modell **Silero VAD** (das bei Erstbenutzung genau wie ffmpeg und eSpeak mit Ihrer Zustimmung automatisch heruntergeladen wird) für hochpräzises Gap-Timing – wodurch echte Dialogpausen zuverlässig von Musik und Hintergrundgeräuschen unterschieden werden. The model is downloaded automatically on first use (with your permission), just like ffmpeg and eSpeak.
 - **Webcam-Video für den Live-Assistenten:** Das Live-Assistenten-Fenster bietet nun die Option **&Webcam verwenden**, um Ihren Kamerafeed statt des Bildschirms an die KI zu senden – perfekt für Fragen zu realen Objekten, Dokumenten oder Ihrer Umgebung. Fehlt ffmpeg, wird es einmalig mit Ihrer Zustimmung heruntergeladen. Die Option ist deaktiviert, wenn keine Kamera erkannt wird oder Windows-Datenschutzeinstellungen blockieren. Liefert die aktivierte Kamera keine Bilder, wird dies im NVDA-Log protokolliert, statt geräuschlos zum Bildschirm zurückzukehren.
-- **Audio Output Device Selection**: You can now select a dedicated audio output device for the Live Assistant and Ambient Observer. Choose between NVDA's default output, Windows Sound Mapper, or any connected physical sound card (like USB headphones or external speakers) in the Live Settings tab, directly inside the Live Assistant dialog, or on the fly via Quick Settings (NVDA+Shift+V then Up/Down/Left/Right).
-- **Prompt Manager**: The Default Prompts tab has a **Filter** list now, so you can show all prompts or just one section (for example **Ambient**). You can also edit the observer’s context texts and the new **Live Operator Instruction** there.
-- **Smart Model Filtering in Advanced Routing**: Advanced Model Routing dropdowns now dynamically categorize Gemini models by capability without clutter. The Live Assistant only displays genuine bidirectional live and native-audio models, TTS only displays dedicated speech synthesis models, STT prioritizes Transcribe and multimodal models, and Video Analysis, OCR, and AI Operator cleanly filter out single-purpose utility models (such as image generation, video generation, and embedding models). Future models are detected automatically based on capability without requiring version updates.
+- **Auswahl des Audio-Ausgabegeräts:** Sie können nun ein eigenes Audio-Ausgabegerät für den Live-Assistenten und den Ambient Observer wählen. Wählen Sie zwischen der Standardausgabe von NVDA, dem Windows-Soundmapper oder jeder angeschlossenen physischen Soundkarte (etwa USB-Kopfhörer oder externe Lautsprecher) – im Reiter Live-Assistent, direkt im Live-Assistenten-Dialog oder spontan über die Schnelleinstellungen (NVDA+Umschalt+V, dann Pfeil hoch/runter/links/rechts).
+- **Prompt-Manager:** Der Reiter Standard-Prompts hat nun eine **Filter**-Liste, sodass Sie alle Prompts oder nur einen Abschnitt (zum Beispiel **Ambient**) anzeigen können. Dort können Sie auch die Kontexttexte des Observers und die neue **Anweisung für Live-Operator** bearbeiten.
+- **Intelligente Modellfilterung im erweiterten Routing:** Die Auswahllisten im erweiterten Modell-Routing sortieren Gemini-Modelle nun dynamisch und übersichtlich nach ihren Fähigkeiten. Der Live-Assistent zeigt nur echte bidirektionale Live- und Native-Audio-Modelle, TTS nur reine Sprachsynthese-Modelle, STT bevorzugt Transkriptions- und multimodale Modelle, und Videoanalyse, OCR sowie KI-Operator filtern Spezialmodelle für einzelne Zwecke (wie Bild- und Videogenerierung oder Embedding-Modelle) sauber heraus. Künftige Modelle werden anhand ihrer Fähigkeiten automatisch erkannt, ohne dass ein Versionsupdate nötig ist.
 - **Erfassung des ersten Auftretens von Charakteren:** Die KI beschreibt das Aussehen jedes Charakters nun nur noch ein einziges Mal – beim ersten Auftauchen im Video. Nachfolgende Auftritte verwenden nur noch die Namen, was redundante Beschreibungen verhindert und die Erzählung lebendig und natürlich hält.
 - **Einheitliches Datenverzeichnis:** Alle Datendateien des Add-ons (Verlauf, Serien, Beschriftungen, OCR-Fortschritte, Caches und Logs) wurden in einem einzigen `VisionAssistant`-Ordner innerhalb Ihres NVDA-Konfigurationsverzeichnisses zusammengeführt – was Ordnung schafft und manuelle Sicherungen vereinfacht.
 - **Verbesserter Speicher-Workflow für Videos:** Beim Speichern von SRT- oder MP3-Dateien öffnet sich der Dateidialog nun standardmäßig im Quellordner des Videos, egal ob Sie das Video über den Dateidialog oder per Umschalt+V aus dem Explorer geöffnet haben.
 - **Dokumente mit oder ohne Zwischenspeicher löschen:** Der Verlaufsdialog (`Strg + H`) bietet nun zwei Löschoptionen für Dokumente – drücken Sie Entf und wählen Sie **Nur aus Verlauf löschen** oder **Aus Verlauf und Cache löschen**. Die zweite Option leert den OCR-Cache des Dokuments, sodass es beim nächsten Öffnen von Grund auf neu gescannt wird – ideal nach einem fehlerhaften Scan. Ein Kontrollkästchen **Nicht mehr fragen** merkt sich Ihre Wahl. Wiederaufnahmedaten unterbrochener Vorgänge bleiben unangetastet.
 - **Engine-abhängiger, zusammenführender OCR-Cache im Dokumentenleser:** Zwischengespeicherter OCR-Text wird nun pro OCR-Engine getrennt gespeichert; das Wechseln der Engine scannt somit stets mit der neuen Engine neu, anstatt alte Ergebnisse abzuspielen. Beim erneuten Öffnen eines Dokuments erscheint der Seitenbereichsdialog erneut (mit Ihrer letzten Auswahl vorausgewählt), bereits gescannte Seiten werden sofort wiederverwendet und nur fehlende Seiten nachgeladen – der Cache führt Seiten zusammen, statt überschrieben zu werden.
-- **PDF Compression in Document Reader**: Added an optional **Compress PDF pages before processing** setting in the Document Reader's page range dialog. When uploading large or high-resolution scanned PDF documents to Gemini or Mistral, pages are automatically downscaled and re-compressed to dramatically reduce upload payload size, speed up processing, and prevent network timeouts. The option is disabled by default and automatically hidden when using the Chrome engine or base64-based image providers.
-- **Per-Prompt Feedback Behavior Customization**: Customize how each custom prompt delivers its output individually! In the custom prompt editor, choose between **Global setting**, **Copy to clipboard**, **Direct Output (NVDA message)**, **Copy to clipboard and Direct Output**, or **Chat window**. This allows specific prompts to speak directly without opening a window while others open a full chat.
-- **New Dynamic Prompt Variables (`[currentURL]` & `[text]`)**: Custom Prompts now support `[currentURL]` to capture the active document URL across Google Chrome, Mozilla Firefox, and Microsoft Edge, and `[text]` to dynamically insert the full text content of the currently focused edit field (ignoring protected password boxes).
-- **Twitter/X Video Downloader Overhaul**: Restored downloading and analysis of Twitter/X videos following upstream scraper failures. Video extraction now utilizes the robust FixTweet API to directly fetch highest-quality MP4 streams from Twitter's CDN, complete with automatic TwitSave fallback and proxy support.
-- **Instagram Video Downloader Fix**: Restored downloading and analysis of Instagram Reels and video URLs following upstream form changes on the downloader service.
-- **Fixes & Performance**: Push to Talk answers the moment you press the key, the Live Assistant no longer starts a reply in the middle of a sentence, the observer no longer reports the previous picture, and the Thinking Depth list only offers what your model actually supports. The AI Operator can scroll left and right too. Fixed an `AttributeError` when analyzing online videos, and prevented custom prompts without text selection from accidentally injecting background window titles into AI requests.
+- **PDF-Komprimierung im Dokumentenleser:** Im Seitenbereichsdialog des Dokumentenlesers gibt es nun die optionale Einstellung **PDF-Seiten vor der Verarbeitung komprimieren**. Beim Hochladen großer oder hochauflösend gescannter PDF-Dokumente zu Gemini oder Mistral werden die Seiten automatisch verkleinert und neu komprimiert – das verringert die Upload-Größe drastisch, beschleunigt die Verarbeitung und verhindert Netzwerk-Zeitüberschreitungen. Die Option ist standardmäßig deaktiviert und wird bei Verwendung der Chrome-Engine oder bei Anbietern, die Bilder per Base64 übertragen, automatisch ausgeblendet.
+- **Ausgabeverhalten pro Prompt anpassen:** Legen Sie für jeden eigenen Prompt einzeln fest, wie er sein Ergebnis ausgibt! Wählen Sie im Editor für eigene Prompts zwischen **Globale Einstellung**, **In die Zwischenablage kopieren**, **Direkte Ausgabe (NVDA-Meldung)**, **In die Zwischenablage kopieren und Direkte Ausgabe** oder **Chat-Fenster**. So können bestimmte Prompts ihre Antwort direkt sprechen, ohne ein Fenster zu öffnen, während andere einen vollständigen Chat öffnen.
+- **Neue dynamische Prompt-Variablen (`[currentURL]` & `[text]`):** Eigene Prompts unterstützen nun `[currentURL]`, um die URL des aktiven Dokuments in Google Chrome, Mozilla Firefox und Microsoft Edge zu erfassen, sowie `[text]`, um den gesamten Textinhalt des aktuell fokussierten Eingabefelds dynamisch einzufügen (geschützte Passwortfelder werden ignoriert).
+- **Überarbeitung des Twitter/X-Video-Downloaders:** Das Herunterladen und Analysieren von Twitter/X-Videos funktioniert nach Ausfällen der vorgelagerten Scraper wieder. Die Videoextraktion nutzt nun die robuste FixTweet-API, um MP4-Streams in höchster Qualität direkt vom CDN von Twitter abzurufen – mit automatischem Rückgriff auf TwitSave und Proxy-Unterstützung.
+- **Korrektur des Instagram-Video-Downloaders:** Das Herunterladen und Analysieren von Instagram-Reels und Video-URLs funktioniert nach Änderungen am Formular des Downloader-Dienstes wieder.
+- **Korrekturen & Leistung:** Push-to-Talk reagiert sofort beim Drücken der Taste, der Live-Assistent beginnt keine Antwort mehr mitten im Satz, der Observer meldet nicht mehr das vorherige Bild, und die Liste der Denktiefe bietet nur noch an, was Ihr Modell tatsächlich unterstützt. Der KI-Operator kann nun auch nach links und rechts scrollen. Ein `AttributeError` beim Analysieren von Online-Videos wurde behoben, und eigene Prompts ohne Textmarkierung fügen nicht mehr versehentlich Titel von Hintergrundfenstern in KI-Anfragen ein.
 
 ## Änderungen für 01.09.2026
 
@@ -479,32 +479,32 @@ _Wenn Sie das Projekt finanziell unterstützen und Ihren Namen hier sehen möcht
 - **Einstellungen sichern & wiederherstellen:** Umfangreiches Backup- und Wiederherstellungssystem im Reiter **Erweitert** hinzugefügt! Sichern Sie alle Add-on-Einstellungen – inklusive API-Schlüssel, Modelle, eigene Prompts und Präferenzen – in einer JSON-Datei. Beim Backup kann zwischen **Alles** (Einstellungen, eigene Beschriftungen, OCR-Fortschritte und Verlauf) oder **Nur Einstellungen** gewählt werden.
 - **Direktes Lesen von Text & HTML:** Der Dokumentenleser kann nun reine Text- (`.txt`) und HTML-Dateien (`.html`, `.htm`) direkt öffnen! Kodierungen werden automatisch erkannt, störende Skripte und Formatierungen bereinigt und Inhalte intelligent in Seiten aufgeteilt – ganz ohne OCR oder KI-Aufwand!
 - **Gemini Live TTS für den Dokumentenleser:** Die Schaltfläche „Audio generieren“ unterstützt jetzt Gemini Live – eine hochwertige, flüssige Streaming-Text-to-Speech-Engine! Ist Gemini aktiv, kann direkt im Reader zwischen Standard-TTS und Gemini Live gewählt werden.
-- **Custom Prompt Shortcuts**: You can now assign a shortcut key to any of your custom prompts right from the Prompt Manager! Give every prompt its own dedicated key or key combination to run it instantly, automatically capturing your current selection or context with zero extra steps!
+- **Tastenkombinationen für eigene Prompts:** Sie können nun jedem Ihrer eigenen Prompts direkt im Prompt-Manager ein Tastaturkürzel zuweisen! Geben Sie jedem Prompt eine eigene Taste oder Tastenkombination, um ihn sofort auszuführen – Ihre aktuelle Markierung oder Ihr Kontext wird dabei ohne zusätzliche Schritte automatisch übernommen!
 - **Navigation durch Chat-Nachrichten:** Navigieren Sie freihändig durch jedes Gespräch! Drücken Sie in Chat-Fenstern `Alt + Pfeil runter` für die nächste und `Alt + Pfeil hoch` für die vorherige Nachricht – mit klarer Ansage von „Sie“ / „KI“ sowie Randmeldungen („Erste Nachricht“ / „Letzte Nachricht“).
 - **Chat-Nachricht kopieren (Alt + C):** Kopieren Sie die aktuell ausgewählte Nachricht beim Durchgehen mit `Alt + Pfeil hoch/runter` per `Alt + C` in die Zwischenablage – unter Beachtung der Markdown-Bereinigungseinstellung.
-- **Direct Chat System Prompt**: The Direct Chat (`Shift+C`) now has its own editable system prompt — "Direct Chat Instruction" — that sets the assistant's persona and response language for every conversation. You can customize it from the Prompt Manager's Default Prompts tab.
-- **Document Reader Cursor Page Navigation**: Reading multi-page documents just got smoother! **Cursor-Seitenwechsel im Dokumentenleser:** Erreicht Ihr Cursor beim Lesen die letzte Zeile einer Seite und Sie drücken `Pfeil runter`, springt das Dokument automatisch zur nächsten Seite. Pressing `Up` at the start of a page seamlessly takes you back to the previous one — no more manual page switching while reading!
+- **System-Prompt für den Direkten Chat:** Der Direkte Chat (`Umschalt+C`) hat nun einen eigenen, editierbaren System-Prompt – „Anweisung für Direkten Chat“ –, der Persönlichkeit und Antwortsprache des Assistenten für jedes Gespräch festlegt. Sie können ihn im Reiter Standard-Prompts des Prompt-Managers anpassen.
+- **Cursor-Seitenwechsel im Dokumentenleser:** Das Lesen mehrseitiger Dokumente wird noch flüssiger! Erreicht Ihr Cursor beim Lesen die letzte Zeile einer Seite und Sie drücken `Pfeil runter`, springt das Dokument automatisch zur nächsten Seite. Drücken Sie am Anfang einer Seite `Pfeil hoch`, gelangen Sie nahtlos zur vorherigen zurück – kein manuelles Umblättern mehr beim Lesen!
 - **Neue Schalter in den Schnelleinstellungen:** Die Optionen „KI-Antworten in die Zwischenablage kopieren“, „Direkte Ausgabe (Kein Chat-Fenster)“, „Bereinigtes Markdown im Chat“ und „Smart Swap“ können nun direkt über die Schnelleinstellungen der Befehlsebene ein- und ausgeschaltet werden.
 - **Eigener Reiter für den Live-Assistenten:** Der Live-Assistent hat einen eigenen Einstellungsreiter erhalten. Die Option „Direkte Ausgabe (Kein Fenster)“ wurde hierhin verschoben. Der Reiter erscheint dynamisch nur, wenn Google Gemini (oder ein kompatibler benutzerdefinierter Anbieter) aktiv ist.
 
 ## Änderungen für 06.08.2026
 
 - **Beschriftung im UI-Explorer:** Elemente können nun direkt innerhalb des UI-Explorers beschriftet werden! Eine neue Schaltfläche "Beschriftung hinzufügen" wurde ergänzt, und das Fenster bleibt geöffnet, damit mehrere Objekte nacheinander barrierefrei beschriftet werden können.
-- **Erweiterte Schnelleinstellungs-Ebene:** Die Befehlsebene (`NVDA+Umschalt+V`) bleibt nun aktiv und interaktiv! Sie können `Pfeil hoch/runter` nutzen, um zwischen Schnelleinstellungen (Anbieter, Modell, KI-Antwortsprache, TTS-Modell) zu navigieren, und `Pfeil links/rechts`, um Werte sofort mit Sprachausgabe zu ändern. Your selections take effect immediately (including auto-enabling advanced routing when necessary), and the layer stays alive while you configure.
-- **Direkter Chat (`Umschalt+C`):** Neuer Befehl in der Befehlsebene! Press `Shift+C` to instantly open a "Direct Chat" window. This provides a clean, text-based conversational interface with the AI right away, without needing an image or document as a starting point.
-- **Flawless Chat History Recall**: Fixed a major bug where pressing `Space` to recall the last result would lose your subsequent chat history. Now, the add-on globally tracks your conversation. If you chat, close the dialog, and press `Space` to recall it, your entire back-and-forth history is perfectly restored! Works for Direct Chat, Vision Analysis, Document Chat, and Translation.
+- **Erweiterte Schnelleinstellungs-Ebene:** Die Befehlsebene (`NVDA+Umschalt+V`) bleibt nun aktiv und interaktiv! Sie können `Pfeil hoch/runter` nutzen, um zwischen Schnelleinstellungen (Anbieter, Modell, KI-Antwortsprache, TTS-Modell) zu navigieren, und `Pfeil links/rechts`, um Werte sofort mit Sprachausgabe zu ändern. Ihre Auswahl wird sofort wirksam (einschließlich automatischer Aktivierung des erweiterten Routings, falls nötig), und die Ebene bleibt aktiv, während Sie Einstellungen vornehmen.
+- **Direkter Chat (`Umschalt+C`):** Neuer Befehl in der Befehlsebene! Drücken Sie `Umschalt+C`, um sofort ein Fenster „Direkter Chat“ zu öffnen. Es bietet Ihnen direkt eine aufgeräumte, textbasierte Gesprächsoberfläche mit der KI, ohne dass ein Bild oder Dokument als Ausgangspunkt nötig ist.
+- **Fehlerfreies Abrufen des Chatverlaufs:** Ein schwerwiegender Fehler wurde behoben, durch den beim Abrufen des letzten Ergebnisses mit der `Leertaste` der nachfolgende Chatverlauf verloren ging. Das Add-on verfolgt Ihr Gespräch nun global. Wenn Sie chatten, den Dialog schließen und mit der `Leertaste` erneut abrufen, wird Ihr gesamtes Hin und Her vollständig wiederhergestellt! Funktioniert für Direkten Chat, Vision-Analyse, Dokumenten-Chat und Übersetzung.
 - **Inline-Bildbeschreibungen bei OCR:** Optionale Funktion zur Beschreibung von Bildern direkt im OCR-Textfluss hinzugefügt. Dies kann in den Einstellungen, vor der Extraktion im Dokumentenleser oder spontan über die Schnelleinstellungs-Ebene umgeschaltet werden.
 - **Voice Translation (`Control+T`)**: Added a powerful new feature! Dictate speech and instantly translate and type it using AI based on your configured source and target languages.
 - **Fehlerbehebungen & Stabilitätsverbesserungen:** Ein Hänger bei der MP3-Generierung beim Schließen des Fortschrittsdialogs wurde behoben, eine Race-Condition im Speicher des Charakter-Wörterbuchs beseitigt, eine saubere Fehlerberichterstattung bei MP3-Kodierungsfehlern ergänzt und die Warteschleife des Dokumentenlesers so angepasst, dass Benutzerabbrüche sofort beachtet werden.
 - **Fortschrittsanzeige bei Updates & eSpeak-NG:** Der Download-Dialog für Add-on-Updates sowie eSpeak-NG zeigt nun den genauen Fortschritt in Prozent an.
 - **Resilientes Stapel-OCR:** Behebt Unterbrechungen bei der Stapel-PDF-Verarbeitung; wenn ein API-Schlüssel sein Limit erreicht, wird automatisch zum nächsten Schlüssel gewechselt und der Scan fortgesetzt.
-- **Visual Captcha Support**: Added robust support for visual captcha solving. It attempts to automatically solve complex image challenges like hCaptcha and reCAPTCHA, significantly enhancing accessibility on challenging web forms.
-- **Audio Transcriber Overhaul**: The Audio Transcriber module has been completely rebuilt and now supports both audio and video files. It features 3 distinct operation modes: "Transcribe (Original Language)", "Transcribe and Translate (Target Language)", and a new powerful "Dub and Translate (Target Language)" option (exclusive to Gemini) that generates a translated audio dub of the original speech.
-- **Optional Page Numbers in Document Reader**: Added a new setting to toggle the inclusion of page numbers and separators in multi-page document outputs. You can easily manage this option from the main settings or toggle it on-the-fly via the Quick Settings layer. This feature applies to both text/HTML file exports and the inline "View Formatted" window, allowing you to read combined documents seamlessly.
-- **Unlimited Gemini Live TTS for Video Descriptions**: You can now select "Gemini Live TTS" as the voice engine when generating Synchronized Audio Narration (MP3) for videos. This utilizes the Gemini Live API to synthesize high-quality audio descriptions without any character limits or length restrictions.
+- **Visuelle CAPTCHA-Unterstützung:** Unterstützung für das automatische Lösen komplexer visueller Aufgaben wie hCaptcha und reCAPTCHA hinzugefügt – eine deutliche Verbesserung der Barrierefreiheit bei schwierigen Webformularen. It attempts to automatically solve complex image challenges like hCaptcha and reCAPTCHA, significantly enhancing accessibility on challenging web forms.
+- **Überarbeitung der Audio-Transkription:** Das Modul wurde komplett neu aufgebaut, unterstützt nun Audio- und Videodateien und bietet 3 Modi: „Transkribieren (Originalsprache)“, „Transkribieren und Übersetzen (Zielsprache)“ sowie eine neue, leistungsstarke Option „Synchronisieren und Übersetzen (Zielsprache)“ (exklusiv für Gemini), die eine übersetzte Audio-Synchronfassung der Originalsprache erzeugt. It features 3 distinct operation modes: "Transcribe (Original Language)", "Transcribe and Translate (Target Language)", and a new powerful "Dub and Translate (Target Language)" option (exclusive to Gemini) that generates a translated audio dub of the original speech.
+- **Optionale Seitenzahlen im Dokumentenleser:** Neue Einstellung zum Ein- oder Ausblenden von Seitenzahlen und Trennlinien in mehrseitigen Dokumentausgaben. Die Option lässt sich bequem in den Haupteinstellungen oder spontan über die Schnelleinstellungs-Ebene umschalten. Sie gilt sowohl für exportierte Text-/HTML-Dateien als auch für das Fenster „Formatiert anzeigen“, sodass Sie zusammengefügte Dokumente nahtlos lesen können.
+- **Unbegrenztes Gemini Live TTS für Videobeschreibungen:** Gemini Live TTS kann nun als Sprach-Engine für synchronisierte Sprachausgaben (MP3) von Videos gewählt werden. Damit werden über die Gemini Live API hochwertige Audiobeschreibungen ganz ohne Zeichen- oder Längenbeschränkung erzeugt.
 - **Codebase-Modularisierung:** Das Add-on wurde von einer einzelnen Datei in eine modulare Architektur mit mehreren Dateien aufgeteilt.
-- **Settings UI Redesign**: Completely redesigned the Settings dialog to use a modern, tab-based interface instead of a grouped layout, providing better organization and easier navigation while keeping all existing options.
-- **Global & Dedicated File Logging**: Added an optional global file logging system under the new "Advanced" settings tab. Automatically captures operational events, API traffic, and errors across all add-on modules into a dedicated file (`vision_assistant.log`). Supports configurable log verbosity levels (Debug, Info, Warning, Error), automated retention periods (1 hour to 90 days), and direct log opening or clearing from settings with zero performance impact or NVDA log interference.
+- **Neugestaltung der Einstellungen:** Das Einstellungsfenster wurde komplett auf ein modernes Layout mit Reitern statt gruppierter Bereiche umgestellt – für bessere Ordnung und einfachere Navigation bei Beibehaltung aller bisherigen Optionen.
+- **Globales & dediziertes File-Logging:** Neues optionales, globales Protokollierungssystem im neuen Reiter „Erweitert“. Es zeichnet betriebliche Ereignisse, API-Verkehr und Fehler aller Module des Add-ons automatisch in einer eigenen Datei (`vision_assistant.log`) auf. Unterstützt werden einstellbare Log-Level (Debug, Info, Warnung, Fehler), automatische Aufbewahrungsfristen (1 Stunde bis 90 Tage) sowie das direkte Öffnen oder Leeren des Logs aus den Einstellungen – ohne Leistungseinbußen und ohne Beeinträchtigung des NVDA-Logs.
 - **Gemini Upload-Fortschritt:** Echtzeit-Fortschrittsanzeigen in Prozent beim Hochladen großer Dateien (Video, Audio, Dokumente) zur Gemini API.
 
 ## Änderungen für 15.07.2026
@@ -512,8 +512,7 @@ _Wenn Sie das Projekt finanziell unterstützen und Ihren Namen hier sehen möcht
 - **Intelligente API-Modellfilterung:** Komplette Überarbeitung des Modellfilterungssystems hin zu einem reinen Blacklist-Ansatz anstelle von Whitelists. Es wurden stärkere Filter-Schlüsselwörter eingeführt (`embedding`, `bison`, `gecko`, `audio`, `realtime`, `babbage`, `moderation`, `deep`, `antigravity`, `computer`), um sicherzustellen, dass die Haupt-Chat-Modellauswahl sauber und zukunftssicher bleibt, während alle spezialisierten Modelle im erweiterten Routing-Bereich weiterhin verfügbar sind.
 - **Durchsuchbares erweitertes Routing:** Alle Dropdown-Menüs im erweiterten Modell-Routing (OCR, STT, TTS, Operator, Video, Live) sowie die eSpeak-Variantenauswahl sind nun vollständig durchsuchbar. Sie können tippen, um das gewünschte Modell oder die Variante schnell zu filtern und zu finden.
 - **Neue Tastenkombinationen in der Befehlsebene:**
-  - |
-    \| **Alt + S** | Einstellungen | Öffnet direkt das Einstellungsfenster von KI Assistent pro.
+  - **Einstellungen (`Alt + S`):** Öffnet direkt das Einstellungsfenster von KI Assistent pro.
   - **Bericht über erschöpfte Kontingente (`Alt + Q`):** Meldet die genaue Anzahl der Gemini-API-Schlüssel, die ihr tägliches Kontingent überschritten haben, identifiziert das betroffene Modell und sagt die genaue Zurücksetzungszeit an.
   - **Routing-Prüfung (`Alt + M`):** Überprüft und meldet Ihre aktuelle Konfiguration des erweiterten Modell-Routings und liest vor, welche Modelle aktiv für spezialisierte Aufgaben ausgewählt sind (Standardeinstellungen werden übersprungen).
 - **Komplette Überarbeitung der Videoanalyse:** Die Videoanalyse wurde von Grund auf transformiert! Zuvor bot sie nur eine einfache Beschreibung von Online-Videos. Jetzt ist sie eine umfassende Videoverarbeitungssuite, die speziell für blinde Nutzer entwickelt wurde:
@@ -627,36 +626,36 @@ _Wenn Sie das Projekt finanziell unterstützen und Ihren Namen hier sehen möcht
 ## Änderungen in 4.0.3
 
 - **Verbesserte Netzwerk-Resilienz:** Automatischer Wiederholungsmechanismus bei instabilen Verbindungen hinzugefügt.
-- **Visual Translation Dialog:** Introduced a dedicated window for translation results. Users can now easily navigate and read long translations line-by-line, similar to OCR results.
+- **Visueller Übersetzungsdialog:** Neues Fenster für Übersetzungsergebnisse. Lange Übersetzungen lassen sich nun – wie bei OCR-Ergebnissen – bequem Zeile für Zeile lesen und durchgehen.
 - **Aggregierte formatierte Ansicht:** Die Funktion "Formatiert anzeigen" im Dokumentenleser zeigt nun alle verarbeiteten Seiten in einem einzigen, organisierten Fenster an.
 - **Optimierter OCR-Workflow:** Überspringt die Seitenbereichsauswahl bei einseitigen Dokumenten automatisch.
 - **Verbesserte API-Stabilität:** Umstellung auf Header-basierte Authentifizierung zur Vermeidung von Fehlern bei der Schlüsselrotation.
-- **Bug Fixes:** Resolved several potential crashes, including an issue during add-on termination and a focus error in the chat dialog.
+- **Fehlerbehebungen:** Mehrere mögliche Abstürze wurden behoben, darunter ein Problem beim Beenden des Add-ons und ein Fokusfehler im Chat-Dialog.
 
 ## Änderungen in 4.0.1
 
 - **Fortgeschrittener Dokumentenleser:** Neuer Viewer für PDF und Bilder mit Seitenbereichsauswahl und Hintergrundverarbeitung.
 - **Neues Werkzeuge-Untermenü:** Untermenü "KI Assistent" unter NVDA-Werkzeuge für schnelleren Zugriff hinzugefügt.
 - **Flexible Anpassung:** OCR-Engine und TTS-Stimme direkt in den Einstellungen wählbar.
-- **API-Schlüssel:** Erforderlich. Sie können mehrere Schlüssel eingeben (getrennt durch Kommas oder neue Zeilen), um eine automatische Rotation zu ermöglichen.
+- **Unterstützung mehrerer API-Schlüssel:** Unterstützung für mehrere Gemini-Schlüssel (einer pro Zeile oder durch Komma getrennt). Sie können mehrere Schlüssel eingeben (getrennt durch Kommas oder neue Zeilen), um eine automatische Rotation zu ermöglichen.
 - **Alternative OCR-Engine:** Neue Engine zur Texterkennung hinzugefügt, falls das Gemini-Kontingent erschöpft ist.
 - **Unterstützung mehrerer API-Schlüssel:** Unterstützung für mehrere Gemini-Schlüssel (einer pro Zeile oder durch Komma getrennt).
 - **Dokument zu MP3/WAV:** Fähigkeit zur Erzeugung hochwertiger Audiodateien direkt im Reader integriert.
-- **Instagram Stories & TikTok Support:** Analyse von Stories und TikTok-Videos über deren URLs hinzugefügt.
+- **Unterstützung für Instagram Stories & TikTok:** Analyse von Stories und TikTok-Videos über deren URLs hinzugefügt.
 - **Gemini Live TTS für Videobeschreibungen:** Gemini Live TTS kann nun als Stimme für synchronisierte Sprachausgaben (MP3) gewählt werden, um unbegrenzte und hochwertige Beschreibungen ohne Längenbeschränkung zu generieren.
-- **Redesigned Update Dialog:** Features a new accessible interface with a scrollable text box to clearly read version changes before installing.
-- **Unified Status & UX:** Standardized file dialogs across the add-on and enhanced the 'L' command to report real-time progress.
+- **Neu gestalteter Update-Dialog:** Neue barrierefreie Oberfläche mit einem scrollbaren Textfeld, in dem sich die Versionsänderungen vor der Installation klar nachlesen lassen.
+- **Einheitlicher Status & Bedienung:** Dateidialoge im gesamten Add-on vereinheitlicht und den Befehl 'L' so erweitert, dass er den Fortschritt in Echtzeit meldet.
 
 ## Änderungen in 3.6.0
 
 - **Hilfesystem:** Hilfe-Befehl (`H`) innerhalb der Befehlsebene hinzugefügt.
-- **Online Video Analysis:** Expanded support to include **Twitter (X)** videos. Also improved URL detection and stability for a more reliable experience.
-- **Project Contribution:** Added an optional donation dialog for users who wish to support the project’s future updates and continuous growth.
+- **Online-Videoanalyse:** Unterstützung für **Twitter (X)** Videos hinzugefügt sowie URL-Erkennung und Stabilität für ein zuverlässigeres Erlebnis verbessert. Also improved URL detection and stability for a more reliable experience.
+- **Projektunterstützung:** Optionaler Spendendialog für Benutzer hinzugefügt, die künftige Updates und das kontinuierliche Wachstum des Projekts unterstützen möchten.
 
 ## Änderungen in 3.5.0
 
-**Einzeltaste** (z. B. `1`, `p` oder `F3`): Funktioniert innerhalb der Befehlsebene und global als `NVDA + Umschalt + Taste`. For example, instead of pressing `NVDA+Control+Shift+T` for translation, you now press `NVDA+Shift+V` followed by `T`.
-\*   \*\*Online Video Analysis:\*\* Added a new feature to analyze YouTube and Instagram videos directly by providing a URL.
+**Befehlsebene:** Einführung der Befehlsebene (Standard: `NVDA+Umschalt+V`), um Kürzel unter einer Haupttaste zu gruppieren. Statt beispielsweise `NVDA+Strg+Umschalt+T` für die Übersetzung zu drücken, drücken Sie nun `NVDA+Umschalt+V` gefolgt von `T`.
+**Online-Videoanalyse:** Neue Funktion zur Analyse von YouTube- und Instagram-Videos direkt über eine URL hinzugefügt.
 
 ## Änderungen in 3.1.0
 
@@ -667,56 +666,56 @@ _Wenn Sie das Projekt finanziell unterstützen und Ihren Namen hier sehen möcht
 
 - **Neue Sprachen:** Persisch und Vietnamesisch hinzugefügt.
 - **Erweiterte KI-Modelle:** Modellliste mit Präfixen (`[Free]`, `[Pro]`, `[Auto]`) neu organisiert. Unterstützung für **Gemini 3.0 Pro** und **Gemini 2.0 Flash Lite**.
-- **Dictation Stability:** Significantly improved Smart Dictation stability. Added a safety check to ignore audio clips shorter than 1 second, preventing AI hallucinations and empty errors.
+- **Diktat-Stabilität:** Die Stabilität des Intelligenten Diktats wurde deutlich verbessert. Audioclips unter 1 Sekunde werden nun durch eine Sicherheitsprüfung ignoriert, um KI-Halluzinationen und leere Fehler zu vermeiden.
 - **Dateihandhabung:** Fehler beim Hochladen von Dateien mit nicht-englischen Namen behoben.
-- **Prompt Optimization:** Improved Translation logic and structured Vision results.
+- **Prompt-Optimierung:** Übersetzungslogik verbessert und Vision-Ergebnisse strukturierter aufbereitet.
 
 ## Änderungen in 2.9
 
 - **Französische und türkische Übersetzungen hinzugefügt.**
 - **Formatierte Ansicht:** Schaltfläche "Formatiert anzeigen" in Chat-Dialogen hinzugefügt (Überschriften, Fettdruck, Code).
-- **Markdown Setting:** Added a new option "Clean Markdown in Chat" in Settings. Unchecking this allows users to see raw Markdown syntax (e.g., `**`, `#`) in the chat window.
-- **Dialog Management:** Fixed an issue where the "Refine Text" or chat windows would open multiple times or fail to focus correctly.
-- **UX Improvements:** Standardized file dialog titles to "Open" and removed redundant speech announcements (e.g., "Opening menu...") for a smoother experience.
+- **Markdown-Einstellung:** Neue Option „Bereinigtes Markdown im Chat“ in den Einstellungen. Ist sie deaktiviert, sehen Benutzer die rohe Markdown-Syntax (z. B. `**`, `#`) im Chat-Fenster.
+- **Dialogverwaltung:** Ein Problem wurde behoben, bei dem sich das Fenster „Text optimieren“ oder Chat-Fenster mehrfach öffneten oder den Fokus nicht korrekt erhielten.
+- **Verbesserte Bedienung:** Titel von Dateidialogen einheitlich auf „Öffnen“ gesetzt und überflüssige Sprachansagen (z. B. „Menü wird geöffnet...“) für ein flüssigeres Erlebnis entfernt. for a smoother experience.
 
 ## Änderungen in 2.8
 
 - Italienische Übersetzung hinzugefügt.
 - **Statusbericht:** Neuer Befehl (NVDA+Strg+Umschalt+I) zum Ansagen des aktuellen Status.
 - **HTML-Export:** Speichern-Schaltfläche exportiert nun als formatiertes HTML.
-- **Settings UI:** Improved the Settings panel layout with accessible grouping.
-- **New Models:** Added support for gemini-flash-latest and gemini-flash-lite-latest.
+- **Einstellungsoberfläche:** Layout des Einstellungsbereichs durch barrierefreie Gruppierung verbessert.
+- **Neue Modelle:** Unterstützung für gemini-flash-latest und gemini-flash-lite-latest hinzugefügt.
 - **Sprachen:** Nepali hinzugefügt.
-- **Refine Menu Logic:** Fixed a critical bug where "Refine Text" commands would fail if the NVDA interface language was not English.
-- **Dictation:** Improved silence detection to prevent incorrect text output when no speech is input.
-- **Update Settings:** "Check for updates on startup" is now disabled by default to comply with Add-on Store policies.
-- Code Cleanup.
+- **Logik des Optimierungsmenüs:** Ein kritischer Fehler wurde behoben, durch den Befehle von „Text optimieren“ fehlschlugen, wenn die NVDA-Oberflächensprache nicht Englisch war.
+- **Diktat:** Stille-Erkennung verbessert, um fehlerhafte Textausgaben zu verhindern, wenn keine Sprache eingegeben wurde.
+- **Update-Einstellungen:** „Beim Start nach Updates suchen“ ist nun standardmäßig deaktiviert, um den Richtlinien des Add-on-Stores zu entsprechen.
+- Code-Bereinigung.
 
 ## Änderungen in 2.7
 
 - Projektstruktur auf die offizielle NV Access Vorlage migriert.
 - Automatisches Retry bei HTTP 429 (Rate Limit) Fehlern.
-- Optimized translation prompts for higher accuracy and better "Smart Swap" logic handling.
+- Optimierte Übersetzungs-Prompts für höhere Genauigkeit und eine bessere Handhabung der „Smart Swap“-Logik.
 - Optimierte Übersetzungs-Prompts.
 
 ## Änderungen in 2.6
 
 - Russische Übersetzung hinzugefügt.
-- Updated error messages to provide more descriptive feedback regarding connectivity.
+- Fehlermeldungen überarbeitet, um aussagekräftigere Rückmeldungen zu Verbindungsproblemen zu geben.
 - Standard-Zielsprache auf Englisch geändert.
 
 ## Änderungen in 2.5
 
 - Native Datei-OCR (NVDA+Strg+Umschalt+F) hinzugefügt.
 - "Chat speichern" Schaltfläche hinzugefügt.
-- Implemented full localization support (i18n).
-- Migrated audio feedback to NVDA's native tones module.
+- Vollständige Unterstützung für Lokalisierung (i18n) implementiert.
+- Akustische Rückmeldungen auf das native tones-Modul von NVDA umgestellt.
 - Umstellung auf Gemini File API für bessere PDF- und Audio-Handhabung.
-- Fixed crash when translating text containing curly braces.
+- Absturz beim Übersetzen von Text mit geschweiften Klammern behoben.
 
-## 1.3 KI-Verhalten Reiter
+## Änderungen in 2.2
 
-- Fixed an issue where the [file_ocr] variable was not functioning correctly within Custom Prompts.
+- Ein Problem wurde behoben, bei dem die Variable [file_ocr] in eigenen Prompts nicht korrekt funktionierte.
 
 ## Änderungen in 2.1
 
@@ -728,17 +727,17 @@ _Wenn Sie das Projekt finanziell unterstützen und Ihren Namen hier sehen möcht
 - Intelligenter Übersetzungscache hinzugefügt.
 - Konversationsgedächtnis für Kontext im Chat hinzugefügt.
 - Separater Befehl für Zwischenablage-Übersetzung (NVDA+Strg+Umschalt+Y).
-- Optimized AI prompts to strictly enforce target language output.
-- Fixed crash caused by special characters in input text.
+- KI-Prompts optimiert, um die Ausgabe strikt in der Zielsprache zu erzwingen.
+- Absturz durch Sonderzeichen im Eingabetext behoben.
 
 ## Änderungen in 1.5
 
 - Unterstützung für über 20 neue Sprachen.
 - Interaktiver Optimierungs-Dialog für Folgefragen.
 - Native "Intelligentes Diktat" Funktion.
-- Added "Vision Assistant" category to NVDA's Input Gestures dialog.
-- Fixed COMError crashes in specific applications like Firefox and Word.
-- Added automatic retry mechanism for server errors.
+- Kategorie „KI Assistent“ im NVDA-Dialog „Eingabegesten“ hinzugefügt.
+- COMError-Abstürze in bestimmten Anwendungen wie Firefox und Word behoben.
+- Automatischer Wiederholungsmechanismus bei Serverfehlern hinzugefügt.
 
 ## Änderungen in 1.0
 

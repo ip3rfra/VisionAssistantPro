@@ -254,7 +254,7 @@ O Transcritor de Áudio foi completamente reconstruído para suportar arquivos d
 2. **Transcrever e Traduzir (Idioma de Destino)**: Transcreve a fala e a traduz para o seu idioma de destino configurado.
 3. **Dublar e Traduzir (Idioma de Destino)** _(Apenas Gemini)_: Um novo recurso poderoso que transcreve a fala, traduz para o seu idioma de destino e sintetiza uma dublagem em áudio falado utilizando o motor TTS do complemento.
 
-## 8) Leitor Avançado de Documentos e Imagens
+## 8. Leitor Avançado de Documentos e Imagens
 
 O **Leitor de Documentos** transforma seus documentos em texto limpo e legível — para que você possa ler, traduzir e ouvir qualquer coisa, desde um livro escaneado até uma pilha de fotos. Ele manipula PDFs de várias páginas, imagens complexas, formatos HEIC do iPhone e até arquivos de texto simples (`.txt`) e HTML (`.html`, `.htm`), que são abertos instantaneamente sem OCR ou processamento de IA. Selecione vários arquivos de uma vez e eles serão mesclados em um único documento contínuo na ordem das páginas. Três motores de OCR estão disponíveis — **Chrome (Rápido)**, **IA (Avançado)** para preservação superior de layout e **Nenhum (Extrair Camada de Texto)** para PDFs pesquisáveis — selecionados em Configurações → Leitor de Documentos.
 
@@ -533,7 +533,7 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
   - **Roteamento Expandido de Modelos**: Agora você pode selecionar explicitamente modelos de vídeo especializados (`gemini_video_model`, `custom_video_model`) nas configurações de Roteamento Avançado de Modelos.
 - **Gerenciamento Inteligente de Cotas de API**: Tratamento aprimorado para erros 429 (Limite Diário Excedido) ao rastrear cotas por modelo. Se uma chave atingir seu limite diário em um modelo, ela entra inteligentemente em quarentena apenas para aquele modelo específico, mantendo a chave disponível para uso com outros modelos.
 
-## Alterações para 5.5.2
+## Alterações para 7.0.0
 
 - **Retomada de Análises Incompletas**: Adicionado um recurso de retomada tanto para o Leitor de Documentos quanto para as Ações Inteligentes de Arquivos. Se uma análise for interrompida, agora você pode continuar de onde parou em vez de recomeçar do zero.
 - **Nova Variável `[screen_fg_obj]`**: Adicionada uma variável de prompt personalizada para capturar uma imagem apenas da janela ativa em primeiro plano, em vez da tela inteira.
@@ -548,7 +548,7 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - **Simulação de Teclado Aprimorada**: Aprimorada a injeção de teclas para suportar totalmente as "Teclas Estendidas" (como teclas de Seta, Home, End, Page Up/Down, Insert, Delete e F1-F12). Isso garante que os comandos de navegação e atalhos enviados pelo Operador de IA funcionem sem falhas em todos os aplicativos.
 - **Suporte a Imagens HEIC/HEIF**: Adicionado suporte nativo para os formatos de foto do iPhone. Agora você pode selecionar diretamente arquivos `.heic` e `.heif` para descrição por IA, OCR ou Leitura de Documentos sem necessidade de conversão prévia.
 
-## Alterações para 5.5 (A Atualização de Automação)
+## Alterações para 6.5.0
 
 - **Assistente em Tempo Real**: Adicionado um recurso de assistente de tela e voz em tempo real, disponível exclusivamente para o provedor Google Gemini (ou provedores personalizados compatíveis com o Gemini). Inclui personalização interativa de voz e de profundidade de pensamento diretamente na caixa de diálogo, com reconexão automática ao alterar as configurações.
 - **Provedor de IA MiniMax**: Integração do MiniMax como um provedor equivalente com suporte multimodal completo (chat, visão, OCR), TTS personalizado com mais de 300 vozes dinâmicas e remoção automática de blocos de raciocínio (ex.: ` thinking... resposta`) dos resultados.
@@ -557,7 +557,7 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - **Status do Visualizador de Documentos**: Corrigido um erro onde o status geral do complemento (verificado via `I`) permanecia travado em "Processamento em Lote Iniciado" durante análises longas de documentos.
 - **Resolução de Falha de Threads**: Corrigida uma falha grave de asserção de threads `IsMain() failed in wxTimerImpl` ao abrir documentos a partir de uma thread em segundo plano, através da transição da fila de retorno da interface gráfica para `wx.CallAfter`.
 
-## Alterações para 5.0
+## Alterações para 6.1.2
 
 - **Pré-Verificação de Rótulos Duplicados**: Corrigido um problema na rotulagem individual onde a verificação de duplicados utilizava chaves de coordenadas antigas, fazendo com que o NVDA fizesse solicitações de IA duplicadas para objetos já rotulados em vez de anunciar o rótulo existente.
 - **Bate-Papo de Documentos para Provedores não-Gemini**: Corrigida uma verificação rigorosa da chave de API no Bate-Papo de Documentos (`on_ask`) para garantir que usuários do OpenAI, Groq ou provedores Personalizados locais (como o Ollama) possam conversar com documentos com sucesso sem serem bloqueados.
@@ -565,37 +565,37 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - **Filtro Alfanumérico do CAPTCHA**: Corrigida a lógica de filtragem no resolutor de CAPTCHA para garantir que os caracteres não alfanuméricos sejam devidamente limpos em todas as situações.
 - **Atualização da Ajuda da Camada de Comandos**: Corrigido o atalho do anúncio de status no menu de ajuda de `L` para `I` e adicionados ambos os comandos de rotulagem (`L` e `Shift+L`) à lista.
 
-## Alterações para 4.6
+## Alterações para 6.1.1
 
 - **Correção do Raciocínio dos Modelos Gemma 4**: Corrigido um problema com os modelos Gemma 4 onde todo o processo de pensamento interno era exibido como resposta final, ou onde desativar o raciocínio resultava em respostas em branco. O complemento agora isola e extrai corretamente apenas a resposta de texto limpa final.
 - **OCR em Lote no Explorador de Arquivos**: Agora você pode selecionar várias fotos ou PDFs diretamente no Explorador de Arquivos do Windows e extrair texto ou analisá-los em lote. O complemento filtrará e processará automaticamente apenas os formatos de arquivo suportados.
 
-## Alterações para 4.5
+## Alterações para 6.1.0
 
 - **Integração Universal de IA Local (Configurar IA Local)**: Adicionado um novo botão **"Configurar IA Local"** nas Configurações do Provedor Personalizado. Os usuários agora podem configurar automaticamente motores de IA locais, incluindo **Ollama**, **LM Studio**, **Jan.ai** e **KoboldCPP** de forma instantânea.
 - **Bypass Inteligente de Proxy Local**: Reconstruída a lógica de conexão com um mecanismo avançado de bypass de proxy. O complemento agora é inteligente o suficiente para ignorar completamente os proxies do sistema Windows para conexões de loopback locais, garantindo conexões estáveis com a IA local mesmo quando sua VPN ou modo TUN estiver ativo.
 - **Rotulagem por IA Ultraestável (v2)**: Substituição das chaves de coordenadas absolutas de tela por um sistema híbrido e avançado de **Assinatura de Objeto**. Os rótulos dependem agora de identificadores programáticos (UIA **AutomationId** ou Win32 **ControlID**) e de coordenadas relativas à janela, tornando seus rótulos personalizados completamente resistentes ao redimensionamento de janelas, à movimentação, à alteração de monitor ou de escala.
 - **Migração Automática e Transparente de Rótulos**: A atualização é totalmente transparente. O complemento migrará automaticamente seus rótulos antigos baseados em coordenadas para o novo formato estável de impressão digital em segundo plano assim que você focar o objeto pela primeira vez, com zero perda de dados.
 
-## Alterações para 4.0.3
+## Alterações para 6.0
 
 - **Apresentando a Rotulagem Semântica por IA**: Os usuários agora podem rotular permanentemente botões e ícones sem nome utilizando a IA. Pressione **L** para rotular o objeto de navegação atual (suportando tanto o foco do Tab quanto a navegação por objetos) ou **Shift+L** para analisar e rotular todo o aplicativo de uma só vez.
 - **Gerenciamento Inteligente de Rótulos**: Adicionada uma nova caixa de diálogo do Gerenciador de Rótulos totalmente acessível (através de **Shift+L** se existirem rótulos) para ver, renomear ou excluir rótulos personalizados em lote.
 - **Análise Direta de Arquivos (Bypass da Caixa de Diálogo de Arquivos)**: O complemento agora é inteligente o suficiente para detectar se você está focado em um arquivo PDF ou de imagem no Explorador de Arquivos do Windows. Pressionar **F (Ação Inteligente de Arquivo)** ou **D (Leitor de Documentos)** em um arquivo selecionado irá processá-lo imediatamente, ignorando completamente a caixa de diálogo padrão "Abrir".
 
-## Alterações para 4.0.1
+## Alterações para 5.6
 
 - **Adicionado Motor OCR "Nenhum (Extrair Camada de Texto)"**: Os usuários podem agora extrair texto diretamente de PDFs pesquisáveis sem utilizar créditos de IA, melhorando significativamente a velocidade e a privacidade para documentos baseados em texto.
 - **Precisão Refinada do Explorador de UI**: Aprimorado o prompt do Explorador de UI para identificar melhor os tipos de elementos (como Itens de Lista) e relatar com precisão estados como "(Marcado)", "(Selecionado)" ou "(Expandido)", ignorando os componentes do sistema Windows como a Barra de Tarefas e o Relógio.
 - **Lembrete de Configuração de Instalação**: Adicionada uma notificação após a instalação para guiar os usuários ao menu de configurações para configurarem suas chaves de API e preferências.
 
-## Alterações para 3.6.0
+## Alterações para 5.5.2
 
 - **Correção na Digitação do Operador de IA:** Corrigido um erro onde a letra 'v' era digitada em vez de colar o texto em determinados sistemas. Esta correção resolve conflitos de temporização que ocorriam durante uma carga elevada do sistema.
 - **Estabilidade Aprimorada:** Adicionado um tratamento de erros robusto para operações na área de transferência para evitar falhas do complemento quando a área de transferência do sistema estiver temporariamente bloqueada por outros aplicativos.
 - **Otimização de Temporização:** Ajustados os atrasos internos para eventos de teclado de modo a garantir maior confiabilidade em diferentes velocidades do sistema e melhor compatibilidade com Gerenciadores da Área de Transferência de terceiros.
 
-## Alterações para 3.5.0
+## Alterações para 5.5 (A Atualização de Automação)
 
 - **Operador de IA (Controle Autônomo - Shift+A):** Esta é a joia da coroa da v5.5. O Vision Assistant Pro deixou de ser um assistente passivo para se tornar seu **Operador de IA** pessoal. Ele não se limita a descrever a tela — ele assume o comando.
   - _Como funciona:_ Você agora pode dar instruções por texto ou voz para operar seu PC. Por exemplo, em um aplicativo completamente inacessível onde seu leitor de tela permanece em silêncio, você pode pressionar **Shift+A** e digitar: _"Clique no botão Configurações"_ ou _"Encontre o campo de pesquisa, digite 'Últimas Notícias' e pressione Enter."_ A IA identifica visualmente os elementos, move o mouse e executa a tarefa por você.
@@ -605,7 +605,7 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - **Ação Inteligente de Arquivo com Sensibilidade ao Contexto (F):** A tecla "F" foi completamente reformulada. Ela não assume mais que você quer apenas OCR. Ao selecionar uma única imagem, agora pergunta inteligentemente qual é a sua intenção: você pode escolher uma **Descrição Visual Detalhada** para entender a cena ou uma **Extração de Texto Estruturada (OCR)** para leitura. O menu adapta-se dinamicamente com base no tipo de arquivo e no seu motor de IA ativo.
 - **Otimização Principal:** Realizamos uma limpeza profunda da lógica interna do complemento, removendo funções legadas não utilizadas e código redundante. Isso resulta em uma experiência mais leve, rápida e confiável para todos os usuários.
 
-## Alterações para 3.1.0
+## Alterações para 5.0
 
 - **Arquitetura Multiprovedor**: Adicionado suporte total para **OpenAI**, **Groq** e **Mistral**, em conjunto com o Google Gemini. Os usuários agora podem escolher sua plataforma de IA preferida.
 - **Roteamento Avançado de Modelos**: Os usuários de provedores nativos (Gemini, OpenAI, etc.) podem agora selecionar modelos específicos em um menu suspenso para diferentes tarefas (OCR, STT, TTS).
@@ -615,14 +615,14 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - **OCR e Tradução Híbridos**: Otimizada a lógica para utilizar o Google Tradutor para maior velocidade ao usar o OCR do Chrome, e tradução baseada em IA ao utilizar os motores Gemini/Groq/OpenAI.
 - **"Analisar Novamente com IA" Universal**: O recurso de reanalisar do Leitor de Documentos não está mais limitado ao Gemini. Ele agora utiliza qualquer provedor de IA que estiver ativo no momento para reprocessar as páginas.
 
-## Alterações para 3.0
+## Alterações para 4.6
 
 - **Recuperação Interativa de Resultados:** Adicionada a tecla **Espaço** à camada de comandos, permitindo aos usuários reabrir instantaneamente a última resposta da IA em uma janela de bate-papo para perguntas adicionais, mesmo quando o modo "Saída Direta" estiver ativo.
 - **Central da Comunidade no Telegram:** Adicionado um link para o "Canal Oficial no Telegram" no menu Ferramentas do NVDA, proporcionando uma forma rápida de se manter atualizado com as últimas notícias, recursos e lançamentos.
 - **Estabilidade de Resposta Aprimorada:** Otimizada a lógica principal para os recursos de Tradução, OCR e Visão para garantir um desempenho mais confiável e uma experiência mais fluida ao utilizar a saída direta de voz.
 - **Orientação de Interface Aprimorada:** Atualizadas as descrições das configurações e a documentação para explicar melhor o novo sistema de recuperação de histórico e como ele funciona junto com as configurações de saída direta.
 
-## Alterações para 2.9
+## Alterações para 4.5
 
 - **Gerenciador Avançado de Prompts:** Introduzida uma caixa de diálogo de gerenciamento dedicada nas configurações para personalizar os prompts padrão do sistema e gerenciar prompts definidos pelo usuário, com suporte total para adicionar, editar, reordenar e pré-visualizar.
 - **Suporte Abrangente a Proxy:** Resolvidos problemas de conexão de rede garantindo que as configurações de proxy definidas pelo usuário sejam rigorosamente aplicadas a todas as requisições de API, incluindo tradução, OCR e geração de voz.
@@ -631,7 +631,7 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - **Interface de Configurações Otimizada:** Simplificada a interface de configurações ao reorganizar o gerenciamento de prompts em uma caixa de diálogo separada, proporcionando uma experiência de uso mais limpa e acessível.
 - **Guia de Variáveis de Prompt:** Adicionado um guia integrado nas caixas de diálogo de prompt para ajudar os usuários a identificar e utilizar facilmente variáveis dinâmicas como [selection], [clipboard] e [screen_obj].
 
-## Alterações para 2.8
+## Alterações para 4.0.3
 
 - **Resiliência de Rede Aprimorada:** Adicionado um mecanismo de nova tentativa automática para lidar melhor com conexões de internet instáveis e erros temporários do servidor, garantindo respostas de IA mais confiáveis.
 - **Janela de Tradução Visual:** Introduzida uma janela dedicada para os resultados de tradução. Os usuários podem agora navegar facilmente e ler traduções longas linha por linha, de forma semelhante aos resultados de OCR.
@@ -640,7 +640,7 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - **Estabilidade da API Aprimorada:** Alterado para um método de autenticação baseado em cabeçalho mais robusto, resolvendo potenciais erros de "Todas as chaves de API falharam" causados por conflitos na rotação de chaves.
 - **Correções de Erros:** Resolvidas várias falhas potenciais, incluindo um problema durante o encerramento do complemento e um erro de foco na caixa de diálogo de bate-papo.
 
-## Alterações para 6.5.0
+## Alterações para 4.0.1
 
 - **Leitor Avançado de Documentos:** Um novo e potente visualizador de PDF e imagens com seleção de intervalo de páginas, processamento em segundo plano e navegação fluida com `Ctrl+PageUp/PageDown`.
 - **Novo Submenu de Ferramentas:** Adicionado um submenu dedicado "Vision Assistant" no menu Ferramentas do NVDA para um acesso mais rápido aos recursos principais, configurações e documentação.
@@ -654,23 +654,23 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - **Janela de Atualização Redesenhada:** Apresenta uma nova interface acessível com uma caixa de texto rolável para ler claramente as alterações de versão antes de instalar.
 - **Status e UX Unificados:** Caixas de diálogo de arquivo padronizadas em todo o complemento e aprimoramento do comando 'L' para relatar o progresso em tempo real.
 
-## Alterações para 2.6
+## Alterações para 3.6.0
 
 - **Sistema de Ajuda:** Adicionado um comando de ajuda (`H`) na Camada de Comandos para fornecer uma lista de fácil acesso com todos os atalhos e suas respectivas funções.
 - **Análise de Vídeos Online:** Expandido o suporte para incluir vídeos do **Twitter (X)**. Também foram melhoradas a detecção de URLs e a estabilidade para uma experiência mais confiável.
 - **Contribuição para o Projeto:** Adicionada uma caixa de diálogo opcional de doação para usuários que desejem apoiar as futuras atualizações e o crescimento contínuo do projeto.
 
-## Alterações para 2.5
+## Alterações para 3.5.0
 
 \*   \*\*Camada de Comandos:\*\* Introduzido um sistema de Camada de Comandos (padrão: `NVDA+Shift+V`) para agrupar atalhos sob uma única tecla principal. Por exemplo, em vez de pressionar `NVDA+Control+Shift+T` para traduzir, você agora pressiona `NVDA+Shift+V` seguido de `T`.
 \*   \*\*Análise de Vídeos Online:\*\* Adicionado um novo recurso para analisar vídeos do YouTube e Instagram diretamente fornecendo uma URL.
 
-## Alterações para 2.1.1
+## Alterações para 3.1.0
 
 - **Modo de Saída Direta:** Adicionada uma opção para ignorar a caixa de diálogo de bate-papo e ouvir as respostas da IA diretamente por voz, proporcionando uma experiência mais rápida e fluida.
 - **Integração com a Área de Transferência:** Adicionada uma nova configuração para copiar automaticamente as respostas da IA para a área de transferência.
 
-## Alterações para 2.1
+## Alterações para 3.0
 
 - **Novos Idiomas:** Adicionadas traduções para **Persa** e **Vietnamita**.
 - **Modelos de IA Expandidos:** Reorganizada a lista de seleção de modelos com prefixos claros (`[Free]`, `[Pro]`, `[Auto]`) para ajudar os usuários a distinguir entre modelos gratuitos e modelos com limite de taxa (pagos). Adicionado suporte para o **Gemini 3.0 Pro** e **Gemini 2.0 Flash Lite**.
@@ -678,7 +678,7 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - **Gerenciamento de Arquivos:** Corrigido um problema em que o envio de arquivos com nomes em caracteres não-ingleses falhava.
 - **Otimização de Prompts:** Melhorada a lógica de Tradução e a estrutura dos resultados de Visão.
 
-## Alterações para 2.0
+## Alterações para 2.9
 
 - **Adicionadas traduções para Francês e Turco.**
 - **Visualização Formatada:** Adicionado o botão "Ver Formatado" nas caixas de diálogo de bate-papo para visualizar a conversa com a devida formatação (Cabeçalhos, Negrito, Código) em uma janela navegável padrão.
@@ -686,7 +686,7 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - **Gerenciamento de Janelas:** Corrigido um problema em que as janelas de "Refinar Texto" ou de bate-papo abriam múltiplas vezes ou falhavam ao colocar o foco corretamente.
 - **Melhorias na Experiência do Usuário:** Padronizados os títulos das caixas de diálogo de arquivos para "Abrir" e removidos anúncios de voz redundantes (ex.: "Abrindo menu...") para uma navegação mais fluida.
 
-## Alterações para 1.5
+## Alterações para 2.8
 
 - Adicionada tradução para Italiano.
 - **Relatório de Status:** Adicionado um novo comando (NVDA+Control+Shift+I) para anunciar o status atual do complemento (ex.: "Enviando...", "Analisando...").
@@ -699,20 +699,20 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - **Configurações de Atualização:** A opção "Procurar atualizações ao iniciar" está agora desativada por padrão para cumprir as políticas da Loja de Complementos do NVDA.
 - Limpeza de Código.
 
-## Alterações para 1.0
+## Alterações para 2.7
 
 - Migrada a estrutura do projeto para o modelo oficial de complementos da NV Access para melhor conformidade com os padrões.
 - Implementada lógica de nova tentativa automática para erros HTTP 429 (Limite de Taxa Excedido) para garantir a confiabilidade durante períodos de tráfego elevado.
 - Otimizadas as prompts de tradução para maior precisão e melhor gerenciamento da lógica de "Troca Inteligente".
 - Atualizada a tradução para Russo.
 
-## Alterações para 6.0
+## Alterações para 2.6
 
 - Adicionado suporte à tradução em Russo (Agradecimentos a nvda-ru).
 - Atualizadas as mensagens de erro para fornecer informações mais descritivas relativamente à conectividade.
 - Alterado o idioma de destino padrão para Inglês.
 
-## Alterações para 5.6
+## Alterações para 2.5
 
 - Adicionado o Comando de OCR de Arquivo Nativo (NVDA+Control+Shift+F).
 - Adicionado o botão "Salvar Bate-Papo" às caixas de diálogo de resultados.
@@ -721,15 +721,15 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - Alterado para a API de Arquivos do Gemini para um melhor manuseio de arquivos PDF e de áudio.
 - Corrigida uma falha (crash) ao traduzir textos que contêm chaves.
 
-## Alterações para 2026.10.01
+## Alterações para 2.1.1
 
 - Corrigido um problema em que a variável [file_ocr] não funcionava corretamente dentro das Prompts Personalizadas.
 
-## Alterações para 2026.09.01
+## Alterações para 2.1
 
 - Padronizados todos os atalhos para utilizar NVDA+Control+Shift de modo a eliminar conflitos com o layout para Notebook do NVDA e teclas de atalho do sistema.
 
-## Alterações para 2.7
+## Alterações para 2.0
 
 - Implementado um sistema integrado de Atualização Automática.
 - Adicionada a Cache de Tradução Inteligente para recuperação instantânea de texto traduzido anteriormente.
@@ -738,7 +738,7 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - Otimizadas as prompts da IA para impor rigorosamente a saída no idioma de destino.
 - Corrigida uma falha causada por caracteres especiais no texto de entrada.
 
-## Alterações para 6.1.2
+## Alterações para 1.5
 
 - Adicionado suporte para mais de 20 novos idiomas.
 - Implementada a Caixa de Diálogo Interativa de Refinamento para perguntas adicionais.
@@ -747,6 +747,6 @@ _Se você deseja apoiar o projeto financeiramente e ver seu nome aqui, poderá e
 - Corrigidas falhas por COMError em aplicativos específicos como o Firefox e o Word.
 - Adicionado mecanismo de nova tentativa automática para erros do servidor.
 
-## Alterações para 7.0.0
+## Alterações para 1.0
 
 - Lançamento inicial.

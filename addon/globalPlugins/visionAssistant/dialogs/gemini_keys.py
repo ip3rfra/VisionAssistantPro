@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
+import re
 import threading
+import webbrowser
 
 import wx
 import addonHandler
@@ -43,6 +45,7 @@ class GeminiKeysDialog(wx.Dialog):
 		self._last_key = ""
 		self._last_key_project = ""
 		self._cancel_event = threading.Event()
+		self._created_projects = {}
 		signed_in = gemini_keys.is_signed_in()
 		email = gemini_keys.get_account_email() if signed_in else ""
 		key_map = gemini_keys.stored_keys_by_project()
@@ -259,6 +262,36 @@ class GeminiKeysDialog(wx.Dialog):
 		self._state["loaded"] = True
 		self._apply_state()
 		self._show_content(True)
+
+		url_match = re.search(r"https?://[^\s<>\"')]+", str(message)) if message else None
+		if url_match:
+			url = url_match.group(0).rstrip(".,;)\"'")
+			gui.mainFrame.prePopup()
+			try:
+				# Translators: Title of the dialog that creates and manages Gemini API keys with the user's Google account, {name} is the name of the add-on.
+				dlg_title = _("{name} - Gemini API Key Manager").format(name=ADDON_NAME)
+				dlg = wx.MessageDialog(
+					self,
+					str(message),
+					dlg_title,
+					wx.OK | wx.CANCEL | wx.OK_DEFAULT | wx.ICON_ERROR,
+				)
+				try:
+					dlg.SetOKCancelLabels(_("&Open Link"), _("&OK"))
+				except Exception:
+					pass
+				try:
+					if dlg.ShowModal() == wx.ID_OK:
+						try:
+							webbrowser.open(url)
+						except Exception as e:
+							log.debug(f"Failed to open URL from error dialog: {e}")
+				finally:
+					dlg.Destroy()
+			finally:
+				gui.mainFrame.postPopup()
+			return
+
 		show_error_dialog(message)
 
 	def _confirm(self, message, title):
@@ -382,6 +415,11 @@ class GeminiKeysDialog(wx.Dialog):
 			self.keys_list.SetSelection(0)
 
 	def _update_buttons(self):
+		if self._busy:
+			for control in self._all_buttons():
+				control.Enable(False)
+			return
+
 		loaded = self._state["loaded"]
 		signed_in = self._state["signed_in"]
 		has_selection = bool(self._selected_project_id())
@@ -427,6 +465,14 @@ class GeminiKeysDialog(wx.Dialog):
 				log.debug(f"Could not sync cloud keys: {e}")
 		key_map = gemini_keys.stored_keys_by_project()
 		key_map_list = gemini_keys.stored_keys_list_by_project()
+
+		loaded_ids = {p.get("projectId") for p in projects}
+		for p_id, proj_dict in list(self._created_projects.items()):
+			if p_id in loaded_ids:
+				self._created_projects.pop(p_id, None)
+			else:
+				projects.append(proj_dict)
+
 		self._call(self._apply_load, signed_in, email, projects, key_map, key_map_list, announce)
 
 	def _apply_load(self, signed_in, email, projects, key_map, key_map_list, announce):
@@ -437,6 +483,8 @@ class GeminiKeysDialog(wx.Dialog):
 		self._state["key_map"] = key_map
 		self._state["key_map_list"] = key_map_list
 		self._apply_state()
+		if self._last_key_project:
+			self._select_project(self._last_key_project)
 		log.debug(f"Loaded {len(projects)} project(s).")
 		if projects:
 			if self.FindFocus() != self.projects_list:
@@ -485,6 +533,8 @@ class GeminiKeysDialog(wx.Dialog):
 		self._run_task(lambda token_id: self._worker_load(announce=True))
 
 	def _on_sign_in(self, event):
+		self._created_projects.clear()
+
 		def worker(token_id):
 			gemini_keys.sign_in(self._progress, cancel_check=self._cancel_event.is_set)
 			self._worker_load(announce=True)
@@ -507,6 +557,7 @@ class GeminiKeysDialog(wx.Dialog):
 		self._run_task(worker)
 
 	def _signed_out(self, removed, still_signed_in):
+		self._created_projects.clear()
 		log.debug(f"Sign out removed {len(removed)} credential file(s).")
 		if still_signed_in:
 			# Translators: Error message shown when the sign-out did not take effect.
@@ -565,6 +616,12 @@ class GeminiKeysDialog(wx.Dialog):
 		def worker(token_id):
 			token = gemini_keys.get_access_token()
 			gemini_keys.create_project(token, project_id, name, self._cancel_event.is_set, self._progress)
+			self._created_projects[project_id] = {
+				"projectId": project_id,
+				"name": name,
+				"displayName": name,
+				"lifecycleState": "ACTIVE",
+			}
 			gemini_keys.enable_service(
 				token, project_id, gemini_keys.GEMINI_SERVICE, self._cancel_event.is_set, self._progress
 			)
@@ -583,6 +640,10 @@ class GeminiKeysDialog(wx.Dialog):
 	def _key_created(self, project_id, label, key):
 		self._last_key = key
 		self._last_key_project = project_id
+		existing_ids = {p.get("projectId") for p in self._state.get("projects", [])}
+		if project_id not in existing_ids:
+			new_proj = {"projectId": project_id, "name": label, "displayName": label, "lifecycleState": "ACTIVE"}
+			self._state["projects"].append(new_proj)
 		self._state["key_map"] = gemini_keys.stored_keys_by_project()
 		self._state["key_map_list"] = gemini_keys.stored_keys_list_by_project()
 		self._apply_state()

@@ -254,7 +254,7 @@ El transcriptor de audio ha sido completamente reconstruido para admitir archivo
 2. **Transcribir y traducir (idioma de destino)**: Transcribe el habla y la traduce al idioma de destino configurado.
 3. **Doblar y traducir (idioma de destino)** _(solo Gemini)_: Transcribe el habla, la traduce al idioma de destino y sintetiza un doblaje de audio hablado usando el motor TTS del complemento.
 
-## 8) Lector avanzado de documentos e imágenes
+## 8. Lector avanzado de documentos e imágenes
 
 El **Lector de documentos** convierte tus documentos en texto legible y limpio. Maneja PDFs de varias páginas, imágenes complejas, formatos HEIC de iPhone y archivos de texto sin formato (`.txt`) y HTML (`.html`, `.htm`), que se abren instantáneamente sin OCR ni IA. Selecciona varios archivos a la vez y se fusionan en un único documento continuo. Hay tres motores OCR disponibles — **Chrome (Rápido)**, **IA (Avanzado)** y **Ninguno (Extraer capa de texto)** para PDFs con capacidad de búsqueda — seleccionables en Configuración → Lector de documentos.
 

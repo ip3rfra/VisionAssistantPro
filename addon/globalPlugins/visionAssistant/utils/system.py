@@ -114,6 +114,8 @@ def _is_failed_ocr_page(text):
 	if not text:
 		return True
 	stripped = text.strip()
+	if stripped in ("<noise>", "}", "[]", "{}"):
+		return True
 	return stripped.startswith("[") or is_ai_error(stripped)
 
 

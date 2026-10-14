@@ -216,6 +216,13 @@ class OpenAIHandler:
 			body.append(b'Content-Disposition: form-data; name="model"')
 			body.append(b"")
 			body.append(model_name.encode())
+			s_code = nvda_config.conf["VisionAssistant"].get("source_language", "auto")
+			if s_code and s_code != "auto":
+				iso_code = s_code.split("-")[0].split("_")[0].lower()
+				body.append(f"--{boundary}".encode())
+				body.append(b'Content-Disposition: form-data; name="language"')
+				body.append(b"")
+				body.append(iso_code.encode())
 			body.append(f"--{boundary}--".encode())
 			body.append(b"")
 			headers = {

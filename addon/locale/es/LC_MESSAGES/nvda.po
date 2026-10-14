@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: VisionAssistantPro\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
 "POT-Creation-Date: 2026-10-02 15:54+0330\n"
-"PO-Revision-Date: 2026-10-06 12:36\n"
+"PO-Revision-Date: 2026-10-14 16:15\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -280,7 +280,7 @@ msgstr "Informal"
 #: addon\globalPlugins\visionAssistant\vision_config.py:147
 #: addon\globalPlugins\visionAssistant\vision_config.py:173
 msgid "Gentle"
-msgstr "Gentil"
+msgstr "Delicada"
 
 #. Translators: Adjective describing a lively AI voice style.
 #: addon\globalPlugins\visionAssistant\vision_config.py:149
@@ -290,7 +290,7 @@ msgstr "Vivaz"
 #. Translators: Adjective describing a knowledgeable AI voice style.
 #: addon\globalPlugins\visionAssistant\vision_config.py:151
 msgid "Knowledgeable"
-msgstr "Erudita"
+msgstr "Conocedora"
 
 #. Translators: Adjective describing a warm AI voice style.
 #: addon\globalPlugins\visionAssistant\vision_config.py:153
@@ -355,17 +355,17 @@ msgstr "Enérgica"
 #. Translators: OCR Engine option (Fast but less formatted)
 #: addon\globalPlugins\visionAssistant\vision_config.py:336
 msgid "Chrome (Fast)"
-msgstr "Chrome (Rápido)"
+msgstr "Chrome (rápido)"
 
 #. Translators: OCR Engine option (Slower but better formatting/AI-driven)
 #: addon\globalPlugins\visionAssistant\vision_config.py:338
 msgid "AI (Advanced)"
-msgstr "IA (Avanzado)"
+msgstr "IA (avanzado)"
 
 #. Translators: OCR Engine option for searchable PDFs (extracts text without OCR)
 #: addon\globalPlugins\visionAssistant\vision_config.py:340
 msgid "None (Extract Text Layer)"
-msgstr "Ninguno (Extraer capa de texto)"
+msgstr "Ninguno (extraer capa de texto)"
 
 #. Translators: Option in the audio output device selection list to follow the device configured in NVDA.
 #: addon\globalPlugins\visionAssistant\vision_config.py:467
@@ -485,7 +485,7 @@ msgstr "Documento"
 #. Translators: Label for the initial context prompt in document chat.
 #: addon\globalPlugins\visionAssistant\vision_config.py:568
 msgid "Document Chat Context"
-msgstr "Contexto de chat de documento"
+msgstr "Contexto del chat del documento"
 
 #. Translators: Section header for direct chat prompts in Prompt Manager.
 #: addon\globalPlugins\visionAssistant\vision_config.py:585
@@ -607,7 +607,7 @@ msgstr "Extracción de texto de documento (OCR)"
 #: addon\globalPlugins\visionAssistant\vision_config.py:895
 #: addon\globalPlugins\visionAssistant\vision_config.py:897
 msgid "Document OCR + Translate"
-msgstr "OCR de documento + Traducir"
+msgstr "OCR de documento + traducción"
 
 #. Translators: Title for the sub-prompt that instructs the AI to describe images inline.
 #: addon\globalPlugins\visionAssistant\vision_config.py:913
@@ -783,7 +783,7 @@ msgstr "Audio del sistema (bucle de retorno)"
 #. Translators: Option in the Ambient Observer settings for very short one-sentence reports.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1214
 msgid "Brief (one short sentence)"
-msgstr "Breve (una oración corta)"
+msgstr "Breve (una frase corta)"
 
 #. Translators: Option in the Ambient Observer settings for fuller descriptions of changes.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1216
@@ -805,7 +805,7 @@ msgstr "Viendo una película o serie"
 #. Translators: Context option in the Ambient Observer start dialog for following a live stream or presentation.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1242
 msgid "Watching a live stream or presentation"
-msgstr "Viendo una transmisión en vivo o presentación"
+msgstr "Viendo una transmisión en vivo o una presentación"
 
 #. Translators: Context option in the Ambient Observer start dialog for following an online meeting or call.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1248
@@ -820,22 +820,22 @@ msgstr "Jugando un videojuego"
 #. Translators: Thinking level option for no reasoning (lowest latency)
 #: addon\globalPlugins\visionAssistant\vision_config.py:1264
 msgid "Minimal (Fastest)"
-msgstr "Mínima (Más rápida)"
+msgstr "Mínima (más rápida)"
 
 #. Translators: Thinking level option for slight reasoning
 #: addon\globalPlugins\visionAssistant\vision_config.py:1266
 msgid "Low (Agentic)"
-msgstr "Baja (Agéntica)"
+msgstr "Baja (agéntica)"
 
 #. Translators: Thinking level option for standard reasoning (balanced)
 #: addon\globalPlugins\visionAssistant\vision_config.py:1268
 msgid "Medium (Balanced)"
-msgstr "Media (Equilibrada)"
+msgstr "Media (equilibrada)"
 
 #. Translators: Thinking level option for deep reasoning
 #: addon\globalPlugins\visionAssistant\vision_config.py:1270
 msgid "High (Deep)"
-msgstr "Alta (Profunda)"
+msgstr "Alta (profunda)"
 
 #. Translators: Context option for using the webcam to check one's own appearance.
 #: addon\globalPlugins\visionAssistant\vision_config.py:1283
@@ -1721,7 +1721,7 @@ msgstr "Procesando páginas {start} a {end}..."
 #: addon\globalPlugins\visionAssistant\ai\providers\gemini.py:1380
 #, python-brace-format
 msgid "Rate limit reached. Waiting {sec}s before retry..."
-msgstr "Límite de velocidad alcanzado. Esperando {sec}s antes de reintentar..."
+msgstr "Se alcanzó el límite de solicitudes. Esperando {sec}s antes de reintentar..."
 
 #. Translators: Status message indicating an API request retry due to a temporary error for specific pages. {error} is error details, {range} is the page range, {current} and {total} are attempts.
 #: addon\globalPlugins\visionAssistant\ai\providers\gemini.py:1002
@@ -3637,7 +3637,7 @@ msgstr "Advertencia: {failed} de {total} bloques de subtítulos no se pudieron n
 #. Translators: Status message when combining audio blocks
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:1998
 msgid "Arranging audio track... Please wait."
-msgstr "Organizando pista de audio... Por favor espera."
+msgstr "Sincronizando la pista de audio... Espera, por favor."
 
 #. Translators: Status message when mixing generated narration with original video audio
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:2081
@@ -3647,7 +3647,7 @@ msgstr "Mezclando narración con el audio original del vídeo..."
 #. Translators: Status message when slicing and splicing the audio file with natural pauses.
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:2111
 msgid "Splicing audio based on natural pauses..."
-msgstr "Uniendo audio según las pausas naturales..."
+msgstr "Cortando y uniendo el audio según las pausas naturales..."
 
 #. Translators: Status message shown when converting the final raw WAV mix to MP3 format.
 #: addon\globalPlugins\visionAssistant\dialogs\media.py:2153
@@ -3791,7 +3791,7 @@ msgstr "Todo"
 #. Translators: Button label for adding a custom prompt.
 #: addon\globalPlugins\visionAssistant\dialogs\prompt_manager_dialog.py:464
 msgid "Add"
-msgstr "Agregar"
+msgstr "Añadir"
 
 #. Translators: Button label for editing a custom prompt.
 #: addon\globalPlugins\visionAssistant\dialogs\prompt_manager_dialog.py:466
@@ -3877,7 +3877,7 @@ msgstr "Confirmar restablecimiento"
 #. Translators: Title of dialog for adding a custom prompt.
 #: addon\globalPlugins\visionAssistant\dialogs\prompt_manager_dialog.py:729
 msgid "Add Custom Prompt"
-msgstr "Agregar indicación personalizada"
+msgstr "Añadir indicación personalizada"
 
 #. Translators: Validation error for duplicate custom prompt name.
 #: addon\globalPlugins\visionAssistant\dialogs\prompt_manager_dialog.py:734
@@ -5371,7 +5371,7 @@ msgstr "DICCIONARIO GLOBAL DE PERSONAJES:"
 #: addon\globalPlugins\visionAssistant\features\video.py:1058
 #, python-brace-format
 msgid "Cooling down to prevent rate limits ({seconds} seconds)..."
-msgstr "Enfriando para evitar límites de velocidad ({seconds} segundos)..."
+msgstr "Esperando para evitar el límite de solicitudes ({seconds} segundos)..."
 
 #. Translators: Header for the list of characters introduced up to the current video scene.
 #: addon\globalPlugins\visionAssistant\features\video.py:1114
@@ -5973,7 +5973,7 @@ msgid "An advanced AI assistant for NVDA using Gemini models.\n"
 "- Report Quota Exhausted Keys (Alt+Q)\n"
 "- Report Advanced Routing (Alt+M)\n"
 "- Quick Settings (Up/Down/Left/Right)"
-msgstr "Un avanzado asistente de IA para NVDA que usa modelos Gemini.\n"
+msgstr "Un asistente de IA avanzado para NVDA que usa modelos Gemini.\n"
 "Capa de comandos: Presiona NVDA+Shift+V, luego:\n"
 "- Traductor inteligente (T) / Portapapeles (Shift+T)\n"
 "- Refinador de texto (R)\n"

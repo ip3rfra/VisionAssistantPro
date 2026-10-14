@@ -254,7 +254,7 @@ Pentranskripsi Audio telah dibangun ulang sepenuhnya untuk mendukung berkas audi
 2. **Transkripsikan dan Terjemahkan (Bahasa Target):** Mentranskripsikan ucapan lalu menerjemahkannya ke bahasa target yang telah Anda atur.
 3. **Sulih Suara dan Terjemahkan (Bahasa Target)** _(Khusus Gemini):_ Mentranskripsikan ucapan, menerjemahkannya ke bahasa target, lalu membuat sulih suara dengan mesin TTS add-on.
 
-## 8) Pembaca Dokumen & Gambar Lanjutan
+## 8. Pembaca Dokumen & Gambar Lanjutan
 
 **Pembaca Dokumen** mengubah dokumen menjadi teks yang rapi dan mudah dibaca — agar Anda dapat membaca, menerjemahkan, dan mendengarkan berbagai bahan, mulai dari buku hasil pemindaian hingga kumpulan foto. Fitur ini menangani PDF multihalaman, gambar kompleks, format HEIC iPhone, bahkan berkas teks biasa (`.txt`) dan HTML (`.html`, `.htm`) yang dapat langsung dibuka tanpa pemrosesan OCR atau AI. Pilih beberapa berkas sekaligus untuk menggabungkannya menjadi satu dokumen berkelanjutan sesuai urutan halaman. Tersedia tiga mesin OCR — **Chrome (Cepat)**, **AI (Lanjutan)** untuk mempertahankan tata letak dengan lebih baik, dan **Tanpa OCR (Ekstrak Lapisan Teks)** untuk PDF yang dapat ditelusuri — yang dapat dipilih di Pengaturan → Pembaca Dokumen.
 
@@ -581,7 +581,7 @@ _Jika ingin mendukung proyek secara finansial dan melihat nama Anda di sini, gun
 - **Akurasi UI Explorer Ditingkatkan**: Prompt UI Explorer diperbaiki agar lebih tepat mengenali jenis elemen, seperti item daftar, dan melaporkan status seperti "(Dicentang)", "(Dipilih)", atau "(Diperluas)", sambil mengabaikan komponen sistem Windows seperti Taskbar dan Jam.
 - **Pengingat Pengaturan Setelah Instalasi**: Menambahkan notifikasi setelah instalasi untuk mengarahkan pengguna ke menu pengaturan agar dapat mengonfigurasi kunci API dan preferensi.
 
-## Perubahan untuk 5.5 (Pembaruan Otomasi)
+## Perubahan untuk 5.5.2
 
 - **Operator AI (Kontrol Mandiri - Shift+A):** Ini adalah fitur utama di v5.5. Vision Assistant Pro berkembang dari asisten pasif menjadi **Operator AI** pribadi Anda. Add-on ini tidak hanya mendeskripsikan layar, tetapi juga dapat mengambil tindakan.
 - **Visual UI Explorer (E):** Lelah menghadapi "tombol tanpa label"? Tekan **E** untuk mengaktifkan UI Explorer. AI akan memindai seluruh jendela dan membuat daftar semua elemen yang bisa diklik, termasuk ikon, grafik, dan menu. Pilih item dari daftar, lalu Operator AI akan mengkliknya untuk Anda. Anggap saja seperti lapisan aksesibilitas tambahan di atas aplikasi apa pun.
@@ -713,7 +713,7 @@ _Jika ingin mendukung proyek secara finansial dan melihat nama Anda di sini, gun
 - Beralih ke Gemini File API untuk menangani PDF dan file audio dengan lebih baik.
 - Memperbaiki crash saat menerjemahkan teks yang berisi kurung kurawal.
 
-## Perubahan untuk 2.1
+## Perubahan untuk 2.1.1
 
 - Menstandarkan semua pintasan agar memakai NVDA+Control+Shift untuk menghindari konflik dengan layout Laptop NVDA dan hotkey sistem.
 

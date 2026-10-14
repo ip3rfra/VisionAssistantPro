@@ -4,7 +4,6 @@ import json
 import logging
 import re
 import time
-import datetime
 import hashlib
 import base64
 from urllib import request, error
@@ -17,6 +16,7 @@ import ui
 from ... import plugin_state
 from ... import vision_config
 from ...utils import error_contract
+from ...utils.system import clean_json_fence
 from ...utils.media_capture import get_proxy_opener, ProgressFileReader
 from ...prompt_utils import get_prompt_text, apply_prompt_template
 from ..core import _apply_gemma_thinking_patch, _extract_text_from_parts
@@ -44,16 +44,39 @@ def _apply_api_key(url, key, headers=None):
 	return f"{url}{connector}key={key}", headers
 
 
-def _pacific_utc_offset(now):
-	dt = datetime.datetime.fromtimestamp(now, datetime.timezone.utc)
-	year = dt.year
-	march1 = datetime.date(year, 3, 1)
-	march_second_sunday = march1 + datetime.timedelta(days=(6 - march1.weekday()) % 7 + 7)
-	nov1 = datetime.date(year, 11, 1)
-	nov_first_sunday = nov1 + datetime.timedelta(days=(6 - nov1.weekday()) % 7)
-	if march_second_sunday <= dt.date() < nov_first_sunday:
-		return 7 * 3600
-	return 8 * 3600
+def _parse_retry_delay_seconds(msg):
+	if not msg:
+		return None
+	if isinstance(msg, dict):
+		if "retryDelay" in msg:
+			rd = msg["retryDelay"]
+			if isinstance(rd, (int, float)):
+				return float(rd)
+			if isinstance(rd, str) and rd.endswith("s"):
+				try:
+					return float(rd[:-1])
+				except ValueError:
+					pass
+		msg = str(msg)
+	s_msg = str(msg)
+	m_rd = re.search(r'"retryDelay":\s*"([\d\.]+)s?"', s_msg, re.IGNORECASE)
+	if m_rd:
+		try:
+			return float(m_rd.group(1))
+		except ValueError:
+			pass
+	m = re.search(r"retry in\s+(?:(\d+(?:\.\d+)?)\s*h)?\s*(?:(\d+(?:\.\d+)?)\s*m)?\s*(?:(\d+(?:\.\d+)?)\s*s)?", s_msg, re.IGNORECASE)
+	if m and any(m.groups()):
+		h = float(m.group(1) or 0)
+		m_val = float(m.group(2) or 0)
+		s = float(m.group(3) or 0)
+		total = h * 3600 + m_val * 60 + s
+		if total > 0:
+			return total
+	m_simple = re.search(r"retry in\s+([\d\.]+)\s*s", s_msg, re.IGNORECASE)
+	if m_simple:
+		return float(m_simple.group(1))
+	return None
 
 
 def _has_url(data):
@@ -61,13 +84,19 @@ def _has_url(data):
 		return False
 	if isinstance(data, str):
 		lower = data.lower()
+		if "googleapis.com" in lower:
+			return False
 		return "http://" in lower or "https://" in lower
 	if isinstance(data, list):
 		for item in data:
 			if _has_url(item):
 				return True
 	if isinstance(data, dict):
-		for v in data.values():
+		if "text" in data and isinstance(data["text"], str):
+			return _has_url(data["text"])
+		for k, v in data.items():
+			if k in ("uri", "file_uri", "fileUri", "mime_type", "mimeType"):
+				continue
 			if _has_url(v):
 				return True
 	return False
@@ -121,8 +150,12 @@ class GeminiHandler:
 	def _get_cached_video_uri(file_path, key):
 		GeminiHandler._load_video_file_cache()
 		try:
-			cache_key = os.path.normcase(file_path)
+			norm_p = os.path.normcase(file_path)
+			k_hash = GeminiHandler._hash_key(key) if key else None
+			cache_key = f"{norm_p}::{k_hash}" if k_hash else norm_p
 			entry = GeminiHandler._video_file_cache.get(cache_key)
+			if not entry and not k_hash:
+				entry = GeminiHandler._video_file_cache.get(norm_p)
 			if not entry:
 				log.debug(f"Video cache miss (no entry for: {os.path.basename(file_path)})")
 				return None, None
@@ -131,13 +164,7 @@ class GeminiHandler:
 				GeminiHandler._save_video_file_cache()
 				log.debug(f"Video cache expired for: {os.path.basename(file_path)}")
 				return None, None
-			keys = GeminiHandler._get_api_keys(task="video")
-			cached_hash = entry.get("key_hash")
-			valid = any(cached_hash == GeminiHandler._hash_key(k) for k in keys)
-			if not valid:
-				del GeminiHandler._video_file_cache[cache_key]
-				GeminiHandler._save_video_file_cache()
-				log.debug(f"Video cache entry removed (no valid key) for: {os.path.basename(file_path)}")
+			if k_hash and entry.get("key_hash") and entry.get("key_hash") != k_hash:
 				return None, None
 			file_size = os.path.getsize(file_path)
 			if entry.get("file_size") != file_size:
@@ -153,12 +180,14 @@ class GeminiHandler:
 	def _set_cached_video_uri(file_path, file_uri, duration_sec, key):
 		GeminiHandler._load_video_file_cache()
 		try:
-			cache_key = os.path.normcase(file_path)
+			norm_p = os.path.normcase(file_path)
+			k_hash = GeminiHandler._hash_key(key) if key else None
+			cache_key = f"{norm_p}::{k_hash}" if k_hash else norm_p
 			GeminiHandler._video_file_cache[cache_key] = {
 				"file_uri": file_uri,
 				"duration_sec": duration_sec,
 				"expires_at": time.time() + 47 * 3600,
-				"key_hash": GeminiHandler._hash_key(key),
+				"key_hash": k_hash,
 				"file_size": os.path.getsize(file_path),
 			}
 			if GeminiHandler._save_video_file_cache():
@@ -167,14 +196,22 @@ class GeminiHandler:
 			log.error(f"Failed to cache video file: {e}")
 
 	@staticmethod
-	def _clear_cached_video_uri(file_path):
+	def _clear_cached_video_uri(file_path, key=None):
 		GeminiHandler._load_video_file_cache()
 		try:
-			cache_key = os.path.normcase(file_path)
-			if cache_key in GeminiHandler._video_file_cache:
-				del GeminiHandler._video_file_cache[cache_key]
-				GeminiHandler._save_video_file_cache()
-				log.info(f"Video cache cleared for: {os.path.basename(file_path)}")
+			norm_p = os.path.normcase(file_path)
+			keys_to_del = []
+			if key:
+				k_hash = GeminiHandler._hash_key(key)
+				keys_to_del.append(f"{norm_p}::{k_hash}")
+			else:
+				for k in list(GeminiHandler._video_file_cache.keys()):
+					if k == norm_p or k.startswith(f"{norm_p}::"):
+						keys_to_del.append(k)
+			for k in keys_to_del:
+				GeminiHandler._video_file_cache.pop(k, None)
+			GeminiHandler._save_video_file_cache()
+			log.info(f"Video cache cleared for: {os.path.basename(file_path)}")
 		except Exception as e:
 			log.error(f"Failed to clear video cache: {e}")
 
@@ -269,9 +306,7 @@ class GeminiHandler:
 			gm = time.gmtime(now)
 			seconds_since_midnight = gm.tm_hour * 3600 + gm.tm_min * 60 + gm.tm_sec
 			midnight_utc = now - seconds_since_midnight
-			reset_ts = midnight_utc + _pacific_utc_offset(now)
-			if now >= reset_ts:
-				reset_ts += 24 * 3600
+			reset_ts = midnight_utc + 24 * 3600
 
 		if model is None:
 			model = GeminiHandler._get_current_model_for_ban()
@@ -514,36 +549,46 @@ class GeminiHandler:
 				if hasattr(e, "code") and e.code >= 500:
 					is_retryable = True
 
-				if hasattr(e, "code") and e.code == 429:
-					used_model = None
-					if hasattr(e, "url") and e.url and "/models/" in e.url:
-						used_model = e.url.split("/models/")[-1].split(":")[0].split("?")[0]
-
-					if error_contract.is_daily_quota_error(err_msg_lower):
-						GeminiHandler._ban_key(key, model=used_model)
-						is_retryable = False
-					else:
-						is_retryable = True
-				elif (
-					"high demand" in err_msg_lower or "exhausted" in err_msg_lower or "quota" in err_msg_lower
-				):
-					used_model = None
-					if hasattr(e, "url") and e.url and "/models/" in e.url:
-						used_model = e.url.split("/models/")[-1].split(":")[0].split("?")[0]
-
-					if not error_contract.is_daily_quota_error(err_msg_lower):
-						is_retryable = True
-					else:
-						GeminiHandler._ban_key(key, model=used_model)
+				used_model = None
+				if hasattr(e, "url") and e.url and "/models/" in e.url:
+					used_model = e.url.split("/models/")[-1].split(":")[0].split("?")[0]
+				if not used_model:
+					used_model = GeminiHandler._get_current_model_for_ban()
 
 				delay_sec = getattr(e, "retry_delay", None)
 				if delay_sec is None:
-					match = re.search(r"retry in ([\d\.]+)s", err_msg_lower)
-					if match:
-						try:
-							delay_sec = float(match.group(1))
-						except Exception as e:
-							log.debug(f"Retry delay parse failed: {e}")
+					delay_sec = _parse_retry_delay_seconds(err_msg)
+
+				if hasattr(e, "code") and e.code == 429:
+					if delay_sec and delay_sec > 60:
+						GeminiHandler._ban_key(key, minutes=delay_sec / 60.0, model=used_model)
+						is_retryable = False
+					elif error_contract.is_daily_quota_error(err_msg_lower):
+						GeminiHandler._ban_key(key, model=used_model)
+						is_retryable = False
+					else:
+						n_keys = len(GeminiHandler._get_api_keys())
+						if n_keys > 1:
+							GeminiHandler._ban_key(key, minutes=5, model=used_model)
+							is_retryable = False
+						else:
+							is_retryable = True
+				elif (
+					"high demand" in err_msg_lower or "exhausted" in err_msg_lower or "quota" in err_msg_lower
+				):
+					if delay_sec and delay_sec > 60:
+						GeminiHandler._ban_key(key, minutes=delay_sec / 60.0, model=used_model)
+						is_retryable = False
+					elif error_contract.is_daily_quota_error(err_msg_lower):
+						GeminiHandler._ban_key(key, model=used_model)
+						is_retryable = False
+					else:
+						n_keys = len(GeminiHandler._get_api_keys())
+						if n_keys > 1 and error_contract.is_key_exhausted_error(err_msg_lower):
+							GeminiHandler._ban_key(key, minutes=5, model=used_model)
+							is_retryable = False
+						else:
+							is_retryable = True
 
 				if delay_sec is not None and delay_sec > 0 and is_retryable:
 					n_keys = len(GeminiHandler._get_api_keys())
@@ -627,7 +672,7 @@ class GeminiHandler:
 						parts.append(fd_part)
 					elif "data" in att:
 						parts.append({"inlineData": {"mimeType": att["mime_type"], "data": att["data"]}})
-			if prompt:
+			if prompt and "transcribe" not in base_endpoint.lower():
 				parts.append({"text": prompt})
 			contents = [{"parts": parts}]
 
@@ -642,8 +687,18 @@ class GeminiHandler:
 		}
 		if json_mode:
 			payload["generationConfig"] = {"responseMimeType": "application/json"}
-		elif _has_url(contents):
+		elif task == "chat" and _has_url(contents):
 			payload["tools"] = [{"url_context": {}}]
+
+		if "transcribe" in base_endpoint.lower():
+			s_code = nvda_config.conf["VisionAssistant"].get("source_language", "auto")
+			if s_code and s_code != "auto":
+				bcp_code = s_code.replace("_", "-")
+				if "generationConfig" not in payload:
+					payload["generationConfig"] = {}
+				payload["generationConfig"]["audioTranscriptionConfig"] = {
+					"languageCodes": [bcp_code]
+				}
 
 		_apply_gemma_thinking_patch(payload, base_endpoint)
 
@@ -687,6 +742,15 @@ class GeminiHandler:
 						collected.append(_extract_text_from_parts(cand.get("content", {}).get("parts", [])))
 
 			text = "".join(collected)
+			if json_mode and text:
+				clean_j = clean_json_fence(text)
+				try:
+					parsed_j = json.loads(clean_j)
+					if not isinstance(parsed_j, (dict, list)):
+						text = ""
+				except Exception:
+					text = ""
+
 			if text:
 				return text
 			if block_reason:
@@ -1246,6 +1310,7 @@ class GeminiHandler:
 		is_direct=False,
 		validator=None,
 		cache_path=None,
+		ensure_local_cb=None,
 	):
 		keys = GeminiHandler._get_api_keys(task="video")
 		num_keys = len(keys)
@@ -1254,6 +1319,7 @@ class GeminiHandler:
 			GeminiHandler._working_key_idx = keys.index(current_key)
 
 		keys_exhausted = 0
+		res = None
 
 		while keys_exhausted < num_keys:
 			if abort_checker and abort_checker():
@@ -1266,39 +1332,45 @@ class GeminiHandler:
 				current_uri = None
 
 			try:
-				if not current_uri and file_path and not is_direct:
-					_cache_key = cache_path if cache_path and os.path.isfile(cache_path) else file_path
-					if os.path.isfile(file_path):
-						cached_uri, _cached_dur = GeminiHandler._get_cached_video_uri(_cache_key, key)
-						if cached_uri:
-							current_uri = cached_uri
-					if not current_uri:
-						if report_callback:
-							file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
-							upload_status = _(
-								# Translators: Status message indicating video upload progress with file size in MB and retry attempt numbers.
-								"Uploading to AI ({size:.1f} MB) (Key {current}/{total})..."
-							).format(
-								size=file_size_mb,
-								current=idx + 1,
-								total=num_keys,
-							)
-							report_callback(upload_status)
+				if not current_uri and not is_direct:
+					if not file_path and ensure_local_cb:
+						file_path = ensure_local_cb()
+					if abort_checker and abort_checker():
+						return None, None, None
 
-						current_uri = GeminiHandler._upload_video_with_key(file_path, key, abort_checker)
+					if file_path:
+						_cache_key = cache_path if cache_path and os.path.isfile(cache_path) else file_path
+						if os.path.isfile(file_path):
+							cached_uri, _cached_dur = GeminiHandler._get_cached_video_uri(_cache_key, key)
+							if cached_uri:
+								current_uri = cached_uri
 						if not current_uri:
-							if report_callback:
-								# Translators: Message reported when a file upload fails and the system is retrying.
-								report_callback(_("Upload failed. Retrying..."))
-							time.sleep(2.0)
-							keys_exhausted += 1
-							GeminiHandler._working_key_idx = (GeminiHandler._working_key_idx + 1) % num_keys
-							continue
-						try:
-							dur = GeminiHandler._file_durations.get(current_uri)
-							GeminiHandler._set_cached_video_uri(_cache_key, current_uri, dur, key)
-						except Exception:
-							pass
+							if report_callback and os.path.isfile(file_path):
+								file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
+								upload_status = _(
+									# Translators: Status message indicating video upload progress with file size in MB and retry attempt numbers.
+									"Uploading to AI ({size:.1f} MB) (Key {current}/{total})..."
+								).format(
+									size=file_size_mb,
+									current=idx + 1,
+									total=num_keys,
+								)
+								report_callback(upload_status)
+
+							current_uri = GeminiHandler._upload_video_with_key(file_path, key, abort_checker)
+							if not current_uri:
+								if report_callback:
+									# Translators: Message reported when a file upload fails and the system is retrying.
+									report_callback(_("Upload failed. Retrying..."))
+								time.sleep(2.0)
+								keys_exhausted += 1
+								GeminiHandler._working_key_idx = (GeminiHandler._working_key_idx + 1) % num_keys
+								continue
+							try:
+								dur = GeminiHandler._file_durations.get(current_uri)
+								GeminiHandler._set_cached_video_uri(_cache_key, current_uri, dur, key)
+							except Exception:
+								pass
 					current_key = key
 				elif is_direct and not current_uri:
 					current_uri = file_path
@@ -1332,6 +1404,22 @@ class GeminiHandler:
 					)
 
 					if res and not error_contract.is_ai_error(res):
+						if json_mode:
+							clean_j = clean_json_fence(res)
+							is_valid_json = False
+							try:
+								parsed_j = json.loads(clean_j)
+								if isinstance(parsed_j, (dict, list)):
+									is_valid_json = True
+							except Exception as je:
+								log.warning(f"Video task JSON validation failed: {je}")
+								is_valid_json = False
+
+							if not is_valid_json:
+								# Translators: Error shown internally when AI stops early
+								res = "ERROR:" + _("Incomplete description. AI stopped early.")
+
+					if res and not error_contract.is_ai_error(res):
 						if validator and not validator(res):
 							# Translators: Error shown internally when AI stops early
 							res = "ERROR:" + _("Incomplete description. AI stopped early.")
@@ -1345,15 +1433,25 @@ class GeminiHandler:
 					)
 					err_msg_lower = err_msg.lower()
 
-					is_fatal_error = error_contract.is_daily_quota_error(err_msg_lower)
+					is_fatal_error = (
+						error_contract.is_daily_quota_error(err_msg_lower)
+						or error_contract.is_key_exhausted_error(err_msg_lower)
+					)
 
 					if is_fatal_error:
+						v_delay = _parse_retry_delay_seconds(err_msg)
+						if v_delay and v_delay > 60:
+							GeminiHandler._ban_key(key, minutes=v_delay / 60.0)
+						elif error_contract.is_daily_quota_error(err_msg_lower):
+							GeminiHandler._ban_key(key)
+						elif num_keys > 1:
+							GeminiHandler._ban_key(key, minutes=5)
 						break
 
 					if error_contract.is_file_access_error(err_msg_lower):
 						try:
 							_ck = cache_path if cache_path and os.path.isfile(cache_path) else file_path
-							GeminiHandler._clear_cached_video_uri(_ck)
+							GeminiHandler._clear_cached_video_uri(_ck, key=key)
 						except Exception:
 							pass
 						if report_callback:
@@ -1366,15 +1464,14 @@ class GeminiHandler:
 					if error_contract.is_hard_error(err_msg_lower):
 						return res, current_uri, current_key
 
-					delay_sec = 0
-					match = re.search(r"retry in ([\d\.]+)s", err_msg_lower)
-					if match:
-						try:
-							delay_sec = float(match.group(1))
-						except Exception as e:
-							log.debug(f"Retry delay parse failed: {e}")
+					delay_sec = _parse_retry_delay_seconds(err_msg) or 0
 
 					if delay_sec > 0:
+						if num_keys > 1:
+							log.warning(
+								f"Video task: Key index {idx} rate-limited with delay. Rotating to next key..."
+							)
+							break
 						if report_callback:
 							report_callback(
 								_("Rate limit reached. Waiting {sec}s before retry...").format(
@@ -1426,5 +1523,10 @@ class GeminiHandler:
 				GeminiHandler._working_key_idx = (GeminiHandler._working_key_idx + 1) % num_keys
 				continue
 
-		# Translators: Error message shown when all API keys run out of quota or fail.
-		return "ERROR:" + _("All API keys failed or daily quota exhausted."), None, None
+		final_err = (
+			res
+			if (res and error_contract.is_ai_error(res))
+			# Translators: Error message shown when all API keys run out of quota or fail.
+			else ("ERROR:" + _("All API keys failed or daily quota exhausted."))
+		)
+		return final_err, None, None

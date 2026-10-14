@@ -254,7 +254,7 @@ Bộ chuyển đổi âm thanh đã được xây dựng lại hoàn toàn để
 2. **Phiên âm và dịch (Ngôn ngữ đích)**: Phiên âm lời nói và dịch nó sang ngôn ngữ đích được định cấu hình của bạn.
 3. **Lồng tiếng và dịch (Ngôn ngữ đích)** _(Chỉ Gemini)_: Một tính năng mới mạnh mẽ giúp phiên âm lời nói, dịch sang ngôn ngữ đích của bạn và tổng hợp bản lồng tiếng bằng giọng nói bằng công cụ TTS của tiện ích bổ sung.
 
-## 8) Trình đọc tài liệu và hình ảnh nâng cao
+## 8. Trình đọc tài liệu và hình ảnh nâng cao
 
 **Trình đọc tài liệu** biến tài liệu của bạn thành văn bản rõ ràng, dễ đọc — để bạn có thể đọc, dịch và nghe bất kỳ nội dung nào từ sách được quét đến chồng ảnh. Nó xử lý các tệp PDF nhiều trang, hình ảnh phức tạp, định dạng iPhone HEIC và thậm chí cả các tệp văn bản thuần túy (`.txt`) và HTML (`.html`, `.htm`), được mở ngay lập tức mà không cần xử lý OCR hoặc AI. Chọn nhiều tệp cùng một lúc và chúng được hợp nhất thành một tài liệu liên tục theo thứ tự trang. Hiện có ba công cụ OCR — **Chrome (Nhanh)**, **AI (Nâng cao)** để bảo toàn bố cục ưu việt và **Không (Lớp văn bản trích xuất)** cho các tệp PDF có thể tìm kiếm — được chọn trong Cài đặt → Trình đọc tài liệu.
 
@@ -495,7 +495,7 @@ _Nếu bạn muốn hỗ trợ tài chính cho dự án và thấy tên mình �
 - **Bật tắt cài đặt nhanh mới**: Sao chép phản hồi AI vào bộ nhớ tạm, Xuất trực tiếp (không có cửa sổ trò chuyện), Đánh dấu rõ ràng trong Trò chuyện và Hoán đổi thông minh giờ đây có thể được bật và tắt ngay lập tức từ Cài đặt nhanh của lớp lệnh!
 - **Tab cài đặt Trợ lý trực tiếp**: Trợ lý trực tiếp hiện có tab cài đặt riêng! Tùy chọn "Trợ lý trực tiếp: Đầu ra trực tiếp (Không có cửa sổ)" được chuyển đến đây từ tab Kết nối và tab này chỉ xuất hiện khi Google Gemini (hoặc Nhà cung cấp tùy chỉnh tương thích với Gemini) là nhà cung cấp đang hoạt động của bạn.
 
-## Những thay đổi cho ngày 06/06/2026
+## Những thay đổi cho ngày 06/08/2026
 
 - **Gắn nhãn UI Explorer**: Giờ đây, bạn có thể thêm nhãn trực tiếp vào các thành phần được tìm thấy bên trong UI Explorer! Nút "Thêm nhãn" mới đã được thêm vào và giao diện luôn mở thông minh và duy trì tiêu điểm để bạn có thể nhanh chóng gắn nhãn cho nhiều đối tượng mà không bị gián đoạn.
 - **Cải tiến lớp cài đặt nhanh**: Lớp Hỗ trợ thị giác (`Insert+Shift+V`) hiện đã ổn định và có tính tương tác cao! Bạn có thể sử dụng mũi tên `Up/Down` để điều hướng giữa các cài đặt nhanh (Nhà cung cấp, Mô hình, Ngôn ngữ phản hồi AI, Mô hình TTS) và mũi tên `Trái/Phải` để thay đổi ngay giá trị của chúng bằng phản hồi bằng giọng nói thông minh, ngắn gọn. Các lựa chọn của bạn sẽ có hiệu lực ngay lập tức (bao gồm cả việc tự động bật định tuyến nâng cao khi cần thiết) và lớp vẫn tồn tại trong khi bạn định cấu hình.
@@ -589,7 +589,7 @@ _Nếu bạn muốn hỗ trợ tài chính cho dự án và thấy tên mình �
 - **Tinh chỉnh độ chính xác của UI Explorer**: Cải thiện prompt của UI Explorer để nhận diện tốt hơn các loại thành phần (như List Item) và báo cáo chính xác các trạng thái như "(Checked)", "(Selected)", hoặc "(Expanded)" trong khi bỏ qua các thành phần hệ thống của Windows như Thanh tác vụ và Đồng hồ.
 - **Nhắc nhở thiết lập cài đặt**: Thêm một thông báo sau khi cài đặt để hướng dẫn người dùng đến menu cài đặt nhằm cấu hình khóa API và các tùy chọn cá nhân của họ.
 
-## Những thay đổi trong phiên bản 5.5 (Bản cập nhật Tự động hóa)
+## Những thay đổi cho 5.5.2
 
 - **AI Operator (Điều khiển tự động - Shift+A):** Đây là tính năng sáng giá nhất của v5.5. Vision Assistant Pro đã nâng cấp từ một trợ lý thụ động thành **AI Operator** cá nhân của bạn. Nó không chỉ mô tả màn hình mà còn thực sự nắm quyền điều khiển.
 - **Trình thám hiểm giao diện (UI Explorer - E):** Bạn mệt mỏi vì phải điều hướng qua các "nút không nhãn"? Nhấn **E** để kích hoạt UI Explorer. AI sẽ quét toàn bộ cửa sổ và tạo danh sách mọi thành phần có thể click mà nó thấy—bao gồm cả icon, đồ họa và menu. Chỉ cần chọn một mục từ danh sách và AI Operator sẽ click giúp bạn. Nó giống như việc thêm một "lớp tiếp cận" lên trên bất kỳ ứng dụng nào.
@@ -721,7 +721,7 @@ _Nếu bạn muốn hỗ trợ tài chính cho dự án và thấy tên mình �
 - Chuyển sang sử dụng Gemini File API để xử lý tốt hơn các tệp PDF và âm thanh.
 - Đã sửa lỗi treo khi dịch văn bản có chứa dấu ngoặc nhọn.
 
-## Những thay đổi trong phiên bản 2.1
+## Những thay đổi cho 2.1.1
 
 - Chuẩn hóa tất cả các phím tắt để sử dụng NVDA+Control+Shift nhằm loại bỏ xung đột với bố cục Bàn phím Laptop của NVDA và các phím nóng hệ thống.
 
