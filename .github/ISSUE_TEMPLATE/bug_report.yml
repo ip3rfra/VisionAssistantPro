@@ -1,0 +1,107 @@
+name: Bug Report
+description: Report a problem or unexpected behavior
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! The more detail you provide, the faster we can fix it.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what went wrong.
+      placeholder: "When I press NVDA+Shift+V and then V, the add-on ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List the exact steps so we can reproduce the issue ourselves.
+      placeholder: |
+        1. Open ...
+        2. Press ...
+        3. Notice that ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen instead?
+      placeholder: "I expected the add-on to ..."
+    validations:
+      required: false
+
+  - type: input
+    id: nvda-version
+    attributes:
+      label: NVDA version
+      description: Your NVDA version (NVDA menu > Help > About).
+      placeholder: "e.g. 2026.1"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: latest-version
+    attributes:
+      label: Version check
+      options:
+        - label: I'm using the latest version of Vision Assistant Pro.
+          required: true
+
+  - type: dropdown
+    id: provider
+    attributes:
+      label: AI provider
+      description: Which provider were you using when the bug occurred?
+      options:
+        - Google Gemini
+        - OpenAI
+        - Mistral
+        - Groq
+        - MiniMax
+        - Custom (Ollama / LM Studio / Jan.ai / KoboldCPP)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Logs are the fastest way for us to diagnose the problem.
+
+        **To enable logs:**
+        1. Open **NVDA menu > Preferences > Settings > Vision Assistant Pro**.
+        2. Go to the **Advanced** tab.
+        3. Check **"Enable dedicated log file"** and set **"Log Level"** to **"Debug"**.
+        4. Reproduce the issue, then click **"Open Log File"** to find your `vision_assistant.log` file.
+
+        Paste the relevant error messages here, or attach the log file below.
+      placeholder: "Paste the error messages from the log here."
+      render: shell
+    validations:
+      required: false
+
+  - type: upload
+    id: log-file
+    attributes:
+      label: Attach the log file
+      description: Attach your `vision_assistant.log` file here if you prefer, instead of pasting the text above.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add any other context or details that might help.
+    validations:
+      required: false

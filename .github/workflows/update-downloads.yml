@@ -1,0 +1,79 @@
+name: Update Download Count
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+
+      - name: Calculate Downloads and Update README
+        run: |
+          cat << 'EOF' > update_count.py
+          import urllib.request, json, re, os
+          repo = "mahmoodhozhabri/VisionAssistantPro"
+          total = 0
+          page = 1
+
+          while True:
+              url = f"https://api.github.com/repos/{repo}/releases?per_page=100&page={page}"
+              req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+              try:
+                  with urllib.request.urlopen(req) as response:
+                      data = json.loads(response.read().decode())
+                      if not data:
+                          break
+                      for r in data:
+                          for a in r.get('assets', []):
+                              total += a.get('download_count', 0)
+                  page += 1
+              except Exception as e:
+                  print(f"Error fetching data: {e}")
+                  break
+
+          readme_file = next((f for f in os.listdir('.') if f.lower() == 'readme.md'), None)
+          if not readme_file:
+              print("Error: readme file not found!")
+              exit(1)
+
+          with open(readme_file, 'r', encoding='utf-8') as f:
+              readme = f.read()
+
+          new_readme = re.sub(
+              r'(<!-- DOWNLOAD_COUNT_START -->).*?(<!-- DOWNLOAD_COUNT_END -->)',
+              f'\\1 Total Downloads: {total:,} \\2',
+              readme,
+              flags=re.DOTALL
+          )
+
+          if new_readme != readme:
+              with open(readme_file, 'w', encoding='utf-8') as f:
+                  f.write(new_readme)
+              os.system(f'echo "CHANGED_FILE={readme_file}" >> $GITHUB_ENV')
+              os.system('echo "CHANGED=true" >> $GITHUB_ENV')
+          else:
+              os.system('echo "CHANGED=false" >> $GITHUB_ENV')
+          EOF
+          python update_count.py
+
+      - name: Commit and Push changes
+        if: env.CHANGED == 'true'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add "${{ env.CHANGED_FILE }}"
+          git commit -m "docs: auto-update total download count"
+          git push

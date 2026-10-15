@@ -1,3 +1,4 @@
+
 # Python Markdown
 
 # A Python implementation of John Gruber's Markdown.
@@ -134,7 +135,7 @@ class InlineProcessor(Treeprocessor):
             count = len(self.inlinePatterns)
             while patternIndex < count:
                 data, matched, startIndex = self.__applyPattern(
-                    self.inlinePatterns[patternIndex], data, patternIndex, startIndex
+                    self.inlinePatterns[patternIndex], data, patternIndex, startIndex,
                 )
                 if not matched:
                     patternIndex += 1
@@ -173,7 +174,7 @@ class InlineProcessor(Treeprocessor):
         self,
         data: str | None,
         parent: etree.Element,
-        isText: bool = True
+        isText: bool = True,
     ) -> list[tuple[etree.Element, list[str]]]:
         """
         Process string with placeholders and generate `ElementTree` tree.
@@ -223,7 +224,7 @@ class InlineProcessor(Treeprocessor):
                             if child.tail:
                                 if child.tail.strip():
                                     self.__processElementText(
-                                        node, child, False
+                                        node, child, False,
                                     )
                             if child.text:
                                 if child.text.strip():
@@ -255,7 +256,7 @@ class InlineProcessor(Treeprocessor):
         pattern: inlinepatterns.Pattern,
         data: str,
         patternIndex: int,
-        startIndex: int = 0
+        startIndex: int = 0,
     ) -> tuple[str, bool, int]:
         """
         Check if the line fits the pattern, create the necessary
@@ -312,23 +313,27 @@ class InlineProcessor(Treeprocessor):
                         if child.text:
                             self.ancestors.append(child.tag.lower())
                             child.text = self.__handleInline(
-                                child.text, patternIndex + 1
+                                child.text, patternIndex + 1,
                             )
                             self.ancestors.pop()
                         if child.tail:
                             child.tail = self.__handleInline(
-                                child.tail, patternIndex
+                                child.tail, patternIndex,
                             )
 
         placeholder = self.__stashNode(node, pattern.type())
 
         if new_style:
-            return "{}{}{}".format(data[:start],
-                                   placeholder, data[end:]), True, 0
+            return "{}{}{}".format(
+                data[:start],
+                placeholder, data[end:],
+            ), True, 0
         else:  # pragma: no cover
-            return "{}{}{}{}".format(leftData,
-                                     match.group(1),
-                                     placeholder, match.groups()[-1]), True, 0
+            return "{}{}{}{}".format(
+                leftData,
+                match.group(1),
+                placeholder, match.groups()[-1],
+            ), True, 0
 
     def __build_ancestors(self, parent: etree.Element | None, parents: list[str]) -> None:
         """Build the ancestor list."""
@@ -376,13 +381,13 @@ class InlineProcessor(Treeprocessor):
             insertQueue = []
             for child in currElement:
                 if child.text and not isinstance(
-                    child.text, util.AtomicString
+                    child.text, util.AtomicString,
                 ):
                     self.ancestors.append(child.tag.lower())
                     text = child.text
                     child.text = None
                     lst = self.__processPlaceholders(
-                        self.__handleInline(text), child
+                        self.__handleInline(text), child,
                     )
                     for item in lst:
                         self.parent_map[item[0]] = child

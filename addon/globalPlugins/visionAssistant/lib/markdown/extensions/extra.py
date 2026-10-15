@@ -1,3 +1,4 @@
+
 # Python-Markdown Extra Extension
 # ===============================
 
@@ -45,7 +46,7 @@ extensions = [
     'def_list',
     'tables',
     'abbr',
-    'md_in_html'
+    'md_in_html',
 ]
 """ The list of included extensions. """
 
